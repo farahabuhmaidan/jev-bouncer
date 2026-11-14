@@ -24,6 +24,15 @@ HHMM = re.compile(r"([01]\d|2[0-3]):[0-5]\d")
 ACTIONS = {"interrupt", "batch", "delegate", "drop"}
 
 
+RELATIONSHIPS = ("family", "contact", "leadership", "team", "peer", "customer")
+
+
+class NewPerson(BaseModel):
+    name: str
+    role: str = ""
+    relationship: str = "contact"
+
+
 class NewEvent(BaseModel):
     """A message (sender + text) or a CI failure (branch, test_name, log_tail). Used by Compose and /test."""
     type: str = "message"
@@ -219,6 +228,34 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
     @app.get("/api/people")
     def people():
         return [{"key": k, **p} for k, p in snapshot()["people"].items() if k != "sanad"]
+
+    @app.post("/api/people", status_code=201)
+    def add_person(body: NewPerson):
+        name, role = body.name.strip(), body.role.strip()
+        if not name or len(name) > 80 or len(role) > 80:
+            raise HTTPException(422, "name must be 1-80 characters, role at most 80")
+        if body.relationship not in RELATIONSHIPS:
+            raise HTTPException(422, f"relationship must be one of {', '.join(RELATIONSHIPS)}")
+        snap = snapshot()
+        base = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-") or "person"
+        key, n = base, 2
+        while key in snap["people"]:
+            key, n = f"{base}-{n}", n + 1
+        person = {"name": name, "role": role or "contact", "relationship": body.relationship, "custom": True}
+        store.put("snapshot", {**snap, "people": {**snap["people"], key: person}})
+        return {"key": key, **person}
+
+    @app.delete("/api/people/{key}")
+    def delete_person(key: str):
+        snap = snapshot()
+        if key not in snap["people"]:
+            raise HTTPException(404, "no such person")
+        if not snap["people"][key].get("custom"):
+            raise HTTPException(409, "only people you added can be removed; take them off the lists instead")
+        store.put("snapshot", {**snap, "people": {k: p for k, p in snap["people"].items() if k != key}})
+        s = effective_settings(store.get("settings"))
+        store.put("settings", {**s, "family": [x for x in s["family"] if x != key], "vip": [x for x in s["vip"] if x != key]})
+        return {"removed": key}
 
     @app.post("/api/reset")
     def reset():

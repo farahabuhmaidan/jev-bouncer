@@ -19,6 +19,8 @@ export const feedback = (id, body) => call("POST", `/api/events/${encodeURICompo
 export const getMetrics = () => call("GET", "/api/metrics");
 export const getDigest = () => call("GET", "/api/digest");
 export const getPeople = () => call("GET", "/api/people");
+export const addPerson = (person) => call("POST", "/api/people", person);
+export const deletePerson = (key) => call("DELETE", `/api/people/${encodeURIComponent(key)}`);
 export const getMoments = () => call("GET", "/api/moments");
 export const reset = () => call("POST", "/api/reset");
 export const getCalendar = () => call("GET", "/api/calendar");

@@ -70,6 +70,8 @@ def _sender(key: str, snapshot: dict) -> str:
         return f"{p['name']} ({p['role']}, family)"
     if rel == "customer":
         return f"{p['name']}, {p['role']} (customer)"
+    if rel == "contact" or not p.get("team"):
+        return f"{p['name']}, {p['role']}"
     if rel == "leadership":
         return f"{p['name']}, {p['role']} (company leadership)"
     return f"{p['name']}, {p['role']} ({p['team']} team)"

@@ -170,3 +170,14 @@ def test_reminder_question_error_is_shown_not_a_no(store):
     out = process_event(store, {"type": "message", "source": "compose", "sender": "maha",
                                 "text": "you need to pay school fees next month"}, ask=ask, write=None)
     assert out["result"]["reminder"]["status"] == "error" and "500" in out["result"]["reminder"]["error"]
+
+
+# Who is family comes from settings, not the snapshot, for live events.
+def test_with_settings_marks_family_from_settings():
+    from server.live import with_settings
+    snap = {"people": {"maha": {"name": "Maha", "role": "partner", "relationship": "family"},
+                       "dina": {"name": "Dina", "role": "QA", "relationship": "peer", "team": "QA"}}}
+    out = with_settings(snap, {"family": ["dina"]})
+    assert out["people"]["dina"]["relationship"] == "family"
+    assert out["people"]["maha"]["relationship"] == "contact"
+    assert snap["people"]["maha"]["relationship"] == "family"  # not mutated

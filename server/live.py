@@ -21,6 +21,23 @@ def _thread(fn):
     threading.Thread(target=fn, daemon=True).start()
 
 
+def with_settings(snapshot: dict, settings: dict) -> dict:
+    """The snapshot as Sanad configured it: people in settings.family are family, nobody else is.
+    Seeded events keep their cached answers; this shapes the state of new events."""
+    family = set(settings.get("family", []))
+    people = {}
+    for k, p in snapshot["people"].items():
+        if p.get("is_bot") or k == "sanad":
+            people[k] = p
+        elif k in family:
+            people[k] = {**p, "relationship": "family"}
+        elif p.get("relationship") == "family":
+            people[k] = {**p, "relationship": "contact"}
+        else:
+            people[k] = p
+    return {**snapshot, "people": people}
+
+
 def _is_person(event: dict, snapshot: dict) -> bool:
     p = snapshot["people"].get(event["sender"])
     return event["type"] == "message" and bool(p) and not p.get("is_bot")
@@ -67,7 +84,7 @@ def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_threa
                   at: str | None = None, dry_run: bool = False) -> dict:
     """Store a new event stamped with the demo clock (or `at`), route it, and (if write) let the LLM write
     its text. A dry run routes it against the real day, writes the text inline, then removes it again."""
-    snapshot = store.get("snapshot")
+    snapshot = with_settings(store.get("snapshot"), effective_settings(store.get("settings")))
     clock = at or store.get("clock")
     if dry_run:
         run = lambda fn: fn()  # noqa: E731  the caller waits for the full response

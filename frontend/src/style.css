@@ -373,3 +373,32 @@ a { color: var(--accent); }
 .agenda .ag-title { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .agenda li.reminder { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .agenda li.clashing { border-left-color: var(--ask); }
+
+/* Rules: editable Family and VIP lists */
+.plist { border-top: 1px solid var(--border); padding: 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.plist-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.plist-head b { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
+.plist-head p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.person-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 4px 4px 6px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2); font-size: 13px; }
+.person-chip small { color: var(--muted); }
+.person-chip button { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+.person-chip button:hover { background: var(--surface); color: var(--error); }
+.avatar.xs { width: 24px; height: 24px; font-size: 10px; }
+.padd { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end; padding: 12px; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); }
+.padd label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
+.padd label small { font-weight: 500; color: var(--muted); }
+.padd-actions { grid-column: 1 / -1; display: flex; gap: 8px; }
+.padd .error-line { grid-column: 1 / -1; }
+.people-added { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-top: 1px solid var(--border); padding: 12px 0; }
+.people-added .person-chip { padding-left: 10px; }
+@media (max-width: 760px) { .padd { grid-template-columns: 1fr; } }
+
+/* Today: the phone column can be hidden */
+.today.no-phone { grid-template-columns: minmax(340px, 1fr) minmax(400px, 1.6fr) 48px; }
+.phone-rail { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--muted); font-weight: 600; font-size: 13px; position: relative; }
+.phone-rail:hover { color: var(--accent); border-color: var(--accent); }
+.phone-rail span { writing-mode: vertical-rl; }
+.rail-count { min-width: 20px; height: 20px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; display: grid; place-items: center; padding: 0 5px; }
+@media (max-width: 1200px) { .today.no-phone { grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.3fr); } .phone-rail { display: none; } }
+@media (max-width: 860px) { .today.no-phone { grid-template-columns: 1fr; } }

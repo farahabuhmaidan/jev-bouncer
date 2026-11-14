@@ -37,7 +37,9 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
 | `POST /api/events/{id}/feedback` | `{kind:"ask", choice}` or `{kind:"urgent"}` | stored feedback |
 | `GET /api/metrics` | | `{jev, llm}` each with critical_misses, precision, false_alarm_rate, cost_per_1k, p50, p95, accuracy, accuracy_excl_asks, holdout_accuracy, by_type, asks, errors; plus `n`, `settings_changed` (08), over labelled events only |
 | `GET /api/digest` | | digest groups filtered to events currently batched |
-| `GET /api/people` | | snapshot people (for Compose and Settings) |
+| `GET /api/people` | | snapshot people (for Compose and Settings); people added from Rules have `custom: true` |
+| `POST /api/people` | `{name, role?, relationship?: family\|contact\|leadership\|team\|peer\|customer}` | `201` + the person with a key made from the name (`rana`, `rana-2`); `422` empty/long name or unknown relationship |
+| `DELETE /api/people/{key}` | | removes a person you added and takes them off Family and VIP; `409` for people from the snapshot, `404` unknown |
 | `GET /api/calendar` | | connection + reminders with each day's agenda (16) |
 | `POST /api/events/{id}/reminder` | `{action: move\|keep\|remove\|add}` | the updated reminder (16) |
 | `POST /api/reset` | | re-seed: deletes live events and feedback, clock 08:00 |
@@ -51,12 +53,13 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
 ## Frontend (`frontend/`, Vite + React, no TypeScript)
 - **Inbox** (left): events with action chip, urgency badge, label (who it was forwarded to / until when), auto-reply under batched people, "you chose …" after an ask. Live events get a "live" tag.
 - **Why** (middle): rule fired, budget/bar, `deadline_in_minutes` (or "none"), Jev answer bars (bold = read by the rule), "baseline + same policy: action, row" (seeded events), label, CI explanation, the exact state JSON.
-- **Phone** (right): interrupts and sender "truly urgent" re-routes; dimmed in evening. Also served alone at `/phone` (open on a real phone on the same wifi).
+- **Phone** (right): interrupts and sender "truly urgent" re-routes; dimmed in evening. It can be hidden (eye button, or `p`); a slim "Show phone" rail with the count brings it back, and the choice is remembered in the browser. Also served alone at `/phone` (open on a real phone on the same wifi).
 - **Compose** (top of inbox): sender dropdown (people), text box, Send. Shows a spinner, then the decision lands in the inbox and the Why panel opens on it.
 - **Header**: clock, ▶ ⏸ ⏭ moment, 1x/10x, ↺ reset, budget dots, ⚙ settings, 👤 sender view, 📋 digest.
 - **Test bench** (`/test`): a form for any notification (type, source, sender or an outside name, channel, time, text; or a CI failure's branch, test, commit and log). It shows the full response: decision, rule, Jev answers, state, auto-reply, raw JSON. **Dry run** by default (`dry_run: true` routes it against the real day, then removes it), so testing never pollutes the demo inbox.
 - **Ask modal**: when a visible event's decision is "ask" and has no feedback, show it (only the question that was unsure: `needs_sanad`, else `time_sensitive`); the choice is POSTed as feedback and shown, never fed to metrics.
 - **Metrics strip** (bottom): from `/api/metrics`, in the order critical misses, interrupt precision, cost per 1,000, p50 latency, then accuracy (all and excluding asks) and asks.
+- **Rules → People**: Family and VIP are editable lists. Add a contact (type-ahead) or a new person (name + who they are), remove with ×; people you added can be deleted. Who is family comes from these settings: policy row 1 reads `settings.family`, and new events tell Jev a sender is family only if they are on the list (`live.with_settings`). Seeded events keep their cached answers.
 - Play is client-driven: a 1 s timer POSTs the next clock value (1 or 10 replay minutes per second).
 
 ## Live demo script (5 minutes)

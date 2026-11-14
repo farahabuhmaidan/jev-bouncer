@@ -28,6 +28,9 @@ export default function App() {
   const [senderView, setSenderView] = useState(false);
   const [digest, setDigest] = useState(null);
   const [error, setError] = useState(null);
+  const [showPhone, setShowPhone] = useState(() => { try { return localStorage.getItem("doorman.phone") !== "hidden"; } catch { return true; } });
+  const togglePhone = () => setShowPhone((v) => { try { localStorage.setItem("doorman.phone", v ? "hidden" : "shown"); } catch { /* private mode */ } return !v; });
+  const loadPeople = useCallback(() => api.getPeople().then((ps) => setPeople(Object.fromEntries(ps.map((p) => [p.key, p])))), []);
   const lastIds = useRef(new Set());
   const digestShown = useRef(false);
 
@@ -44,12 +47,12 @@ export default function App() {
   const refreshMetrics = useCallback(() => api.getMetrics().then(setMetrics).catch(() => {}), []);
 
   useEffect(() => {
-    api.getPeople().then((ps) => setPeople(Object.fromEntries(ps.map((p) => [p.key, p]))));
+    loadPeople();
     api.getMoments().then(setMoments);
     refresh(); refreshMetrics();
     const t = setInterval(refresh, 1000); // live events and LLM text arrive by polling
     return () => clearInterval(t);
-  }, [refresh, refreshMetrics]);
+  }, [refresh, refreshMetrics, loadPeople]);
 
   useEffect(() => { if (tab === "insights") refreshMetrics(); }, [tab, refreshMetrics]);
 
@@ -100,6 +103,7 @@ export default function App() {
       if (["INPUT", "SELECT", "TEXTAREA"].includes(ev.target.tagName)) return;
       if (ev.key === " ") { ev.preventDefault(); setPlaying((p) => !p); }
       if (ev.key === "n") jump();
+      if (ev.key === "p" && tab === "today") togglePhone();
       if (ev.key === "Escape") { setDigest(null); setComposing(false); }
     };
     window.addEventListener("keydown", onKey);
@@ -119,7 +123,7 @@ export default function App() {
       {error && <div className="banner" role="alert"><Icon name="alert" size={14} />{error}</div>}
 
       {tab === "today" && (
-        <main className="today">
+        <main className={`today ${showPhone ? "" : "no-phone"}`}>
           <section className="col list-col" aria-label="Messages">
             <div className="col-head">
               <div>
@@ -143,16 +147,26 @@ export default function App() {
           <section className="col detail-col" aria-label="Details">
             <div className="scroll"><Why event={byId[selected]} people={people} settings={day.settings} onChoose={choose} onChange={refresh} /></div>
           </section>
-          <aside className="col phone-col" aria-label="Phone preview">
-            <div className="col-head"><div><h1 className="small-h">On your phone</h1><p>Only what got through</p></div>
-              <a className="icon-btn" href="/phone" target="_blank" rel="noreferrer" aria-label="Open the phone view in a new tab" title="Open on a phone"><Icon name="phone" /></a></div>
-            <Phone day={day} people={people} onSelect={(id) => { setSelected(id); setFilter("all"); }} />
-          </aside>
+          {showPhone ? (
+            <aside className="col phone-col" aria-label="Phone preview">
+              <div className="col-head"><div><h1 className="small-h">On your phone</h1><p>Only what got through</p></div>
+                <div className="head-actions">
+                  <a className="icon-btn" href="/phone" target="_blank" rel="noreferrer" aria-label="Open the phone view in a new tab" title="Open on a phone"><Icon name="phone" /></a>
+                  <button className="icon-btn" onClick={togglePhone} aria-label="Hide the phone" title="Hide the phone (p)"><Icon name="eyeOff" /></button>
+                </div></div>
+              <Phone day={day} people={people} onSelect={(id) => { setSelected(id); setFilter("all"); }} />
+            </aside>
+          ) : (
+            <button className="phone-rail" onClick={togglePhone} aria-label="Show the phone" title="Show the phone (p)">
+              <Icon name="phone" size={18} /><span>Show phone</span>
+              {day.phone.length > 0 && <b className="rail-count">{day.phone.length}</b>}
+            </button>
+          )}
         </main>
       )}
       {tab === "calendar" && <CalendarPage version={day.events.length} />}
       {tab === "insights" && <Metrics m={metrics} />}
-      {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} />}
+      {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} onPeople={loadPeople} />}
 
       <footer className="foot">
         <span>Doorman · decisions by fixed rules on judgments from TypeSafe Jev</span>

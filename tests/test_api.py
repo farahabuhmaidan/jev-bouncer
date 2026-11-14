@@ -282,3 +282,46 @@ def test_reminder_move_to_suggested_and_remove(make):
     assert c.post(f"/api/events/{eid}/reminder", json={"action": "remove"}).json()["status"] == "removed"
     assert c.get("/api/calendar").json()["reminders"] == []
     assert c.post(f"/api/events/{eid}/reminder", json={"action": "fly"}).status_code == 422
+
+
+# People are configurable from the Rules page (design/14 § People).
+def test_add_person_then_message_from_them(make):
+    c, _ = make()
+    r = c.post("/api/people", json={"name": "Rana Haddad", "role": "Sanad's aunt", "relationship": "family"})
+    assert r.status_code == 201
+    p = r.json()
+    assert p["key"] == "rana-haddad" and p["custom"] is True and p["relationship"] == "family"
+    assert any(x["key"] == "rana-haddad" for x in c.get("/api/people").json())
+    e = c.post("/api/events", json={"sender": "rana-haddad", "text": "call me when you can"})
+    assert e.status_code == 201
+
+
+def test_add_person_same_name_gets_new_key(make):
+    c, _ = make()
+    a = c.post("/api/people", json={"name": "Rana", "role": "aunt"}).json()
+    b = c.post("/api/people", json={"name": "Rana", "role": "cousin"}).json()
+    assert a["key"] == "rana" and b["key"] == "rana-2" and a["relationship"] == "contact"
+
+
+@pytest.mark.parametrize("body", [{"name": "  ", "role": "x"}, {"name": "A", "role": "x", "relationship": "boss"},
+                                  {"name": "x" * 81, "role": "x"}])
+def test_add_person_rejects_bad_input(make, body):
+    c, _ = make()
+    assert c.post("/api/people", json=body).status_code == 422
+
+
+def test_delete_person_drops_them_from_lists(make):
+    c, _ = make()
+    key = c.post("/api/people", json={"name": "Rana", "role": "aunt", "relationship": "family"}).json()["key"]
+    s = c.get("/api/settings").json()
+    c.put("/api/settings", json={**s, "family": s["family"] + [key], "vip": [key]})
+    assert c.delete(f"/api/people/{key}").status_code == 200
+    s = c.get("/api/settings").json()
+    assert key not in s["family"] and key not in s["vip"]
+    assert all(x["key"] != key for x in c.get("/api/people").json())
+
+
+def test_delete_person_only_custom(make):
+    c, _ = make()
+    assert c.delete("/api/people/maha").status_code == 409
+    assert c.delete("/api/people/nobody").status_code == 404
