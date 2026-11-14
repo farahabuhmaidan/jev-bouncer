@@ -3,22 +3,24 @@ import json
 import re
 from pathlib import Path
 
+from pipeline.load import load_events, load_snapshot
+
 DATA = Path(__file__).resolve().parent.parent / "data"
 ACTIONS = {"interrupt", "batch", "delegate", "drop"}
 MOMENTS = {"loud-vs-quiet", "ci-trio", "unsure", "evening"}
 
 
-def _events():
-    return json.loads((DATA / "events.json").read_text())
-
-
 def _snapshot():
-    return json.loads((DATA / "snapshot.json").read_text())
+    return load_snapshot(DATA / "snapshot.json")
+
+
+def _events():
+    """Every event, raw entries already run through their adapters."""
+    return load_events(DATA / "events.json", _snapshot())
 
 
 def _unified(events):
-    """Events already in unified form (raw entries are checked by the adapter tests)."""
-    return [e for e in events if "raw_source" not in e]
+    return events
 
 
 def test_every_event_labelled():
@@ -35,6 +37,12 @@ def test_times_are_hh_mm_in_day():
     for e in _unified(_events()):
         assert re.fullmatch(r"\d\d:\d\d", e["time"]), e["id"]
         assert "08:00" <= e["time"] <= "20:00", e["id"]
+
+
+def test_calendar_comes_from_adapter():
+    kinds = {c["title"]: c["kind"] for c in _snapshot()["calendar"]}
+    assert kinds == {"Standup": "meeting", "Investor demo prep with the CEO": "meeting",
+                     "Focus block": "focus", "School pickup": "personal"}
 
 
 def test_senders_exist():
@@ -74,5 +82,5 @@ def test_budget_interrupts_at_most_5():
 def test_ci_events_have_logs_and_failure_type():
     for e in _unified(_events()):
         if e["type"] == "ci_failure":
-            assert (DATA / e["log_file"]).is_file(), e["id"]
+            assert e.get("log_tail") or (DATA / e["log_file"]).is_file(), e["id"]
             assert e["label"]["failure_type"] in {"flaky_test", "code_regression", "infra_problem", "config_or_lint"}

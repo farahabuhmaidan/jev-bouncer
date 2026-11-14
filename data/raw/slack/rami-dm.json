@@ -1,0 +1,17 @@
+{
+  "token": "<redacted>",
+  "team_id": "T0EXAMPLE",
+  "api_app_id": "A0EXAMPLE",
+  "type": "event_callback",
+  "event_id": "Ev1794655200",
+  "event_time": 1794655200,
+  "event": {
+    "type": "message",
+    "user": "U07RAMI",
+    "text": "hey, is checkout supposed to show 0 JOD for some users?",
+    "ts": "1794655200.000000",
+    "channel": "D07SANADDM",
+    "channel_type": "im",
+    "event_ts": "1794655200.000000"
+  }
+}

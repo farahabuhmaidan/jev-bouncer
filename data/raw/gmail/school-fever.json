@@ -1,0 +1,37 @@
+{
+  "id": "18f0a1school",
+  "threadId": "t18f0a1school",
+  "labelIds": [
+    "INBOX",
+    "UNREAD"
+  ],
+  "snippet": "Your daughter has a mild fever and is resting in the nurse's office. Please call",
+  "internalDate": "1794672600000",
+  "payload": {
+    "mimeType": "multipart/alternative",
+    "headers": [
+      {
+        "name": "From",
+        "value": "Riverside School office <office@riverside-school.example.org>"
+      },
+      {
+        "name": "To",
+        "value": "Sanad <sanad@example.com>"
+      },
+      {
+        "name": "Subject",
+        "value": "Your daughter is in the nurse's office"
+      }
+    ],
+    "parts": [
+      {
+        "partId": "0",
+        "mimeType": "text/plain",
+        "body": {
+          "size": 178,
+          "data": "WW91ciBkYXVnaHRlciBoYXMgYSBtaWxkIGZldmVyIGFuZCBpcyByZXN0aW5nIGluIHRoZSBudXJzZSdzIG9mZmljZS4gUGxlYXNlIGNhbGwgdXMgYmFjayB3aGVuIHlvdSBjYW4uCgpPbiBUaHUsIE5vdiAxMiwgMjAyNiwgU2FuYWQgd3JvdGU6Cj4gVGhhbmtzIGZvciB0aGUgdXBkYXRlIGFib3V0IHRoZSB0cmlwLg"
+        }
+      }
+    ]
+  }
+}

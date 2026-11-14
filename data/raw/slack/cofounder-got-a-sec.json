@@ -1,0 +1,17 @@
+{
+  "token": "<redacted>",
+  "team_id": "T0EXAMPLE",
+  "api_app_id": "A0EXAMPLE",
+  "type": "event_callback",
+  "event_id": "Ev1794657900",
+  "event_time": 1794657900,
+  "event": {
+    "type": "message",
+    "user": "U07OMAR",
+    "text": "got a sec?",
+    "ts": "1794657900.000000",
+    "channel": "D07SANADDM",
+    "channel_type": "im",
+    "event_ts": "1794657900.000000"
+  }
+}

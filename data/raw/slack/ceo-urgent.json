@@ -1,0 +1,17 @@
+{
+  "token": "<redacted>",
+  "team_id": "T0EXAMPLE",
+  "api_app_id": "A0EXAMPLE",
+  "type": "event_callback",
+  "event_id": "Ev1794654300",
+  "event_time": 1794654300,
+  "event": {
+    "type": "message",
+    "user": "U07LAYLA",
+    "text": "URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!",
+    "ts": "1794654300.000000",
+    "channel": "D07SANADDM",
+    "channel_type": "im",
+    "event_ts": "1794654300.000000"
+  }
+}

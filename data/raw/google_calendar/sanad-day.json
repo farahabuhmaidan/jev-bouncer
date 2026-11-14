@@ -1,0 +1,98 @@
+{
+  "kind": "calendar#events",
+  "summary": "sanad@example.com",
+  "timeZone": "Asia/Amman",
+  "items": [
+    {
+      "kind": "calendar#event",
+      "id": "standup",
+      "status": "confirmed",
+      "summary": "Standup",
+      "start": {
+        "dateTime": "2026-11-14T09:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T09:45:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "investor-demo-prep-with-the-ceo",
+      "status": "confirmed",
+      "summary": "Investor demo prep with the CEO",
+      "start": {
+        "dateTime": "2026-11-14T11:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T12:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "focus-block",
+      "status": "confirmed",
+      "summary": "Focus block",
+      "start": {
+        "dateTime": "2026-11-14T14:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T16:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "focusTime"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "school-pickup",
+      "status": "confirmed",
+      "summary": "School pickup",
+      "start": {
+        "dateTime": "2026-11-14T17:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T18:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "old-roadmap-sync",
+      "status": "cancelled",
+      "summary": "Old roadmap sync",
+      "start": {
+        "dateTime": "2026-11-14T13:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T13:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "optional:-brown-bag-talk",
+      "status": "confirmed",
+      "summary": "Optional: brown-bag talk",
+      "start": {
+        "dateTime": "2026-11-14T12:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-14T13:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default",
+      "transparency": "transparent"
+    }
+  ]
+}
