@@ -1,12 +1,14 @@
-# Bouncer
+# Doorman
 
 **Lets the important ping through. Holds the loud one at the door.**
 
 ![tests: pytest](https://img.shields.io/badge/tests-pytest-4fd18b) ![data: fictional](https://img.shields.io/badge/data-fictional-6aa8ff) ![license: MIT](https://img.shields.io/badge/license-MIT-b08cff)
 
-Bouncer is an attention filter for a busy engineer. Every Slack DM, email, calendar change and failed CI run becomes one event. [Jev](https://docs.typesafe.ai), TypeSafe's System One model, answers a few small judgments about the event. Plain code then decides whether to interrupt, batch, delegate or drop it. An LLM only writes the text: auto-replies, CI explanations and the evening digest.
+Doorman is an attention filter for people at work who get hundreds of pings a day. Every Slack DM, email, calendar change and failed CI run becomes one event. [Jev](https://docs.typesafe.ai), TypeSafe's System One model, answers a few small judgments about the event. Plain code then decides whether to interrupt, batch, delegate or drop it. An LLM only writes the text: auto-replies, CI explanations and the evening digest.
 
-![Bouncer: inbox, why panel and Sanad's phone](docs/assets/screenshot.png)
+![Doorman: today's messages, why a message got through, and the phone preview](docs/assets/screenshot.png)
+
+The app has three pages: **Today** (every message with what Doorman did and why, in plain words), **Insights** (Doorman vs an LLM on the same questions) and **Rules** (budget, deadlines, quiet hours, family and VIPs).
 
 ## What it does
 
@@ -68,7 +70,7 @@ These come from `make eval`, computed by [`server/metrics.py`](server/metrics.py
 How to read it:
 - **Same policy, same questions: the answers are about as good.** Both miss one interrupt and score 65% overall. Jev is right more often when it doesn't ask (81% vs 76%). The LLM is better on the 8 holdout events and never interrupts wrongly; Jev has one false alarm.
 - **Jev is about 7× faster and about 100× cheaper per routing decision.** Costs are measured from each call's `usage.cost`.
-- **Asks are where both lose points.** When either model is unsure whether Sanad is needed, Bouncer asks him instead of guessing, and the metric counts every ask as wrong.
+- **Asks are where both lose points.** When either model is unsure whether Sanad is needed, Doorman asks him instead of guessing, and the metric counts every ask as wrong.
 - **Every decision can be explained** by the answers and a numbered rule, for both columns.
 
 ## How it works

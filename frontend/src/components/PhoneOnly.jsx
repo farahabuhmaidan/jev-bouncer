@@ -13,6 +13,6 @@ export default function PhoneOnly() {
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
   }, []);
-  if (!day) return <p className="muted pad">Connecting…</p>;
+  if (!day) return <p className="boot">Connecting…</p>;
   return <div className="phone-only"><Phone day={day} people={people} /></div>;
 }

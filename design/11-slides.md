@@ -5,7 +5,7 @@ A short HTML deck in `slides/index.html`, committed to the repo so it ships with
 ## Talk flow (about 5 minutes)
 | # | Slide | Content |
 |---|---|---|
-| 1 | Title | Bouncer: a one-line pitch and the team |
+| 1 | Title | Doorman: a one-line pitch and the team |
 | 2 | The problem | Hundreds of pings a day; wording sets urgency, so loud beats important. One example pair: the CEO's "URGENT!!!" deck colour vs Rami's quiet pricing bug |
 | 3 | The idea | Both models answer the same judgments with probabilities; code decides; the LLM also writes. The truth table in miniature, including the deadline row |
 | 4 | How it plugs in | Adapters → unified event → context builder → Jev → policy → LLM (diagram from 01). Real integrations are adapters; mocked today |

@@ -1,8 +1,8 @@
-# Bouncer App Implementation Plan
+# Doorman App Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn Bouncer from a replay page into a working app: FastAPI + SQLite backend that routes seeded and live events, and a React frontend driven live in the demo.
+**Goal:** Turn Doorman from a replay page into a working app: FastAPI + SQLite backend that routes seeded and live events, and a React frontend driven live in the demo.
 
 **Architecture:** The server owns events, model outputs, settings and feedback in SQLite, and recomputes decisions with the one Python policy on every read. Live events go adapters → state → Jev → policy synchronously; the LLM writes text in a background thread. React polls `/api/day` every second.
 
@@ -15,7 +15,7 @@
 - Rising bar `min(0.95, bar + 0.15*(budget-left)/max(1, budget-1))`; clamp `noAt = yesAt - 0.05` when `yesAt <= noAt`; an empty or malformed `eveningStart` falls back to "18:00".
 - A failed Jev call is stored and shown as ERROR, never routed, never a "no".
 - Labels are read only by metrics. LLM baseline is not called for live events.
-- Public repo: no secrets, fictional data only; `data/bouncer.db` is gitignored.
+- Public repo: no secrets, fictional data only; `data/doorman.db` is gitignored.
 - One policy implementation (Python). `web/` static page and JS policy are removed once the React app replaces them.
 - Commits without Claude attribution.
 
@@ -44,7 +44,7 @@
 
 ### Task 2: Store, seed and live processing
 
-**Files:** Create `server/db.py`, `server/live.py`, `tests/test_db.py`, `tests/test_live.py`. Modify `pipeline/run.py` (cache keys), `requirements.txt` (fastapi, uvicorn), `.gitignore` (`data/bouncer.db`).
+**Files:** Create `server/db.py`, `server/live.py`, `tests/test_db.py`, `tests/test_live.py`. Modify `pipeline/run.py` (cache keys), `requirements.txt` (fastapi, uvicorn), `.gitignore` (`data/doorman.db`).
 
 **Interfaces:**
 - `Store(path)`: `seed(snapshot, events, results)`, `all_events() -> list`, `results() -> dict`, `add_event(event, result, origin="live")`, `set_result(id, patch)`, `get/put(key, value)`, `add_feedback(id, kind, value)`, `feedback() -> dict[id, list]`, `reset_live()`.
@@ -59,7 +59,7 @@
 
 **Files:** Create `server/app.py`, `tests/test_api.py`. Modify `Makefile` (`seed`, `app`, `dev`, `install` adds npm).
 
-**Interfaces:** routes exactly as in `design/14-app.md` § API. `create_app(store, ask=..., write=...) -> FastAPI` for tests; module-level `app` uses `data/bouncer.db` (seeds on first start if empty), serves `frontend/dist` at `/` (SPA fallback for `/phone`) and `slides/` at `/slides`.
+**Interfaces:** routes exactly as in `design/14-app.md` § API. `create_app(store, ask=..., write=...) -> FastAPI` for tests; module-level `app` uses `data/doorman.db` (seeds on first start if empty), serves `frontend/dist` at `/` (SPA fallback for `/phone`) and `slides/` at `/slides`.
 
 - [ ] **Step 1: Tests** (TestClient, fakes): `test_day_hides_future_events` (clock 09:00 → only events ≤ 09:00), `test_settings_put_reroutes` (budget 1 → fewer interrupts in `/api/day` at 20:00), `test_settings_put_bad_values_fall_back`, `test_post_event_live` (201, decision present), `test_post_event_unknown_sender_422`, `test_post_event_empty_text_422`, `test_post_event_jev_down_502_and_stored`, `test_ingest_slack_raw_uses_adapter`, `test_ingest_unknown_source_404`, `test_feedback_ask_never_changes_metrics`, `test_metrics_shape`, `test_digest_only_batched`, `test_reset`.
 - [ ] **Step 2–4:** FAIL → implement → pass. **Step 5:** Commit `feat(server): API`.

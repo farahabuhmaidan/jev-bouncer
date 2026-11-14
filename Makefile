@@ -20,13 +20,13 @@ eval:
 demo: app
 
 seed:
-	$(PY) -c "from server.db import Store, seed_store; seed_store(Store()); print('seeded data/bouncer.db')"
+	$(PY) -c "from server.db import Store, seed_store; seed_store(Store()); print('seeded data/doorman.db')"
 
 frontend:
 	cd frontend && npm run build
 
 app: frontend
-	@echo "Bouncer on http://localhost:8000  (phone: /phone, slides: /slides/)"
+	@echo "Doorman on http://localhost:8000  (phone: /phone, slides: /slides/)"
 	$(PY) -m uvicorn server.app:main_app --factory --host 0.0.0.0 --port 8000
 
 dev:

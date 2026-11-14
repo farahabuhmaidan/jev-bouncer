@@ -6,7 +6,7 @@ Guide for AI agents working in this repo. The design in `design/` is the source 
 - `server/`: FastAPI app. `app.py` (routes), `db.py` (SQLite store + seeding), `live.py` (a new event: state → Jev → policy, LLM text in a thread), `policy.py` (**the only routing logic**), `metrics.py`, `print_metrics.py`.
 - `pipeline/`: Python shared with the server. `adapters/` (one module per source, auto-registered), `load.py`, `state.py` (the state Jev sees, no AI), `questions.py` (all Jev wording), `jev.py`, `llm.py` (all LLM prompts), `run.py` (offline run over the labelled day, cached in `pipeline/cache/`, writes `data/results.json`).
 - `frontend/`: React + Vite (plain JS). Talks to the API only; never routes.
-- `data/`: fictional persona (`snapshot.json`), labelled events (`events.json`), raw payloads (`raw/<source>/`), CI logs, `results.json`. Label or wording changes after seeing model output go in `data/CHANGELOG.md`. `bouncer.db` is local and gitignored.
+- `data/`: fictional persona (`snapshot.json`), labelled events (`events.json`), raw payloads (`raw/<source>/`), CI logs, `results.json`. Label or wording changes after seeing model output go in `data/CHANGELOG.md`. `doorman.db` is local and gitignored.
 - `slides/`: the deck; slide 6 reads `/api/metrics`.
 
 ## Commands

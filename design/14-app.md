@@ -14,7 +14,7 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
                  │  LLM auto-reply / CI explanation (thread)  │
                  └──────────────┬────────────────────────────┘
                                 │ sqlite3
-                       data/bouncer.db (gitignored, rebuilt by `make seed`)
+                       data/doorman.db (gitignored, rebuilt by `make seed`)
 ```
 
 ## Backend (`server/`)

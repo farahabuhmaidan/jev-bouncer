@@ -1,4 +1,4 @@
-// Thin client for the Bouncer API (design/14-app.md § API).
+// Thin client for the Doorman API (design/14-app.md § API).
 async function call(method, path, body) {
   const res = await fetch(path, {
     method,

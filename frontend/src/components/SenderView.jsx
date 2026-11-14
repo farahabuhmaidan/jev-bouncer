@@ -1,19 +1,20 @@
 import { feedback } from "../api.js";
-import { isUrgent, senderName } from "./ui.jsx";
+import { Avatar, Icon, isUrgent, senderName } from "./ui.jsx";
 
+// What colleagues see when Doorman holds their message.
 export default function SenderView({ events, people, onChange }) {
   const held = events.filter((e) => e.type === "message" && people[e.sender] && !people[e.sender].is_bot && e.decision.action === "batch");
-  if (!held.length) return <p className="muted">No one is waiting on Sanad yet.</p>;
+  if (!held.length) return <div className="empty"><p>No one is waiting on you right now.</p></div>;
   return (
-    <ol className="list">
+    <ol className="msg-list">
       {held.map((e) => (
-        <li key={e.id} className="item">
-          <div className="top"><span className="time">{e.time}</span><span className="who">{senderName(e, people)} sent:</span></div>
-          <div className="text">{e.text}</div>
-          <div className="reply">Auto-reply: {e.result?.auto_reply ?? (e.result?.writing ? "writing…" : "(none)")}</div>
+        <li key={e.id} className="sender-card">
+          <div className="msg-top"><Avatar e={e} people={people} /><span className="who">{senderName(e, people)}</span><span className="time">{e.time}</span></div>
+          <p className="bubble out">{e.text}</p>
+          <p className="bubble in"><Icon name="door" size={12} /> {e.result?.auto_reply ?? (e.result?.writing ? "Writing…" : "No auto-reply")}</p>
           {isUrgent(e)
-            ? <span className="tag urgent-tag">→ on Sanad's phone</span>
-            : <button className="urgent-btn" onClick={async () => { await feedback(e.id, { kind: "urgent" }); onChange(); }}>truly urgent</button>}
+            ? <span className="pill warn"><Icon name="check" size={12} />Sent to their phone</span>
+            : <button className="btn small danger" onClick={async () => { await feedback(e.id, { kind: "urgent" }); onChange(); }}>It's truly urgent</button>}
         </li>
       ))}
     </ol>

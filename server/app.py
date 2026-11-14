@@ -62,7 +62,7 @@ def _safe(ask):
 
 
 def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
-    app = FastAPI(title="Bouncer")
+    app = FastAPI(title="Doorman")
     ask = _safe(ask)
 
     def snapshot():
@@ -206,7 +206,7 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
 
 
 def main_app() -> FastAPI:
-    """The app `make app` serves (uvicorn --factory): real models, data/bouncer.db, seeded on first start."""
+    """The app `make app` serves (uvicorn --factory): real models, data/doorman.db, seeded on first start."""
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env")
     store = Store(DB_PATH)

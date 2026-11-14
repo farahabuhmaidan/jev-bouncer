@@ -1,56 +1,108 @@
-import { Chip, askChoice, senderName } from "./ui.jsx";
+import { Avatar, Icon, SIGNALS, Status, askChoice, eventText, explain, senderName, senderRole, sourceName, statusText } from "./ui.jsx";
 
-function Bar({ q, p, used, s }) {
-  const cls = p >= s.yesAt ? "yes" : p > s.noAt ? "unsure" : "";
+function Signal({ q, p, used, s }) {
+  const level = p >= s.yesAt ? "yes" : p > s.noAt ? "unsure" : "no";
+  const word = { yes: "Yes", unsure: "Unsure", no: "No" }[level];
   return (
-    <>
-      <div className={`q ${used ? "used" : ""}`}>{q}</div>
-      <div className="track"><div className={`fill ${cls}`} style={{ width: `${Math.round(p * 100)}%` }} /></div>
-      <div className="val">{p.toFixed(2)}</div>
-    </>
+    <div className={`signal ${used ? "used" : ""}`}>
+      <div className="sig-name">{SIGNALS[q] ?? q}{used && <span className="sig-used">used</span>}</div>
+      <div className="sig-track" aria-hidden="true"><div className={`sig-fill ${level}`} style={{ width: `${Math.round(p * 100)}%` }} /></div>
+      <div className={`sig-val ${level}`}>{word} <span>{Math.round(p * 100)}%</span></div>
+    </div>
   );
 }
 
-const deadlineText = (m, d) =>
-  m == null ? "none" : `in ${m} minutes${d.rule === 5 ? " · rule 5 fired" : ""}`;
-
-const ruleText = (d) => (d.rule === "error" ? "not routed" : typeof d.rule === "number" ? `message row ${d.rule}` : d.rule);
+const ruleRef = (d) => (d.rule === "error" ? "not routed" : typeof d.rule === "number" ? `rule ${d.rule}` : d.rule);
 
 export default function Why({ event: e, people, settings, onChoose }) {
-  if (!e) return <p className="muted">Click an event to see what Jev was shown, what it answered and which rule fired.</p>;
+  if (!e) {
+    return (
+      <div className="empty tall">
+        <Icon name="shield" size={30} />
+        <p><b>Select a message</b><br />to see what Doorman did with it, and why.</p>
+      </div>
+    );
+  }
   const r = e.result ?? {}, d = e.decision, used = new Set(d.reasons.map((x) => x.q));
   const answers = r.jev?.answers ?? {};
-  const bars = [];
-  for (const [q, v] of Object.entries(answers)) {
-    if (typeof v === "number") bars.push(<Bar key={q} q={q} p={v} used={used.has(q)} s={settings} />);
-    else if (q === "failure_type") for (const [opt, p] of Object.entries(v)) bars.push(<Bar key={opt} q={`failure: ${opt}`} p={p} used={used.has(q)} s={settings} />);
-  }
+  const chosen = askChoice(e);
+  const signals = Object.entries(answers).filter(([, v]) => typeof v === "number");
+  const failure = answers.failure_type;
+  const deadline = r.facts?.deadline_in_minutes;
+  const isPerson = e.type === "message" && people[e.sender] && !people[e.sender].is_bot;
+
   return (
-    <div>
-      <h3 className="why-title">{senderName(e, people)} <span className="muted">at {e.time}</span></h3>
-      <dl className="facts">
-        <dt>Bouncer did</dt><dd><Chip action={d.action} label={d.label} /> {d.label}</dd>
-        {d.action === "ask" && <><dt>Your call</dt><dd>{askChoice(e) ? <Chip action={askChoice(e)} /> : <>
-          <button className="mini" onClick={() => onChoose(e.id, "interrupt")}>🔔 show me now</button>{" "}
-          <button className="mini" onClick={() => onChoose(e.id, "batch")}>later is fine</button></>}</dd></>}
-        <dt>Rule fired</dt><dd>{ruleText(d)}{d.uses_budget ? " · used 1 interrupt" : ""}{d.rule === 9 || d.uses_budget ? ` · bar ${d.bar.toFixed(2)}` : ""}</dd>
-        {e.type === "message" && <><dt>Deadline</dt><dd>{deadlineText(r.facts?.deadline_in_minutes, d)}</dd></>}
-        {e.baseline_decision && <><dt>Baseline + same policy</dt><dd><Chip action={e.baseline_decision.action} /> {ruleText(e.baseline_decision)}</dd></>}
-        {e.label && <><dt>Label</dt><dd><Chip action={e.label.action} />{e.holdout && <span className="tag"> holdout</span>}</dd></>}
-        {e.origin === "live" && <><dt>Source</dt><dd>live · {e.source}{e.source_time ? ` (sent ${e.source_time})` : ""}</dd></>}
-      </dl>
-      <h4>Jev's answers {r.jev?.latency_ms ? <span className="muted">· {r.jev.latency_ms} ms</span> : null}</h4>
-      {r.jev?.error ? <p><span className="chip error">error</span> {r.jev.error}</p> : <div className="bars">{bars}</div>}
-      {r.ci_explanation && (
-        <div className="explain">
-          <b>LLM explanation</b><br />{r.ci_explanation.likely_cause}
-          {(r.ci_explanation.suspicious_lines ?? []).map((l, i) => <div key={i}><code>{l}</code></div>)}
-          <i>Fix:</i> {r.ci_explanation.suggested_fix}
+    <article className="detail">
+      <header className="detail-head">
+        <Avatar e={e} people={people} />
+        <div>
+          <h2>{senderName(e, people)}</h2>
+          <p className="sub">{senderRole(e, people)} · {sourceName(e.source)} · {e.time}</p>
         </div>
+      </header>
+
+      <blockquote className="original">{eventText(e)}</blockquote>
+
+      <section className={`verdict v-${chosen ?? d.action}`}>
+        <Status decision={d} chosen={chosen} />
+        <p>{explain(e, d, people)}</p>
+        {d.action === "ask" && !chosen && (
+          <div className="actions">
+            <button className="btn primary" onClick={() => onChoose(e.id, "interrupt")}><Icon name="bell" />Show me now</button>
+            <button className="btn" onClick={() => onChoose(e.id, "batch")}><Icon name="clock" />Later is fine</button>
+          </div>
+        )}
+        {deadline != null && e.type === "message" && (
+          <p className="fact"><Icon name="timer" size={14} />Deadline in {deadline} minutes{d.rule === 5 ? " · that's why it got through" : ""}</p>
+        )}
+      </section>
+
+      {d.action === "batch" && isPerson && (r.auto_reply || r.writing) && (
+        <section className="card">
+          <h3><Icon name="reply" size={14} />Auto-reply sent to {senderName(e, people)}</h3>
+          <p className={r.auto_reply ? "" : "muted"}>{r.auto_reply ?? "Writing…"}</p>
+        </section>
       )}
-      {r.llm_error && <p className="error-line">LLM: {r.llm_error}</p>}
-      <h4>State sent to Jev</h4>
-      <pre>{JSON.stringify(r.state, null, 2)}</pre>
-    </div>
+
+      {r.ci_explanation && (
+        <section className="card">
+          <h3><Icon name="code" size={14} />What probably broke</h3>
+          <p>{r.ci_explanation.likely_cause}</p>
+          {(r.ci_explanation.suspicious_lines ?? []).map((l, i) => <pre key={i} className="code-line">{l}</pre>)}
+          <p><b>Suggested fix:</b> {r.ci_explanation.suggested_fix}</p>
+        </section>
+      )}
+      {r.llm_error && <p className="error-line"><Icon name="alert" size={14} />The text writer failed: {r.llm_error}</p>}
+
+      <section className="card">
+        <h3>What Doorman read in it</h3>
+        {r.jev?.error
+          ? <p className="error-line"><Icon name="alert" size={14} />{r.jev.error}</p>
+          : <>
+            {failure && (
+              <div className="signal used">
+                <div className="sig-name">Most likely cause<span className="sig-used">used</span></div>
+                <div className="sig-text">{Object.entries(failure).sort((a, b) => b[1] - a[1])[0][0].replace(/_/g, " ")}</div>
+                <div className="sig-val">{Math.round(Math.max(...Object.values(failure)) * 100)}%</div>
+              </div>
+            )}
+            {signals.map(([q, p]) => <Signal key={q} q={q} p={p} used={used.has(q)} s={settings} />)}
+          </>}
+        <p className="hint">The highlighted signals decided the outcome. Doorman's model only answers these questions; fixed rules make the decision.</p>
+      </section>
+
+      <details className="tech">
+        <summary><Icon name="code" size={14} />Technical details</summary>
+        <dl>
+          <dt>Rule</dt><dd>{ruleRef(d)}{d.uses_budget ? ` · used 1 interruption (bar ${d.bar.toFixed(2)})` : ""}</dd>
+          <dt>Model</dt><dd>Jev{r.jev?.latency_ms ? ` · ${r.jev.latency_ms} ms` : ""}</dd>
+          {e.baseline_decision && <><dt>LLM baseline, same rules</dt><dd>{statusText(e.baseline_decision)} · {ruleRef(e.baseline_decision)}</dd></>}
+          {e.label && <><dt>Hand label</dt><dd>{e.label.action}{e.holdout ? " · holdout" : ""}</dd></>}
+          {e.source_time && <><dt>Sent at</dt><dd>{e.source_time}</dd></>}
+        </dl>
+        <h4>Exactly what the model saw</h4>
+        <pre>{JSON.stringify(r.state, null, 2)}</pre>
+      </details>
+    </article>
   );
 }

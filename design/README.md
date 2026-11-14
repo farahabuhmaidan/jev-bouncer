@@ -1,12 +1,12 @@
-# Bouncer — Design (hackathon cut)
+# Doorman — Design (hackathon cut)
 
 Date: 2026-11-14 · Time box: 3 hours (hackathon) · Revised 14:10: from a replay page to a working app (see 14)
 
 ## What it is and why
 
-Bouncer is a personal attention assistant. People in bridge roles get hundreds of pings a day from Slack, email and CI, and the wording decides what feels urgent, not the context. Loud messages win and important quiet ones get lost.
+Doorman is a personal attention assistant. People in bridge roles get hundreds of pings a day from Slack, email and CI, and the wording decides what feels urgent, not the context. Loud messages win and important quiet ones get lost.
 
-Bouncer puts every event through one Jev call that answers a few small judgments about it ("does Sanad need to handle this himself?", "is the urgency only in the wording?"). The baseline LLM answers those same judgments. Plain code turns either set of answers into an action: **interrupt, batch, delegate or drop**. The LLM also writes text: auto-replies, the CI explanation and the digest. Deadline proximity is computed in code and applied as a hard rule, so a model probability cannot override the clock.
+Doorman puts every event through one Jev call that answers a few small judgments about it ("does Sanad need to handle this himself?", "is the urgency only in the wording?"). The baseline LLM answers those same judgments. Plain code turns either set of answers into an action: **interrupt, batch, delegate or drop**. The LLM also writes text: auto-replies, the CI explanation and the digest. Deadline proximity is computed in code and applied as a hard rule, so a model probability cannot override the clock.
 
 **Audience:** engineers at a hackathon. **What they must leave believing:** Jev routes attention better and more cheaply than an LLM alone, and the numbers prove it.
 

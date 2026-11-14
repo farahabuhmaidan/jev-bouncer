@@ -1,4 +1,4 @@
-// Arrow keys / click to move; slide 6 numbers come live from the Bouncer server (/api/metrics).
+// Arrow keys / click to move; slide 6 numbers come live from the Doorman server (/api/metrics).
 
 const slides = [...document.querySelectorAll(".slide")];
 let i = Math.max(0, Math.min(slides.length - 1, Number(location.hash.slice(1)) - 1 || 0));

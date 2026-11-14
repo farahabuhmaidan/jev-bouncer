@@ -1,25 +1,44 @@
-export default function Header({ day, playing, speed, onPlay, onPause, onJump, onSpeed, onReset, onSettings, senderView, onSenderView, onDigest }) {
+import { Icon } from "./ui.jsx";
+
+const TABS = [
+  { key: "today", label: "Today", icon: "inbox" },
+  { key: "insights", label: "Insights", icon: "chart" },
+  { key: "rules", label: "Rules", icon: "sliders" },
+];
+
+export default function Header({ day, tab, onTab, playing, speed, onPlay, onPause, onJump, onSpeed, onReset, onDigest }) {
   const { clock, budget, evening } = day;
+  const used = budget.total - budget.left;
   return (
-    <header className="bar">
-      <div className="brand">Bouncer <span className="sub">Sanad's attention, guarded</span></div>
-      <div className={`clock ${evening ? "evening" : ""}`}>{clock}{evening ? " 🌙" : ""}</div>
-      <div className="controls">
-        {playing ? <button onClick={onPause} title="Pause (space)">⏸</button> : <button onClick={onPlay} title="Play (space)">▶</button>}
-        <button onClick={onJump} title="Jump to the next demo moment (n)">⏭ moment</button>
-        <button onClick={onSpeed} title="Replay speed">{speed}x</button>
-        <button onClick={onReset} title="Back to 08:00, remove live messages">↺</button>
+    <header className="topbar">
+      <div className="brand">
+        <span className="logo"><Icon name="door" size={18} /></span>
+        <span className="wordmark">Doorman</span>
       </div>
-      <div className="budget" title={`${budget.left} of ${budget.total} interrupts left today`}>
-        <span className="label">interrupts</span>
-        {Array.from({ length: budget.total }, (_, i) => <span key={i} className={`dot ${i < budget.left ? "left" : ""}`} />)}
+      <nav className="tabs" aria-label="Main">
+        {TABS.map((t) => (
+          <button key={t.key} className={`tab ${tab === t.key ? "active" : ""}`} aria-current={tab === t.key ? "page" : undefined}
+            onClick={() => onTab(t.key)}>
+            <Icon name={t.icon} size={16} />{t.label}
+          </button>
+        ))}
+        <button className="tab" onClick={onDigest}><Icon name="file" size={16} />Daily summary</button>
+      </nav>
+
+      <div className="budget-meter" title="Doorman interrupts you at most this many times a day. Deadlines, release blockers and family don't count.">
+        <div className="bm-label"><span>Interruptions today</span><b>{used} of {budget.total}</b></div>
+        <div className="bm-track">{Array.from({ length: budget.total }, (_, i) => <span key={i} className={i < used ? "on" : ""} />)}</div>
       </div>
-      <div className="controls">
-        <button onClick={onSettings}>⚙ settings</button>
-        <button className={senderView ? "on" : ""} onClick={onSenderView}>👤 sender view</button>
-        <button onClick={onDigest}>📋 digest</button>
-        <a className="btnlink" href="/phone" target="_blank" rel="noreferrer">📱 phone</a>
-        <a className="btnlink" href="/test" target="_blank" rel="noreferrer">🧪 test</a>
+
+      <div className="demo" role="group" aria-label="Demo day controls">
+        <span className="demo-label">Demo day</span>
+        <span className={`clock ${evening ? "evening" : ""}`}>{evening && <Icon name="moon" size={14} />}{clock}</span>
+        {playing
+          ? <button className="icon-btn" onClick={onPause} aria-label="Pause" title="Pause (space)"><Icon name="pause" /></button>
+          : <button className="icon-btn" onClick={onPlay} aria-label="Play the day" title="Play (space)"><Icon name="play" /></button>}
+        <button className="icon-btn" onClick={onJump} aria-label="Next moment" title="Jump to the next demo moment (n)"><Icon name="next" /></button>
+        <button className="icon-btn text" onClick={onSpeed} aria-label="Playback speed" title="Playback speed">{speed}×</button>
+        <button className="icon-btn" onClick={onReset} aria-label="Restart the day" title="Back to 08:00, remove test messages"><Icon name="reset" /></button>
       </div>
     </header>
   );

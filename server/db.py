@@ -16,7 +16,7 @@ from pipeline.adapters.base import DEMO_TZ
 from .policy import DEFAULTS
 
 ROOT = Path(__file__).resolve().parent.parent
-DB_PATH = ROOT / "data" / "bouncer.db"
+DB_PATH = ROOT / "data" / "doorman.db"
 DAY_START = "08:00"
 
 SCHEMA = """
