@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bouncer</title>
+  <link rel="stylesheet" href="../web/style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="deck">
+
+<section class="slide title">
+  <p class="kicker">Hackathon · 2026-11-14</p>
+  <h1>Bouncer</h1>
+  <p class="lead">Lets the important ping through. Holds the loud one at the door.</p>
+  <p class="muted">Jev judges · code decides · the LLM only writes</p>
+</section>
+
+<section class="slide">
+  <h2>The problem</h2>
+  <p class="lead">Hundreds of pings a day, and <b>wording</b> sets the urgency. Loud beats important.</p>
+  <div class="pair">
+    <div class="card loud"><div class="who">14:05 · Layla, CEO</div>“URGENT!!! Can we make the investor deck background blue instead of grey???”<div class="verdict"><span class="chip batch">batch</span> cosmetic, can wait</div></div>
+    <div class="card quiet"><div class="who">14:20 · Rami, engineer</div>“hey, is checkout supposed to show 0 JOD for some users? 🤔”<div class="verdict"><span class="chip interrupt">🔔 interrupt</span> pricing bug before the demo</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>The idea</h2>
+  <ol class="steps">
+    <li><b>Jev</b> answers small judgments with calibrated probabilities: <code>needs_sanad</code>, <code>time_sensitive</code>, <code>wording_only_urgency</code>, <code>blocks_release</code>, <code>family_matter</code>, <code>is_noise</code>.</li>
+    <li><b>Code</b> turns them into an action with a truth table you can read, test and tweak.</li>
+    <li><b>The LLM</b> only writes: auto-replies, CI explanations, the evening digest.</li>
+  </ol>
+  <table class="tt">
+    <tr><td>family, can't wait</td><td><span class="chip interrupt">interrupt</span></td></tr>
+    <tr><td>blocks the release and needs Sanad</td><td><span class="chip interrupt">interrupt</span></td></tr>
+    <tr><td>sounds urgent, isn't</td><td><span class="chip batch">batch + auto-reply</span></td></tr>
+    <tr><td>Jev unsure if Sanad is needed</td><td><span class="chip ask">ask Sanad</span></td></tr>
+    <tr><td>doesn't need Sanad</td><td><span class="chip delegate">delegate</span></td></tr>
+    <tr><td>time-sensitive, under the interrupt budget</td><td><span class="chip interrupt">interrupt</span></td></tr>
+  </table>
+</section>
+
+<section class="slide">
+  <h2>How it plugs in</h2>
+  <div class="flow">
+    <div>Slack</div><div>Gmail</div><div>GitHub Actions</div><div>Calendar</div>
+  </div>
+  <div class="arrow">↓ adapters (one file per source)</div>
+  <div class="flow single"><div>unified event + context builder</div></div>
+  <div class="arrow">↓ state + typed questions</div>
+  <div class="flow"><div class="jev">Jev</div><div>policy.js (rules)</div><div class="llm">LLM writes text</div></div>
+  <p class="muted">A new source is one adapter module plus a fixture; the contract tests pick it up. Today's data is fictional and replayed.</p>
+</section>
+
+<section class="slide">
+  <h2>Live demo</h2>
+  <ol class="steps">
+    <li>Loud vs quiet: the CEO's URGENT deck colour vs Rami's 0 JOD bug</li>
+    <li>The CI trio: flaky → rerun silently · infra → DevOps · regression → interrupt + explanation</li>
+    <li>“got a sec?” from the cofounder: Jev is unsure, so Bouncer asks</li>
+    <li>Evening mode: work waits for morning, the school still gets through</li>
+    <li>Drag the budget and the sure band: the whole day re-routes, the numbers update</li>
+  </ol>
+  <p><a class="button" href="../web/" target="_blank">Open the demo →</a></p>
+  <video id="backup" src="../docs/assets/demo.mp4" controls muted hidden></video>
+</section>
+
+<section class="slide">
+  <h2>The numbers</h2>
+  <p class="muted" id="numbers-meta">loading…</p>
+  <table class="numbers" id="numbers"></table>
+  <p class="muted small">Computed live from <code>web/results.json</code> by <code>web/metrics.js</code> at default settings. An “ask” counts as wrong.</p>
+</section>
+
+<section class="slide">
+  <h2>Privacy and limits</h2>
+  <ul class="steps">
+    <li>Personal sources (Gmail, Calendar) are opt-in; nothing leaves the laptop except the model calls.</li>
+    <li>All people and data are fictional. One day, 33 hand-labelled events, 8 held out: a small set.</li>
+    <li>Labels and rules were corrected after the first real run; every change is logged in <code>data/CHANGELOG.md</code>.</li>
+    <li>The LLM baseline is one prompt at default reasoning; a better prompt might do better.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>What's next</h2>
+  <ul class="steps">
+    <li>Real adapters running live: Slack events API, Gmail push, GitHub webhooks</li>
+    <li>Learn from “ask” answers: Sanad's clicks become labels and tune the sure band</li>
+    <li>Per-team policies: the truth table as config</li>
+  </ul>
+  <p class="lead">Bouncer: <b>judgments</b> from Jev, <b>decisions</b> in code.</p>
+</section>
+
+</main>
+<div class="pager" id="pager"></div>
+<script type="module" src="slides.js"></script>
+</body>
+</html>
