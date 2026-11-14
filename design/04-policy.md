@@ -1,6 +1,6 @@
 # 04 — Decision policy and user settings
 
-Lives in `web/policy.js` as a pure function: `decide(event, jevAnswers, settings, dayState) → { action, rule, reasons }`. `rule` names the row that fired, and `reasons` lists the Jev answers it read. The "why was I interrupted?" view shows exactly these, with no generated text.
+Lives in `server/policy.py` (first build: `web/policy.js`) as a pure function: `decide(event, answers, settings, dayState) → { action, rule, reasons }`. The same function runs on Jev's answers and on the baseline's answers. `rule` names the row that fired, and `reasons` lists the answers it read plus `deadline_in_minutes` when that row fired. The "why" view shows exactly these, with no generated text. A deadline line reads like "deadline in 40 minutes, rule 5".
 
 Notation: `yes(q)` means p ≥ `settings.yesAt`, `no(q)` means p ≤ `settings.noAt`, and anything in between is **unsure**.
 
@@ -8,18 +8,22 @@ Notation: `yes(q)` means p ≥ `settings.yesAt`, `no(q)` means p ≤ `settings.n
 | # | Condition | Action | Uses budget |
 |---|---|---|---|
 | 1 | Rule "family can always reach me" on, and `yes(family_matter)` or sender marked family | interrupt, unless `no(time_sensitive)`: then batch to the next free slot (never ask or delegate family) | no |
-| 2 | Evening mode active and not family and not `yes(blocks_release)` | batch (to morning) | n/a |
+| 2 | Evening mode active and not family and not `yes(blocks_release)` and the deadline row would not fire | batch (to morning) | n/a |
 | 3 | `yes(is_noise)` | drop | n/a |
 | 4 | `yes(blocks_release)` and `yes(needs_sanad)` | interrupt | no |
-| 5 | `yes(wording_only_urgency)` and not `yes(blocks_release)` | batch (+ auto-reply) | n/a |
-| 6 | `needs_sanad` or `time_sensitive` is unsure | **ask Sanad** | n/a |
-| 7 | `no(needs_sanad)` | delegate | n/a |
-| 8 | `yes(time_sensitive)` and budget left ≥ 1 and `p(time_sensitive)` ≥ current interrupt bar | interrupt | yes |
-| 9 | otherwise | batch | n/a |
+| 5 | `deadline_in_minutes` is not null, is `< settings.deadlineMinutes`, and `no(is_noise)` | interrupt | no |
+| 6 | `yes(wording_only_urgency)` and not `yes(blocks_release)` | batch (+ auto-reply) | n/a |
+| 7 | `needs_sanad` is unsure | **ask Sanad** | n/a |
+| 8 | `no(needs_sanad)` | delegate (leadership: batch, they asked Sanad directly) | n/a |
+| 8b | `time_sensitive` is unsure (Sanad is needed, so timing matters) | **ask Sanad** (reported as row 7) | n/a |
+| 9 | `yes(time_sensitive)` and budget left ≥ 1 and `p(time_sensitive)` ≥ current interrupt bar | interrupt | yes |
+| 10 | otherwise | batch | n/a |
 
-Row 5 comes before the delegate and ask rows on purpose: loud-but-not-time-critical messages (the CEO's deck colour) are batched with an auto-reply, not forwarded or asked about. A message from a manager or leadership gets batched, not delegated, because the sender asked Sanad directly.
+Row 5 is a hard rule from the clock (02). It does not spend budget. A newsletter still dies on row 3, and a verbal "ASAP" with no parsed deadline still dies on row 6. Evening mode does not swallow row 5: row 2 is skipped when row 5 would fire, so a real deadline after 18:00 still interrupts.
 
-Senders marked **VIP** skip the budget check in row 8.
+Row 6 comes before the delegate and ask rows on purpose: loud-but-not-time-critical messages (the CEO's deck colour) are batched with an auto-reply, not forwarded or asked about. A message from a manager or leadership gets batched, not delegated, because the sender asked Sanad directly.
+
+Senders marked **VIP** skip the budget check in row 9.
 
 **Unsure answers on other questions.** Only `needs_sanad` and `time_sensitive` trigger "ask". For every other question, an unsure answer counts as **not yes**, and the row is skipped.
 
@@ -30,6 +34,7 @@ Senders marked **VIP** skip the budget check in row 8.
 ## CI truth table
 | Condition | Action |
 |---|---|
+| code_regression and `yes(blocks_release)` (checked first, also in the evening) | interrupt + show the LLM explanation |
 | `no(cause_identifiable)` | interrupt with "unclear failure" (or batch if `no(blocks_release)`) |
 | top `failure_type` = flaky_test and rule "silent rerun" on | drop, marked "rerun silently" |
 | infra_problem | delegate, marked "pinged DevOps" |
@@ -39,8 +44,8 @@ Senders marked **VIP** skip the budget check in row 8.
 
 Evening mode applies to CI too: in the evening every CI row becomes batch except a code_regression with `yes(blocks_release)`, which still interrupts. CI interrupts never use the budget.
 
-## When a Jev call failed
-An event whose Jev call errored shows an **ERROR** chip and is never routed. It is not treated as a "no". It counts as wrong in accuracy and is listed separately in the metrics strip.
+## When a call failed
+An event whose Jev call errored shows an **ERROR** chip on the Jev path and is never routed. The baseline path does the same when its call errored. An error is not treated as a "no". It counts as wrong in accuracy and is listed separately in the metrics strip.
 
 ## Day state (computed as the replay runs)
 - Budget left = budget − interrupts that used budget so far today.
@@ -58,6 +63,7 @@ Replay pauses and a modal shows the two candidate actions with the unsure probab
 | Rising bar | toggle | on |
 | Daily budget | stepper 1–10 | 5 |
 | Evening start | time | 18:00 |
+| `deadlineMinutes` | stepper 15–480 | 120 |
 | People: family / VIP | tag per contact | family = Sanad's partner and the school; VIP = none |
 | Rules: family can always reach me, CI silent rerun | toggles | on |
 

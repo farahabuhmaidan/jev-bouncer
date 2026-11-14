@@ -6,15 +6,15 @@ Date: 2026-11-14 · Time box: 3 hours (hackathon) · Revised 14:10: from a repla
 
 Bouncer is a personal attention assistant. People in bridge roles get hundreds of pings a day from Slack, email and CI, and the wording decides what feels urgent, not the context. Loud messages win and important quiet ones get lost.
 
-Bouncer puts every event through one Jev call that answers a few small judgments about it ("does Sanad need to handle this himself?", "is the urgency only in the wording?"). Plain code turns those answers into an action: **interrupt, batch, delegate or drop**. The LLM only writes text: auto-replies, the CI explanation and the digest. It also serves as the baseline Jev is measured against.
+Bouncer puts every event through one Jev call that answers a few small judgments about it ("does Sanad need to handle this himself?", "is the urgency only in the wording?"). The baseline LLM answers those same judgments. Plain code turns either set of answers into an action: **interrupt, batch, delegate or drop**. The LLM also writes text: auto-replies, the CI explanation and the digest. Deadline proximity is computed in code and applied as a hard rule, so a model probability cannot override the clock.
 
 **Audience:** engineers at a hackathon. **What they must leave believing:** Jev routes attention better and more cheaply than an LLM alone, and the numbers prove it.
 
 ## Goals
 - **A working app, driven live on stage.** A FastAPI backend with a small SQLite database owns events, Jev answers, decisions, settings and feedback. A React frontend shows Sanad's inbox, the "why" for every decision, his phone and the metrics.
 - **Live routing.** Anyone can type a message as any person (or POST a raw Slack / GitHub payload through the adapters); the backend builds the state, calls Jev (~0.3 s), applies the policy and stores the decision. The LLM writes the auto-reply in the background.
-- **The seeded day.** The same 33 labelled events are loaded from `data/` + the committed model outputs, so the measured Jev-vs-LLM comparison still holds and the demo works with no keys.
-- Users manage their own settings (thresholds, budget, evening hours, people, rules); the server re-routes the whole day and the UI updates.
+- **The seeded day.** The same 33 labelled events are loaded from `data/` + the committed model outputs, so the measured comparison (Jev answers vs the baseline LLM's answers to the same questions, both through the same policy) still holds and the demo works with no keys.
+- Users manage their own settings (thresholds, budget, evening hours, deadline window, people, rules); the server re-routes the whole day for both Jev and the baseline, because both go through the same policy.
 - Auto-replies to people whose messages get batched; Sanad's answers to "ask" and senders' "truly urgent" taps are stored.
 
 ## Non-goals

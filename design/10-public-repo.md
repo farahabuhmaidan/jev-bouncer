@@ -23,7 +23,7 @@ docs/assets/       demo GIF, screenshots, saved eval results
 1. **One-line pitch**, then a badge row and the demo GIF
 2. **What it does**: three bullets (loud vs quiet, Jev judges and code decides, measured against an LLM-only baseline)
 3. **Quickstart**: `git clone` → `make install && make app` serves the seeded day from the committed model outputs with **no API keys needed**; live messages need a key. Rerunning the models (`make pipeline`) needs keys in `.env`.
-4. **The numbers**: the metrics table with date, model versions, event count and sample size, plus a link to the saved results file. Losses are shown too.
+4. **The numbers**: critical misses, interrupt precision, cost per 1,000, latency, then accuracy, with date, model versions, event count and sample size, plus a link to the saved results file. Losses are shown too.
 5. **How it works**: the architecture diagram from 01 and the truth table from 04, with links into `design/`
 6. **Limits**: mock data only, one persona, small labelled set, the labeller is also the builder
 7. **How real integrations would plug in** (adapters) and **privacy** (personal sources opt-in), plus a link to the slides in `slides/`.
