@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.96,
+ "reason": "Family matter: school nurse reports Sanad's daughter has a fever and asks for a callback, so it needs immediate notice even in evening mode.",
+ "latency_ms": 1857,
+ "tokens": {
+  "in": 739,
+  "out": 73
+ },
+ "cost": 0.002208,
+ "error": null
+}

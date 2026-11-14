@@ -1,0 +1,164 @@
+{
+ "groups": [
+  {
+   "title": "Urgent: needs action now",
+   "items": [
+    {
+     "event_id": "evt-030",
+     "summary": "School nurse says your daughter has a mild fever and is resting in the nurse's office; they asked you to call back.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-025",
+     "summary": "Yousef: prod checkout error rate jumped to 8% after the 16:15 deploy; he is asking for your call on a rollback.",
+     "draft_reply": "Yes, roll back now. Please confirm once error rates are back to normal, and we'll do a postmortem tomorrow."
+    }
+   ]
+  },
+  {
+   "title": "Omar (leadership)",
+   "items": [
+    {
+     "event_id": "evt-006",
+     "summary": "Omar needed confirmation before 11 that checkout on the investor-demo branch works end to end with a discounted plan for tomorrow's demo.",
+     "draft_reply": "Sorry for the delay, Omar. I'm testing the investor-demo branch end to end with a discounted plan now and will confirm shortly."
+    },
+    {
+     "event_id": "evt-020",
+     "summary": "Omar asked 'got a sec?' with no details.",
+     "draft_reply": "Hi Omar, I'm free now. What's up?"
+    }
+   ]
+  },
+  {
+   "title": "Yousef and checkout team",
+   "items": [
+    {
+     "event_id": "evt-002",
+     "summary": "Yousef said the CHK-88 fix is on a branch and the PR would follow after standup.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-013",
+     "summary": "Yousef opened the CHK-88 PR and wants your review today so it can ship.",
+     "draft_reply": "Thanks Yousef, I'll review CHK-88 first thing tomorrow. Given the prod incident, let's hold the ship until then."
+    },
+    {
+     "event_id": "evt-015",
+     "summary": "Rami asks whether checkout is supposed to show 0 JOD for some users, which may be linked to the prod issue.",
+     "draft_reply": "No, that's not expected. Can you send an example user or order and the steps to reproduce? It may be related to today's deploy issue."
+    },
+    {
+     "event_id": "evt-027",
+     "summary": "Rami asks where the staging credentials for the payments sandbox are kept.",
+     "draft_reply": "They're in our team password manager under the payments sandbox entry. If you can't see it, tell me and I'll get you access."
+    },
+    {
+     "event_id": "evt-008",
+     "summary": "Rami thanked you for yesterday's review.",
+     "draft_reply": null
+    }
+   ]
+  },
+  {
+   "title": "Support (Noor and Hana)",
+   "items": [
+    {
+     "event_id": "evt-005",
+     "summary": "Noor: a customer asks whether checkout supports Apple Pay yet.",
+     "draft_reply": "Hi Noor, I need to double-check the current status before you answer the customer. I'll get back to you tomorrow."
+    },
+    {
+     "event_id": "evt-021",
+     "summary": "Noor: a customer says discount code SPRING20 isn't applying at checkout and asks if it's a known issue.",
+     "draft_reply": "Thanks Noor, I'm looking into it and it may be related to today's checkout problems. Please send the customer's order or account details and the exact error shown."
+    },
+    {
+     "event_id": "evt-009",
+     "summary": "Hana: several tickets ask how to download invoices from the account page; she asks if there's a help article to link.",
+     "draft_reply": "Hi Hana, I'll check whether we have a help article and send the link tomorrow. If not, I'll get one drafted."
+    }
+   ]
+  },
+  {
+   "title": "Dina (product)",
+   "items": [
+    {
+     "event_id": "evt-004",
+     "summary": "Dina asked you to add the receipt copy changes to the sprint board (no rush).",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-029",
+     "summary": "Dina says she updated the sprint board herself and asks you to take a look tomorrow.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-019",
+     "summary": "Dina asks which receipt wording to use: 'Thanks for your order' or 'Thank you for your purchase'.",
+     "draft_reply": "I'd go with 'Thank you for your purchase'. It reads a bit more polished for a receipt."
+    },
+    {
+     "event_id": "evt-024",
+     "summary": "Dina: PM sync moved to tomorrow at 2pm, same link.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-010",
+     "summary": "Dina invited you to lunch at 12:10.",
+     "draft_reply": null
+    }
+   ]
+  },
+  {
+   "title": "Layla (CEO)",
+   "items": [
+    {
+     "event_id": "evt-014",
+     "summary": "Layla urgently asks to change the investor deck background from grey to blue.",
+     "draft_reply": "Hi Layla, I'll check with whoever owns the deck design and get back to you. Blue is fine by me."
+    },
+    {
+     "event_id": "evt-023",
+     "summary": "Layla shared the board update draft; comments are welcome by Friday.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-031",
+     "summary": "Layla wants to discuss moving subscriptions up in next quarter's roadmap.",
+     "draft_reply": "Happy to discuss. Let's find a time tomorrow, and I'll prepare the impact on the current roadmap."
+    }
+   ]
+  },
+  {
+   "title": "Family",
+   "items": [
+    {
+     "event_id": "evt-011",
+     "summary": "Maha asked you to pick up bread on the way home (not urgent).",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-028",
+     "summary": "School reminder: pickup is at the east gate today because of maintenance.",
+     "draft_reply": null
+    },
+    {
+     "event_id": "evt-033",
+     "summary": "Maha says dinner is ready.",
+     "draft_reply": null
+    }
+   ]
+  },
+  {
+   "title": "FYI",
+   "items": [
+    {
+     "event_id": "evt-012",
+     "summary": "Lina: CI runners move to the new pool on Thursday; nothing needed from you.",
+     "draft_reply": null
+    }
+   ]
+  }
+ ]
+}

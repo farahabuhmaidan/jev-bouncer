@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.8,
+ "reason": "Automated Jira status change on a low-priority ticket (CHK-91) due next week; it needs Sanad's review eventually but doesn't block today's CHK-88 release or tomorrow's demo, so hold it for a free slot or the digest.",
+ "latency_ms": 2016,
+ "tokens": {
+  "in": 771,
+  "out": 103
+ },
+ "cost": 0.002572,
+ "error": null
+}

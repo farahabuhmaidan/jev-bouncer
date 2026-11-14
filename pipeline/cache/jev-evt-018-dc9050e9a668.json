@@ -1,0 +1,74 @@
+{
+ "answers": {
+  "failure_type": {
+   "flaky_test": 0,
+   "code_regression": 1,
+   "infra_problem": 0,
+   "config_or_lint": 0
+  },
+  "cause_identifiable": 0.98,
+  "blocks_release": 0.91
+ },
+ "latency_ms": 319,
+ "usage": {
+  "input_tokens": 1133,
+  "output_tokens": 96,
+  "cost": 4.7586e-05,
+  "is_byok": false,
+  "cost_details": {
+   "upstream_inference_cost": 4.7586e-05,
+   "upstream_inference_prompt_cost": 4.7586e-05,
+   "upstream_inference_completions_cost": 0
+  }
+ },
+ "model": "typesafe/jev-1.14-20261014",
+ "request": {
+  "model": "typesafe/jev-1.14",
+  "state": {
+   "now": "14:46, Sanad is in a focus block until 16:00",
+   "sanad": "Sanad: Product engineer at a startup; works with leadership and leads the Checkout team",
+   "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+   "sender": "GitHub Actions (automated)",
+   "channel": "CI (GitHub Actions)",
+   "ci": {
+    "branch": "investor-demo",
+    "test_name": "test_discounted_plan_total",
+    "commit_message": "Apply plan discount before tax in checkout summary",
+    "log_tail": "Run: CI / test (investor-demo) #4818\nCommit: c09b5e2 \"Apply plan discount before tax in checkout summary\"\nChanged files: checkout/summary.py\n\nDiff:\n--- a/checkout/summary.py\n+++ b/checkout/summary.py\n@@ def order_total(plan, tax_rate):\n-    subtotal = plan.price\n-    total = subtotal * (1 + tax_rate) - plan.discount\n+    subtotal = plan.price - plan.discount * plan.price\n+    total = round(subtotal * (1 + tax_rate) - plan.discount, 2)\n     return max(total, 0)\n\n=== FAILURES ===\n________________________ test_discounted_plan_total ________________________\ntests/test_summary.py:58\n    plan = Plan(price=30.00, discount=0.20)   # 20% off\n    assert order_total(plan, tax_rate=0.16) == 27.84\nE   AssertionError: assert 27.64 == 27.84\nE    +  where 27.64 = order_total(Plan(price=30.0, discount=0.2), tax_rate=0.16)\n\ntests/test_summary.py:71 test_full_price_plan_total PASSED\n1 failed, 388 passed in 2m02s"
+   },
+   "linked_items": [
+    "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today",
+    "PR #212 on branch investor-demo: Demo flow polish for tomorrow's investor demo"
+   ]
+  },
+  "questions": {
+   "failure_type": {
+    "type": "choice",
+    "instructions": "What caused the CI failure shown in `ci.log_tail`?",
+    "criteria": {
+     "flaky_test": "An intermittent test failure such as a timeout or ordering issue, unrelated to the change in `ci.commit_message`; the same test passes on rerun.",
+     "code_regression": "The change in `ci.commit_message` broke behaviour that the failing test checks; the assertion shows a wrong value.",
+     "infra_problem": "The CI machinery failed: runner, network, registry, disk or permissions errors; no test actually ran or the failure is outside the code.",
+     "config_or_lint": "Lint, formatting, type-check or configuration errors in the changed files."
+    }
+   },
+   "cause_identifiable": {
+    "type": "noul",
+    "instructions": "Does `ci.log_tail` show what made the run fail?",
+    "criteria": {
+     "true": "The log names a failing test, error or step clearly enough to tell what went wrong.",
+     "false": "The log is cut off, empty or too vague to tell what failed."
+    }
+   },
+   "blocks_release": {
+    "type": "noul",
+    "instructions": "Is this CI failure on the investor demo branch or a release branch, given `ci.branch` and `linked_items`?",
+    "criteria": {
+     "true": "The failing branch is the investor-demo branch, main for a release planned today, or a branch for a ticket due today.",
+     "false": "The failing branch is a feature branch for work that is not due today."
+    }
+   }
+  }
+ },
+ "error": null
+}

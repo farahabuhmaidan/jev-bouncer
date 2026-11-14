@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.6,
+ "reason": "Routine customer question from support, not urgent or blocking the CHK-88 release or demo. Sanad is free now, but it can wait for a free slot or the digest rather than use an interrupt; he, as Checkout lead, is likely the best person to answer the Apple Pay question.",
+ "latency_ms": 2148,
+ "tokens": {
+  "in": 785,
+  "out": 113
+ },
+ "cost": 0.0027,
+ "error": null
+}

@@ -1,0 +1,12 @@
+{
+ "action": "drop",
+ "confidence": 0.6,
+ "reason": "Build on low-priority CHK-91 branch (not the CHK-88 release) failed on a transient registry timeout before any tests ran, so a silent rerun is enough; if it recurs, the nearly full runner disk is a DevOps matter.",
+ "latency_ms": 2534,
+ "tokens": {
+  "in": 995,
+  "out": 103
+ },
+ "cost": 0.00302,
+ "error": null
+}

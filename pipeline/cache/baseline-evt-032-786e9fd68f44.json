@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.8,
+ "reason": "Automated Jira notice that CHK-88 was moved to Done by Yousef. It's good news, not a blocker, so it doesn't justify an evening interrupt. Hold it for the digest or morning check, when Sanad can confirm the release went out before the 10:00 investor demo.",
+ "latency_ms": 2003,
+ "tokens": {
+  "in": 774,
+  "out": 116
+ },
+ "cost": 0.002708,
+ "error": null
+}

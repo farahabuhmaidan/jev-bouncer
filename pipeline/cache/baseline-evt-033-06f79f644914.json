@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.93,
+ "reason": "Message is from family (Maha, Sanad's partner), and family always interrupts per his settings, even in evening mode.",
+ "latency_ms": 1157,
+ "tokens": {
+  "in": 698,
+  "out": 63
+ },
+ "cost": 0.002026,
+ "error": null
+}

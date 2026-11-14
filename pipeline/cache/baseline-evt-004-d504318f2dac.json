@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.88,
+ "reason": "Low-priority, no-rush request from Dina about CHK-91 (due next week); it doesn't block today's CHK-88 release or tomorrow's investor demo, so hold it for a free slot or the digest.",
+ "latency_ms": 2423,
+ "tokens": {
+  "in": 770,
+  "out": 92
+ },
+ "cost": 0.00246,
+ "error": null
+}

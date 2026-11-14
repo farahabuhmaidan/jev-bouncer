@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.72,
+ "reason": "Not a flaky test: commit c09b5e2 on the investor-demo branch subtracts the discount twice (27.64 vs 27.84), a real regression in CHK-88, Sanad's high-priority item due today, and it blocks both today's release and tomorrow's 10:00 investor demo.",
+ "latency_ms": 4422,
+ "tokens": {
+  "in": 1304,
+  "out": 510
+ },
+ "cost": 0.007708,
+ "error": null
+}

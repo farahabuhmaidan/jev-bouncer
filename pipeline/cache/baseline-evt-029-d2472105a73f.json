@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.9,
+ "reason": "Evening mode: Dina's sprint board update is explicitly non-urgent ('tomorrow'), doesn't block the CHK-88 release or the investor demo, so hold it for the morning digest.",
+ "latency_ms": 2059,
+ "tokens": {
+  "in": 702,
+  "out": 89
+ },
+ "cost": 0.002294,
+ "error": null
+}

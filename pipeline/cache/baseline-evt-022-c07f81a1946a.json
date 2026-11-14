@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.85,
+ "reason": "Real but minor lint failure (unused import, long line) on a low-priority CHK-91 branch that is not the CHK-88 release or the demo, so it can wait for the end-of-day digest and does not justify breaking his focus block.",
+ "latency_ms": 1503,
+ "tokens": {
+  "in": 971,
+  "out": 98
+ },
+ "cost": 0.002922,
+ "error": null
+}

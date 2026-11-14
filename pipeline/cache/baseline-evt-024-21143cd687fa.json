@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.9,
+ "reason": "A routine PM sync reschedule for tomorrow at 2pm is informational and not urgent, so it can wait for his next free slot or the digest and does not block the CHK-88 release or the investor demo.",
+ "latency_ms": 1513,
+ "tokens": {
+  "in": 712,
+  "out": 89
+ },
+ "cost": 0.002314,
+ "error": null
+}

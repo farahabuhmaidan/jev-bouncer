@@ -1,0 +1,109 @@
+{
+ "answers": {
+  "needs_sanad": 0.89,
+  "time_sensitive": 0.91,
+  "wording_only_urgency": 0.03,
+  "family_matter": 0.01,
+  "blocks_release": 0.99,
+  "is_noise": 0.01,
+  "urgency": {
+   "score": 3.99,
+   "probabilities": {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0.01,
+    "4": 0.99
+   }
+  }
+ },
+ "latency_ms": 312,
+ "usage": {
+  "input_tokens": 1125,
+  "output_tokens": 127,
+  "cost": 4.725e-05,
+  "is_byok": false,
+  "cost_details": {
+   "upstream_inference_cost": 4.725e-05,
+   "upstream_inference_prompt_cost": 4.725e-05,
+   "upstream_inference_completions_cost": 0
+  }
+ },
+ "model": "typesafe/jev-1.14-20261014",
+ "request": {
+  "model": "typesafe/jev-1.14",
+  "state": {
+   "now": "16:25, Sanad is free; next: School pickup at 17:30",
+   "sanad": "Sanad: Product engineer at a startup; works with leadership and leads the Checkout team",
+   "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+   "sender": "Yousef, Senior developer and Checkout tech lead (Sanad's team: checkout)",
+   "channel": "Slack DM",
+   "message": "prod checkout error rate just jumped to 8% after the 16:15 deploy, rolling back? need your call",
+   "linked_items": [
+    "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
+   ]
+  },
+  "questions": {
+   "needs_sanad": {
+    "type": "noul",
+    "instructions": "Does Sanad need to handle `message` himself?",
+    "criteria": {
+     "true": "Only Sanad has the knowledge, ownership or authority to act on it, for example it is about a ticket or decision he owns, or the sender asks for him specifically about his own work.",
+     "false": "A teammate, the support or DevOps team, a doc or anyone on the team could answer or handle it just as well."
+    }
+   },
+   "time_sensitive": {
+    "type": "noul",
+    "instructions": "Will waiting until Sanad's next free slot cause real harm?",
+    "criteria": {
+     "true": "Something breaks or stays broken for customers, a release or the investor demo is put at risk, money is lost, a person or child needs care, or a deadline today is missed if this waits a few hours.",
+     "false": "It would be just as useful answered in a few hours or tomorrow; nothing gets worse in the meantime."
+    }
+   },
+   "wording_only_urgency": {
+    "type": "noul",
+    "instructions": "Does `message` sound urgent while nothing in it is actually time-critical?",
+    "criteria": {
+     "true": "It uses urgent wording such as caps, URGENT, ASAP or several exclamation marks about something that can safely wait, such as a cosmetic change to a slide or a preference.",
+     "false": "It does not sound urgent, or it sounds urgent and the urgency is real (something is broken or a person needs help)."
+    }
+   },
+   "family_matter": {
+    "type": "noul",
+    "instructions": "Is `message` about Sanad's family or personal life?",
+    "criteria": {
+     "true": "It comes from or is about his partner, his child, the child's school, his home or his health.",
+     "false": "It is about work: product, code, customers, colleagues or company matters."
+    }
+   },
+   "blocks_release": {
+    "type": "noul",
+    "instructions": "Does `message` report something broken or missing that would stop today's release, tomorrow's investor demo or a ticket due today from working?",
+    "criteria": {
+     "true": "A bug, outage, failing flow or missing piece that stops one of these from working, for example wrong prices in checkout or errors in production.",
+     "false": "It is unrelated to them, or it is a cosmetic or optional change such as a slide's colour or wording."
+    }
+   },
+   "is_noise": {
+    "type": "noul",
+    "instructions": "Is `message` informational with nothing for Sanad to do or reply to?",
+    "criteria": {
+     "true": "Newsletters, marketing, automated status notifications, reminders he already has, or a plain thanks or reaction.",
+     "false": "It asks a question, requests something, or carries information Sanad needs to act on or reply to."
+    }
+   },
+   "urgency": {
+    "type": "score",
+    "instructions": "How soon does `message` need a response from Sanad?",
+    "criteria": [
+     "It can wait days, or needs no response at all.",
+     "It should be answered sometime this week.",
+     "It should be answered today, but a few hours of delay is fine.",
+     "It should be answered within the hour.",
+     "It needs action within minutes: something is broken, a person needs help, or a deadline is about to pass."
+    ]
+   }
+  }
+ },
+ "error": null
+}

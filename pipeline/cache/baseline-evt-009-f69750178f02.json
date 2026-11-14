@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.8,
+ "reason": "Non-urgent support question about an invoice help article; it does not block the release or the investor demo, so hold it for the next free slot or end-of-day digest while Sanad is in demo prep.",
+ "latency_ms": 1520,
+ "tokens": {
+  "in": 742,
+  "out": 83
+ },
+ "cost": 0.002314,
+ "error": null
+}
