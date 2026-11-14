@@ -27,6 +27,7 @@ export const getConnections = () => call("GET", "/api/connections");
 export const googleDisconnect = () => call("POST", "/api/connections/google/disconnect");
 export const gmailSync = (limit = 10) => call("POST", "/api/connections/gmail/sync", { limit });
 export const getCalendar = () => call("GET", "/api/calendar");
+export const getCalendarRange = (start, days) => call("GET", `/api/calendar/range?start=${start}&days=${days}`);
 export const reminderAction = (id, action) => call("POST", `/api/events/${encodeURIComponent(id)}/reminder`, { action });
 
 export const toMin = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };

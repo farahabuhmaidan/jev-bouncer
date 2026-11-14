@@ -172,7 +172,8 @@ export default function App() {
           )}
         </main>
       )}
-      {tab === "calendar" && <CalendarPage version={day.events.length} />}
+      {tab === "calendar" && <CalendarPage version={day.events.length} clock={day.clock}
+        onOpenMessage={(id) => { setTab("today"); setFilter("all"); setSelected(id); }} />}
       {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} onPeople={loadPeople} conn={conn} onConn={loadConn} />}
 
       <footer className="foot">

@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
+from datetime import date, timedelta
 from urllib.parse import quote
 
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
@@ -244,6 +245,23 @@ def create_app(store: Store, ask=ask_jev, write=True, google=None) -> FastAPI:
             return cal_events(day)
         except GoogleError:
             return []
+
+    @app.get("/api/calendar/range")
+    def calendar_range(start: str, days: int = 7):
+        """Every day's events from `start` for the week/month views (Google when connected, demo otherwise)."""
+        try:
+            d0 = date.fromisoformat(start)
+        except ValueError:
+            raise HTTPException(422, "start must be YYYY-MM-DD")
+        if not 1 <= days <= 42:
+            raise HTTPException(422, "days must be 1-42")
+        dates = [(d0 + timedelta(days=i)).isoformat() for i in range(days)]
+        try:
+            by_day = google.calendar_range(start, days) if google.status()["connected"] else {d: calendar.events_on(d) for d in dates}
+        except GoogleError as e:
+            raise HTTPException(502, f"couldn't read your calendar: {e}")
+        return {"connection": cal_connection(), "today": calendar.TODAY,
+                "days": [{"date": d, "events": by_day.get(d, [])} for d in dates]}
 
     # ---- Connections (design/17): real Google Calendar and Gmail, demo data otherwise ----
     @app.get("/api/connections")

@@ -125,18 +125,26 @@ class Google:
     # ---- Calendar ----
     def calendar_events(self, day: str) -> list[dict]:
         """Timed events on a date in Doorman's time zone, as {title, start, end} (HH:MM), sorted."""
+        return self.calendar_range(day, 1)[day]
+
+    def calendar_range(self, start_day: str, days: int) -> dict[str, list[dict]]:
+        """Timed events for `days` dates from `start_day`, in one request, grouped by local date."""
         zone = ZoneInfo(self.tz)
-        start = datetime.fromisoformat(day).replace(tzinfo=zone)
-        items = self._get(CALENDAR_URL, {"timeMin": start.isoformat(), "timeMax": (start + timedelta(days=1)).isoformat(),
-                                         "singleEvents": "true", "orderBy": "startTime", "maxResults": "100"}).get("items", [])
-        out = []
+        start = datetime.fromisoformat(start_day).replace(tzinfo=zone)
+        dates = [(start + timedelta(days=i)).date().isoformat() for i in range(days)]
+        items = self._get(CALENDAR_URL, {"timeMin": start.isoformat(), "timeMax": (start + timedelta(days=days)).isoformat(),
+                                         "singleEvents": "true", "orderBy": "startTime", "maxResults": "250"}).get("items", [])
+        out: dict[str, list[dict]] = {d: [] for d in dates}
         for it in items:
             if it.get("status") == "cancelled" or "dateTime" not in it.get("start", {}):
                 continue  # all-day events don't block a 30-minute reminder
             s = datetime.fromisoformat(it["start"]["dateTime"]).astimezone(zone)
             e = datetime.fromisoformat(it["end"]["dateTime"]).astimezone(zone)
-            out.append({"title": it.get("summary") or "(busy)", "start": s.strftime("%H:%M"), "end": e.strftime("%H:%M")})
-        return sorted(out, key=lambda x: x["start"])
+            day = s.date().isoformat()
+            if day in out:
+                end = e.strftime("%H:%M") if e.date() == s.date() else "23:59"
+                out[day].append({"title": it.get("summary") or "(busy)", "start": s.strftime("%H:%M"), "end": end})
+        return {d: sorted(v, key=lambda x: x["start"]) for d, v in out.items()}
 
     def insert_event(self, day: str, start: str, minutes: int, title: str, description: str = "") -> dict:
         begin = datetime.fromisoformat(f"{day}T{start}:00")

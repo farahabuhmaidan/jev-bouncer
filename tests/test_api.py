@@ -359,6 +359,11 @@ class FakeGoogle:
             raise GoogleError("HTTP 500")
         return [{"title": "Real meeting", "start": "09:00", "end": "09:45"}]
 
+    def calendar_range(self, start, days):
+        from datetime import date, timedelta
+        d0 = date.fromisoformat(start)
+        return {(d0 + timedelta(days=i)).isoformat(): self.calendar_events((d0 + timedelta(days=i)).isoformat()) for i in range(days)}
+
     def insert_event(self, day, start, minutes, title, description=""):
         self.inserted.append((day, start, minutes, title))
         return {"id": "g1", "link": "https://calendar.google.com/event?eid=g1"}
@@ -472,3 +477,32 @@ def test_reseed_keeps_the_google_connection(tmp_path):
     store.put("google", {"refresh_token": "rt"})
     seed_store(store)
     assert store.get("google") == {"refresh_token": "rt"}
+
+
+# ---- Calendar range for the week/month views ----
+def test_calendar_range_lists_each_day(make):
+    c, _ = make()
+    out = c.get("/api/calendar/range", params={"start": "2026-11-14", "days": 3}).json()
+    assert [d["date"] for d in out["days"]] == ["2026-11-14", "2026-11-15", "2026-11-16"]
+    assert any(e["title"] == "Investor demo prep with the CEO" for e in out["days"][0]["events"])
+    assert any(e["title"] == "Investor demo" for e in out["days"][1]["events"])
+    assert out["connection"]["demo"] is True and out["today"] == "2026-11-14"
+
+
+@pytest.mark.parametrize("params", [{"start": "nope", "days": 7}, {"start": "2026-11-14", "days": 0},
+                                    {"start": "2026-11-14", "days": 43}])
+def test_calendar_range_rejects_bad_input(make, params):
+    c, _ = make()
+    assert c.get("/api/calendar/range", params=params).status_code == 422
+
+
+def test_calendar_range_uses_google_when_connected(gmake):
+    c, _ = gmake(FakeGoogle(connected=True))
+    out = c.get("/api/calendar/range", params={"start": "2026-12-01", "days": 2}).json()
+    assert out["days"][0]["events"] == [{"title": "Real meeting", "start": "09:00", "end": "09:45"}]
+    assert out["connection"]["demo"] is False
+
+
+def test_calendar_range_reports_google_failure(gmake):
+    c, _ = gmake(FakeGoogle(connected=True, fail=True))
+    assert c.get("/api/calendar/range", params={"start": "2026-12-01", "days": 2}).status_code == 502

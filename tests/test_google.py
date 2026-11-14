@@ -147,3 +147,12 @@ def test_disconnect_forgets_tokens(g):
     google.disconnect()
     assert google.status()["connected"] is False
     assert any("revoke" in str(c.url) for c in fake.calls)
+
+
+def test_calendar_range_groups_by_local_day_in_one_call(g):
+    google, fake, _ = g
+    connect(google)
+    n = len(fake.calls)
+    out = google.calendar_range("2026-11-30", 3)
+    assert len(fake.calls) == n + 1
+    assert out == {"2026-11-30": [], "2026-12-01": [{"title": "Dentist", "start": "10:00", "end": "11:00"}], "2026-12-02": []}

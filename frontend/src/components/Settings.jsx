@@ -85,7 +85,7 @@ function Connections({ conn, onConn, onRouted }) {
     await onRouted();
     setMsg({ ok: true, text: out.added.length ? `Routed ${out.added.length} new email${out.added.length > 1 ? "s" : ""} into Today.` : "No new mail since the last fetch." });
   });
-  const live = (on, text) => <span className="conn">{on ? <span className="dot" /> : <span className="dot demo" />}{text}</span>;
+  const live = (on, text) => <span className="conn">{on ? <span className="dot" /> : <span className="dot off" />}{text}</span>;
   return (
     <>
       <Row title="Google account" help={g.connected
