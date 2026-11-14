@@ -1,0 +1,9 @@
+{
+ "likely_cause": "The discount is applied twice. The new line already reduces the subtotal by the percentage discount (30 - 0.2*30 = 24.00), but the total line still subtracts plan.discount (0.2) as a flat amount after tax. Result: 24.00 * 1.16 - 0.2 = 27.64 instead of the expected 24.00 * 1.16 = 27.84. The full-price test passes only because its discount is 0.",
+ "suspicious_lines": [
+  "+    total = round(subtotal * (1 + tax_rate) - plan.discount, 2)",
+  "+    subtotal = plan.price - plan.discount * plan.price",
+  "E   AssertionError: assert 27.64 == 27.84"
+ ],
+ "suggested_fix": "Remove the leftover flat subtraction in checkout/summary.py so the discount is applied only once, before tax: `total = round(subtotal * (1 + tax_rate), 2)`. Keep `return max(total, 0)`. Optionally add a test with a non-zero discount and different tax rate to guard against double-discounting."
+}

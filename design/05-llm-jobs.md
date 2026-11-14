@@ -1,12 +1,13 @@
 # 05 — LLM jobs
 
-Model: `claude-sonnet-5-5` via the Anthropic API, with structured output (tool use or a JSON schema) wherever the code reads the result. All runs happen in the pipeline, ahead of time.
+Model: `anthropic/claude-sonnet-5.5` via OpenRouter, with structured output (a JSON schema) wherever the code reads the result. All runs happen in the pipeline, ahead of time.
 
-## 1. Baseline router (for the comparison)
-- **Input:** the same state Jev saw (02), plus the four action names with one-line descriptions, plus Sanad's default settings in words ("5 interrupts a day; family always interrupts; evening mode from 18:00").
-- **Output:** `{ action, confidence 0–1, one_line_reason }`.
+## 1. Baseline judge (for the comparison)
+- **Input:** the same state Jev saw (02). No action names. No Sanad settings. No `deadline_in_minutes`.
+- **Output:** the same probabilities as `03`: for a message, `needs_sanad`, `time_sensitive`, `wording_only_urgency`, `family_matter`, `blocks_release`, `is_noise`, and the `urgency` score; for CI, `failure_type`, `cause_identifiable`, `blocks_release`.
 - Record latency and input/output tokens per call.
-- The baseline's actions are fixed; settings sliders don't change them.
+- The action is not in this response. The browser computes it with `decide(event, answers, settings, dayState)` (04), the same function it uses for Jev. Moving a slider re-routes both columns.
+- **Cut first if late:** an extra call where the model picks `interrupt` / `batch` / `delegate` / `drop` directly. That arm is not stored in the main `results.json` shape and does not appear on slide 6.
 
 ## 2. Auto-reply (every message from a person)
 - **Written for:** every message event whose sender is a person (not a bot or CI), about 20–25 calls. The page shows a reply only while that message's current action is **batch**.

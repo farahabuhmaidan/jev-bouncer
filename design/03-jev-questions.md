@@ -15,6 +15,8 @@ Type names follow TypeSafe's docs: **Noul** means the probability that a stateme
 | `is_noise` | Noul | Is `message` informational with nothing for Sanad to do or read? | Newsletters, automated FYIs, reactions, "thanks!" | Has a question, request or information Sanad needs |
 | `urgency` | Score 1–5 | How soon does `message` need a response? (display only, never routes) | Levels written as situations, 1 = "can wait days", 5 = "needs action within minutes" | |
 
+Deadline proximity is not a Jev question. `state.py` computes `deadline_in_minutes` and the policy applies it (02, 04). `urgency` stays a badge.
+
 ## CI failure events
 | id | Type | Question / options |
 |---|---|---|

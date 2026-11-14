@@ -1,0 +1,49 @@
+{
+  "id": "18f0a1news",
+  "threadId": "t18f0a1news",
+  "labelIds": [
+    "INBOX",
+    "UNREAD"
+  ],
+  "snippet": "9 onboarding patterns we loved this month. Unsubscribe anytime.",
+  "internalDate": "1794632700000",
+  "payload": {
+    "mimeType": "multipart/alternative",
+    "headers": [
+      {
+        "name": "From",
+        "value": "Product Weekly <digest@productweekly.example.com>"
+      },
+      {
+        "name": "To",
+        "value": "Sanad <sanad@example.com>"
+      },
+      {
+        "name": "Subject",
+        "value": "Product Weekly #142"
+      },
+      {
+        "name": "List-Unsubscribe",
+        "value": "<mailto:unsubscribe@productweekly.example.com>"
+      }
+    ],
+    "parts": [
+      {
+        "partId": "0",
+        "mimeType": "text/plain",
+        "body": {
+          "size": 63,
+          "data": "OSBvbmJvYXJkaW5nIHBhdHRlcm5zIHdlIGxvdmVkIHRoaXMgbW9udGguIFVuc3Vic2NyaWJlIGFueXRpbWUu"
+        }
+      },
+      {
+        "partId": "1",
+        "mimeType": "text/html",
+        "body": {
+          "size": 103,
+          "data": "PGh0bWw-PGJvZHk-PGgxPlByb2R1Y3QgV2Vla2x5ICMxNDI8L2gxPjxwPjkgb25ib2FyZGluZyBwYXR0ZXJucyB3ZSBsb3ZlZCB0aGlzIG1vbnRoLjwvcD48L2JvZHk-PC9odG1sPg"
+        }
+      }
+    ]
+  }
+}

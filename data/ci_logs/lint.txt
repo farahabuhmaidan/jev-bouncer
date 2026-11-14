@@ -1,0 +1,8 @@
+Run: CI / lint (chk-91-receipt-copy) #4821
+Commit: a77d0e1 "Update receipt email wording"
+Changed files: templates/email/receipt.html, checkout/emails.py
+
+checkout/emails.py:12:1: F401 'datetime' imported but unused
+checkout/emails.py:33:89: E501 line too long (104 > 88 characters)
+Found 2 errors.
+##[error]Process completed with exit code 1.

@@ -1,0 +1,23 @@
+/* Doorman deck: the same tokens as the app (frontend/src/style.css). */
+:root {
+  --bg: #f6f8fb; --surface: #ffffff; --surface-2: #f1f5f9; --border: #e2e8f0; --border-strong: #cbd5e1;
+  --text: #0f172a; --text-2: #334155; --muted: #64748b; --primary: #0f172a; --accent: #0369a1; --accent-soft: #e0f2fe;
+  --interrupt: #b91c1c; --interrupt-bg: #fef2f2; --ask: #b45309; --ask-bg: #fffbeb;
+  --batch: #0369a1; --batch-bg: #f0f9ff; --delegate: #6d28d9; --delegate-bg: #f5f3ff;
+  --drop: #475569; --drop-bg: #f1f5f9; --ok: #15803d; --ok-bg: #f0fdf4;
+  --font: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text); font: 18px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--muted); }
+.small { font-size: 15px; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+.s-interrupt { background: var(--interrupt-bg); color: var(--interrupt); }
+.s-ask { background: var(--ask-bg); color: var(--ask); }
+.s-batch { background: var(--batch-bg); color: var(--batch); }
+.s-delegate { background: var(--delegate-bg); color: var(--delegate); }
+.s-drop { background: var(--drop-bg); color: var(--drop); }

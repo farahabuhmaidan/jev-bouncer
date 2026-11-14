@@ -1,0 +1,70 @@
+{
+ "answers": {
+  "failure_type": {
+   "flaky_test": 0.98,
+   "code_regression": 0.02,
+   "infra_problem": 0,
+   "config_or_lint": 0
+  },
+  "cause_identifiable": 0.97,
+  "blocks_release": 0.85
+ },
+ "latency_ms": 327,
+ "usage": {
+  "input_tokens": 987,
+  "output_tokens": 95,
+  "cost": 4.1454e-05,
+  "is_byok": false,
+  "cost_details": {
+   "upstream_inference_cost": 4.1454e-05,
+   "upstream_inference_prompt_cost": 4.1454e-05,
+   "upstream_inference_completions_cost": 0
+  }
+ },
+ "model": "typesafe/jev-1.14-20261014",
+ "request": {
+  "model": "typesafe/jev-1.14",
+  "state": {
+   "now": "14:31, Sanad is in a focus block until 16:00",
+   "sanad": "Sanad: Product engineer at a startup; works with leadership and leads the Checkout team",
+   "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+   "sender": "GitHub Actions (automated)",
+   "channel": "CI (GitHub Actions)",
+   "ci": {
+    "branch": "main",
+    "test_name": "test_cart_badge_updates_after_add",
+    "commit_message": "Bump eslint to 9.3.1",
+    "log_tail": "Run: CI / test (main) #4812\nCommit: 3f1c2a9 \"Bump eslint to 9.3.1\"\nChanged files: package.json, package-lock.json\n\n=== FAILURES ===\n_____________________ test_cart_badge_updates_after_add _____________________\nweb/tests/cart.spec.ts:44\n  await page.click('[data-test=add-to-cart]')\n  await expect(page.locator('[data-test=cart-badge]')).toHaveText('1')\nError: Timed out 5000ms waiting for expect(locator).toHaveText(\"1\")\n  Received: \"\"\n  Call log:\n    - waiting for locator('[data-test=cart-badge]')\n    - locator resolved to <span data-test=\"cart-badge\"></span>\n    - unexpected value \"\"\n\nRetry history for this test (last 20 runs on main): 17 passed, 3 failed (timeout)\n1 failed, 412 passed in 3m21s"
+   }
+  },
+  "questions": {
+   "failure_type": {
+    "type": "choice",
+    "instructions": "What caused the CI failure shown in `ci.log_tail`?",
+    "criteria": {
+     "flaky_test": "An intermittent test failure such as a timeout or ordering issue, unrelated to the change in `ci.commit_message`; the same test passes on rerun.",
+     "code_regression": "The change in `ci.commit_message` broke behaviour that the failing test checks; the assertion shows a wrong value.",
+     "infra_problem": "The CI machinery failed: runner, network, registry, disk or permissions errors; no test actually ran or the failure is outside the code.",
+     "config_or_lint": "Lint, formatting, type-check or configuration errors in the changed files."
+    }
+   },
+   "cause_identifiable": {
+    "type": "noul",
+    "instructions": "Does `ci.log_tail` show what made the run fail?",
+    "criteria": {
+     "true": "The log names a failing test, error or step clearly enough to tell what went wrong.",
+     "false": "The log is cut off, empty or too vague to tell what failed."
+    }
+   },
+   "blocks_release": {
+    "type": "noul",
+    "instructions": "Is this CI failure on the investor demo branch or a release branch, given `ci.branch` and `linked_items`?",
+    "criteria": {
+     "true": "The failing branch is the investor-demo branch, main for a release planned today, or a branch for a ticket due today.",
+     "false": "The failing branch is a feature branch for work that is not due today."
+    }
+   }
+  }
+ },
+ "error": null
+}

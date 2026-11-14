@@ -34,7 +34,9 @@ CI events have no `text`. They add `branch`, `test_name` and `log_file` (a path 
 1. **Loud vs quiet:** CEO "URGENT!!! can we make the deck blue" → batch, plus an auto-reply. Rami's quiet checkout bug about CHK-88 → interrupt.
 2. **Three CI failures:** flaky (silent rerun), infra (DevOps), regression on `investor-demo` (interrupt + explanation).
 3. **Unsure:** cofounder "got a sec?" with no context → `needs_sanad` lands in the unsure band → ask Sanad.
-4. **Evening:** 19:10 school message → interrupt; 19:30 leadership roadmap thread → batch to morning.
+4. **Evening:** 19:10 school message → interrupt; 19:30 leadership roadmap thread → batch to morning. The school message is a raw Gmail payload (`raw_source: "gmail"`), so the snapshot shows the body after HTML is stripped and the quoted chain is cut.
+
+One more required event, not a fifth demo moment: a daytime customer email, also raw Gmail, with a parseable deadline ("before 15:00") and label `interrupt`. It is what row 5 of the policy is for. The label is set by a person before either model runs.
 
 ## `data/snapshot.json`
 ```json
@@ -46,7 +48,10 @@ CI events have no `text`. They add `branch`, `test_name` and `log_file` (a path 
   "people": {
     "rami": { "name": "Rami", "role": "Junior dev", "relationship": "team", "team": "checkout", "lead": "sanad", "is_bot": false }
   },
-  "devops_contact": "lina"
+  "devops_contact": "lina",
+  "commitments": [
+    { "who": "ceo", "what": "Sanad told the CEO the deck was final", "when": "yesterday" }
+  ]
 }
 ```
 `kind` is one of `meeting`, `focus` or `personal`. People to include: Rami, the CEO, the cofounder, the PM, a DevOps contact, a team lead, Sanad's partner, the school, and 2–3 bots (e.g. a newsletter and a calendar bot). All names are invented.
@@ -57,7 +62,7 @@ CI events use `"sender": "github-actions"`, a bot entry in `people`.
 Four to six short text logs (about 40–80 lines), each with the log tail, commit message and a small diff snippet. One log per failure type, plus the regression on `investor-demo`.
 
 ## Budget in the data
-Keep labelled budget-using interrupts to **5 or fewer** at default settings, so the default budget never forces a different answer. Labels and the baseline can then both judge each event on its own. Lowering the budget in the settings is a demo of the slider, not part of the measured comparison.
+Keep labelled budget-using interrupts to **5 or fewer** at default settings, so the default budget never forces a different answer. Both answer sets then go through the same policy. Lowering the budget in the settings re-routes both columns; the measured comparison on the slide uses default settings. Labels assume those defaults.
 
 ## When a demo moment doesn't land
 If Jev's real answers don't produce one of the 4 demo moments, **reword that event's text and rerun it**. The rules:

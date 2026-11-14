@@ -7,13 +7,14 @@ This repo will be made public after the hackathon. Everything committed must be 
 README.md          pitch, demo GIF, quickstart, the numbers, how it works
 LICENSE            MIT
 .gitignore         .env, .venv/, __pycache__/, .DS_Store, .remember/
-.env.example       TYPESAFE_API_KEY=, ANTHROPIC_API_KEY= (no values)
+.env.example       OPENROUTER_API_KEY= (no value)
 AGENTS.md          short guide for AI agents working in the repo (where things are, how to run)
-Makefile           make install · make pipeline · make demo · make eval
+Makefile           make install · make app · make test · make eval · make pipeline
 design/            this spec
 data/              mock persona, events, CI logs (all fictional)
-pipeline/          offline Jev + LLM runs → web/results.json
-web/               the static demo page
+server/            FastAPI + SQLite backend (policy, metrics, API)
+frontend/          React app (inbox, why, phone, test bench)
+pipeline/          adapters, state, Jev + LLM clients, offline run → data/results.json
 slides/            the presentation deck (see 11)
 docs/assets/       demo GIF, screenshots, saved eval results
 ```
@@ -21,8 +22,8 @@ docs/assets/       demo GIF, screenshots, saved eval results
 ## Root README sections (written last, in hour 3)
 1. **One-line pitch**, then a badge row and the demo GIF
 2. **What it does**: three bullets (loud vs quiet, Jev judges and code decides, measured against an LLM-only baseline)
-3. **Quickstart**: `git clone` → `make demo` opens the replay from the committed `results.json` with **no API keys needed**. Rerunning the models (`make pipeline`) needs keys in `.env`.
-4. **The numbers**: the metrics table with date, model versions, event count and sample size, plus a link to the saved results file. Losses are shown too.
+3. **Quickstart**: `git clone` → `make install && make app` serves the seeded day from the committed model outputs with **no API keys needed**; live messages need a key. Rerunning the models (`make pipeline`) needs keys in `.env`.
+4. **The numbers**: critical misses, interrupt precision, cost per 1,000, latency, then accuracy, with date, model versions, event count and sample size, plus a link to the saved results file. Losses are shown too.
 5. **How it works**: the architecture diagram from 01 and the truth table from 04, with links into `design/`
 6. **Limits**: mock data only, one persona, small labelled set, the labeller is also the builder
 7. **How real integrations would plug in** (adapters) and **privacy** (personal sources opt-in), plus a link to the slides in `slides/`.
@@ -33,4 +34,4 @@ docs/assets/       demo GIF, screenshots, saved eval results
 - **No private links.** No internal docs, artifacts or chat links.
 - **Reproducible claims.** Every number in the README links to the file it came from, and `make eval` regenerates it.
 - **Prompts and questions in plain files** (`pipeline/questions.py`, `pipeline/llm.py`), so readers can audit what the models were asked.
-- `pipeline/cache/` is committed (model outputs, no secrets), so `make demo` and `make eval` work without keys.
+- `pipeline/cache/` is committed (model outputs, no secrets), so `make app` and `make eval` work without keys.

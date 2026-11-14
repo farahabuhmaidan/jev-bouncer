@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doorman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="deck">
+
+<section class="slide title">
+  <p class="kicker">Hackathon · 2026-11-14</p>
+  <h1><span class="logo"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56Z"/></svg></span>Doorman</h1>
+  <p class="lead">The message that matters gets through. The loud one waits its turn.</p>
+  <p class="muted">A personal attention assistant, built on TypeSafe Jev</p>
+</section>
+
+<section class="slide">
+  <h2>Meet Sanad</h2>
+  <p class="lead">He's a product engineer who leads the Checkout team. Tomorrow at 10:00 he demos to investors. Today he has to ship a pricing fix.</p>
+  <ul class="steps">
+    <li>In between, <b>34 messages</b> land on him: Slack, email, CI, the CEO, a customer, his partner, his daughter's school.</li>
+    <li>A handful of them really need him today. Most don't. He can't tell which until he's already stopped what he's doing.</li>
+  </ul>
+  <p class="muted small">Sanad, his team and his day are fictional, written for this project.</p>
+</section>
+
+<section class="slide">
+  <h2>Loud beats important</h2>
+  <p class="lead">Our tools treat every ping the same, so the <b>wording</b> decides what feels urgent.</p>
+  <div class="pair">
+    <div class="card loud"><div class="who">14:05 · Layla, CEO</div>“URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!”<div class="verdict">Feels like a fire. It's a colour change.</div></div>
+    <div class="card quiet"><div class="who">14:20 · Rami, engineer</div>“hey, is checkout supposed to show 0 JOD for some users?”<div class="verdict">Feels like a question. It's a pricing bug the day before the demo.</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Today there are two bad options</h2>
+  <div class="pair">
+    <div class="card"><div class="who">Notifications on</div>Everything gets through. Every “lunch? 🌯” costs him his train of thought, and the bug report sits under the shouting.</div>
+    <div class="card"><div class="who">Do not disturb</div>Nothing gets through. Not the error-rate spike after the deploy, and not the school calling about his daughter.</div>
+  </div>
+  <p class="lead">What he needs is someone at the door who knows him and his day.</p>
+</section>
+
+<section class="slide">
+  <h2>Doorman stands at the door</h2>
+  <ul class="steps">
+    <li><span class="status s-interrupt">Interrupted you</span> only when it needs him and can't wait: the 0 JOD bug, the customer launching today, the school.</li>
+    <li><span class="status s-batch">Held for later</span> when it can wait, and the sender gets a kind auto-reply saying when he'll be back.</li>
+    <li><span class="status s-delegate">Forwarded</span> when someone else can handle it, like CI machinery failures going to DevOps.</li>
+    <li><span class="status s-ask">Needs your call</span> when it honestly can't tell. “got a sec?” from the cofounder gets a question, not a guess.</li>
+    <li>Family always reaches him, unless the message can clearly wait. A “pay the school fees next month” becomes a reminder in his calendar, with clashes flagged.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>It asks what a good assistant would ask</h2>
+  <ol class="steps">
+    <li><b>Jev answers small questions</b> about each message, with honest probabilities: Does this need Sanad himself? Can it wait a few hours? Is the urgency only in the wording? Does it block the release? Is it family?</li>
+    <li><b>Plain rules decide</b> what to do with those answers. You can read them, test them, and change them on the Rules page: the daily interruption budget, quiet hours, who counts as family or VIP.</li>
+    <li><b>The LLM only writes</b> the words: auto-replies, CI explanations, the evening summary. It never decides who gets through.</li>
+  </ol>
+  <p class="muted">Deadlines are read by code, not guessed by a model: a deadline in the next two hours always gets through.</p>
+</section>
+
+<section class="slide">
+  <h2>Under the hood</h2>
+  <div class="flow">
+    <div>Slack</div><div>Gmail</div><div>GitHub Actions</div><div>Calendar</div>
+  </div>
+  <div class="arrow">↓ each message becomes one event, with the context a person would look at</div>
+  <div class="flow single"><div>Doorman server · who sent it, what's on today, linked tickets, deadlines</div></div>
+  <div class="arrow">↓ about a third of a second</div>
+  <div class="flow"><div class="jev">Jev answers the questions</div><div>Rules decide</div><div class="llm">LLM writes the words</div></div>
+  <div class="arrow">↓</div>
+  <div class="flow"><div>Sanad's day: Today · Calendar · Rules</div><div>His phone: only what got through</div></div>
+</section>
+
+<section class="slide">
+  <h2>Live demo</h2>
+  <ol class="steps">
+    <li>Loud vs quiet: the CEO's URGENT deck colour vs Rami's 0 JOD bug</li>
+    <li>The CI trio: flaky → rerun silently · infra → DevOps · regression → interrupt + explanation</li>
+    <li><b>Live:</b> type a message as anyone; Jev routes it in a second, the LLM writes the auto-reply</li>
+    <li>“got a sec?” from the cofounder: Jev is unsure, so Doorman asks</li>
+    <li>Evening mode: work waits for morning, the school still gets through</li>
+    <li>Rules: change the budget or the deadline window; the whole day re-routes</li>
+  </ol>
+  <p><a class="button" href="/" target="_blank">Open the app →</a></p>
+  <video id="backup" src="../docs/assets/demo.mp4" controls muted hidden></video>
+</section>
+
+<section class="slide">
+  <h2>The numbers</h2>
+  <p class="muted" id="numbers-meta">loading…</p>
+  <table class="numbers" id="numbers"></table>
+  <p class="muted small">Both models answer the same questions; the same policy routes both. Computed live by the Doorman server (<code>/api/metrics</code>) over every labelled event at the current settings.</p>
+</section>
+
+<section class="slide">
+  <h2>What we're honest about</h2>
+  <ul class="steps">
+    <li>Personal sources (Gmail, Calendar) are opt-in; nothing leaves the laptop except the model calls.</li>
+    <li>All people and data are fictional. One day, 34 hand-labelled events, 8 held out: a small set.</li>
+    <li>Labels and rules were corrected after the first real run; every change is logged in <code>data/CHANGELOG.md</code>.</li>
+    <li>The LLM comparison answers the same questions in one prompt at default reasoning; a better prompt might do better.</li>
+    <li>The calendar connection is demo data in Google Calendar's format; nothing is written to a real account yet.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>What's next</h2>
+  <ul class="steps">
+    <li>Connect the real thing: Slack, Gmail and Google Calendar for one real person, for one real week</li>
+    <li>Learn from Sanad: every “show me” or “later” he answers tunes when Doorman asks</li>
+    <li>Teams: shared rules, so a whole team stops paying for each other's loud pings</li>
+  </ul>
+  <p class="lead">Fewer interruptions, and the right ones.</p>
+</section>
+
+</main>
+<div class="pager" id="pager"></div>
+<script type="module" src="slides.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "id": "18f0a1cedar",
+  "threadId": "t18f0a1cedar",
+  "labelIds": [
+    "INBOX",
+    "UNREAD"
+  ],
+  "snippet": "Our stores go live on your checkout today. Our production API key is still in test mode",
+  "internalDate": "1794651600000",
+  "payload": {
+    "mimeType": "multipart/alternative",
+    "headers": [
+      {
+        "name": "From",
+        "value": "Hadi (Cedar Market) <hadi@cedarmarket.example.com>"
+      },
+      {
+        "name": "To",
+        "value": "Sanad <sanad@example.com>"
+      },
+      {
+        "name": "Subject",
+        "value": "Launch today: API key still in test mode"
+      }
+    ],
+    "parts": [
+      {
+        "partId": "0",
+        "mimeType": "text/plain",
+        "body": {
+          "size": 331,
+          "data": "SGkgU2FuYWQsCgpPdXIgc3RvcmVzIGdvIGxpdmUgb24geW91ciBjaGVja291dCB0b2RheS4gT3VyIHByb2R1Y3Rpb24gQVBJIGtleSBpcyBzdGlsbCBpbiB0ZXN0IG1vZGUsIHNvIG5vIHJlYWwgcGF5bWVudHMgZ28gdGhyb3VnaC4gV2UgbmVlZCBpdCBzd2l0Y2hlZCB0byBsaXZlIGJlZm9yZSAxNTowMCwgd2hlbiBvdXIgbGF1bmNoIGVtYWlsIGdvZXMgb3V0IHRvIDQwLDAwMCBjdXN0b21lcnMuIENhbiB5b3Ugc3dpdGNoIGl0IG9uPwoKVGhhbmtzLApIYWRpCgpPbiBGcmksIE5vdiAxMywgMjAyNiwgU2FuYWQgd3JvdGU6Cj4gV2UnbGwgYmUgcmVhZHkgZm9yIHlvdXIgbGF1bmNoLg"
+        }
+      },
+      {
+        "partId": "1",
+        "mimeType": "text/html",
+        "body": {
+          "size": 307,
+          "data": "PGh0bWw-PGJvZHk-PHA-SGkgU2FuYWQsPC9wPjxwPk91ciBzdG9yZXMgZ28gbGl2ZSBvbiB5b3VyIGNoZWNrb3V0IHRvZGF5LiBPdXIgcHJvZHVjdGlvbiBBUEkga2V5IGlzIHN0aWxsIGluIHRlc3QgbW9kZSwgc28gbm8gcmVhbCBwYXltZW50cyBnbyB0aHJvdWdoLiBXZSBuZWVkIGl0IHN3aXRjaGVkIHRvIGxpdmUgYmVmb3JlIDE1OjAwLCB3aGVuIG91ciBsYXVuY2ggZW1haWwgZ29lcyBvdXQgdG8gNDAsMDAwIGN1c3RvbWVycy4gQ2FuIHlvdSBzd2l0Y2ggaXQgb24_PC9wPjxwPlRoYW5rcyw8YnI-SGFkaTwvcD48L2JvZHk-PC9odG1sPg"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "user": {
+    "name": "Sanad",
+    "role": "Product engineer at a startup; works with leadership and leads the Checkout team",
+    "team": "checkout",
+    "personal_keywords": [
+      "pickup",
+      "school",
+      "dentist",
+      "family"
+    ]
+  },
+  "calendar": {
+    "raw_source": "google_calendar",
+    "raw_file": "raw/google_calendar/sanad-day.json"
+  },
+  "tickets": [
+    {
+      "key": "CHK-88",
+      "title": "Checkout pricing: wrong totals for discounted plans",
+      "priority": "High",
+      "due": "today",
+      "owner": "sanad",
+      "keywords": [
+        "checkout",
+        "pricing",
+        "price",
+        "discount",
+        "total",
+        "JOD"
+      ]
+    },
+    {
+      "key": "CHK-91",
+      "title": "Receipt email copy tweaks",
+      "priority": "Low",
+      "due": "next week",
+      "owner": "sanad",
+      "keywords": [
+        "receipt"
+      ]
+    },
+    {
+      "key": "OPS-14",
+      "title": "Migrate CI runners to new pool",
+      "priority": "Medium",
+      "due": "this sprint",
+      "owner": "lina",
+      "keywords": [
+        "runner",
+        "runners",
+        "CI pool"
+      ]
+    }
+  ],
+  "prs": [
+    {
+      "number": 212,
+      "branch": "investor-demo",
+      "title": "Demo flow polish for tomorrow's investor demo",
+      "keywords": [
+        "investor-demo",
+        "demo branch",
+        "demo flow"
+      ]
+    }
+  ],
+  "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+  "devops_contact": "lina",
+  "commitments": [
+    {"who": "layla", "what": "Sanad told the CEO the deck was final", "when": "yesterday", "about": ["deck", "slide"]}
+  ],
+  "people": {
+    "sanad": {
+      "name": "Sanad",
+      "role": "Product engineer",
+      "relationship": "self",
+      "team": "checkout",
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": "U07SANAD",
+        "email": "sanad@example.com"
+      }
+    },
+    "layla": {
+      "name": "Layla",
+      "role": "CEO",
+      "relationship": "leadership",
+      "team": "leadership",
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": "U07LAYLA",
+        "email": "layla@example.com"
+      }
+    },
+    "omar": {
+      "name": "Omar",
+      "role": "Cofounder and CTO",
+      "relationship": "leadership",
+      "team": "leadership",
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": "U07OMAR",
+        "email": "omar@example.com"
+      }
+    },
+    "dina": {
+      "name": "Dina",
+      "role": "Product manager",
+      "relationship": "peer",
+      "team": "product",
+      "lead": "omar",
+      "is_bot": false,
+      "handles": {
+        "slack": "U07DINA",
+        "email": "dina@example.com"
+      }
+    },
+    "rami": {
+      "name": "Rami",
+      "role": "Junior developer",
+      "relationship": "team",
+      "team": "checkout",
+      "lead": "yousef",
+      "is_bot": false,
+      "handles": {
+        "slack": "U07RAMI",
+        "email": "rami@example.com"
+      }
+    },
+    "yousef": {
+      "name": "Yousef",
+      "role": "Senior developer and Checkout tech lead",
+      "relationship": "team",
+      "team": "checkout",
+      "lead": "sanad",
+      "is_bot": false,
+      "handles": {
+        "slack": "U07YOUSEF",
+        "email": "yousef@example.com"
+      }
+    },
+    "noor": {
+      "name": "Noor",
+      "role": "Customer support agent",
+      "relationship": "peer",
+      "team": "support",
+      "lead": "hana",
+      "is_bot": false,
+      "handles": {
+        "slack": "U07NOOR",
+        "email": "noor@example.com"
+      }
+    },
+    "hana": {
+      "name": "Hana",
+      "role": "Support lead",
+      "relationship": "peer",
+      "team": "support",
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": "U07HANA",
+        "email": "hana@example.com"
+      }
+    },
+    "lina": {
+      "name": "Lina",
+      "role": "DevOps engineer",
+      "relationship": "peer",
+      "team": "devops",
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": "U07LINA",
+        "email": "lina@example.com"
+      }
+    },
+    "maha": {
+      "name": "Maha",
+      "role": "Sanad's partner",
+      "relationship": "family",
+      "team": null,
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": null,
+        "email": "maha@example.org"
+      }
+    },
+    "hadi": {"name": "Hadi", "role": "Operations lead at Cedar Market", "relationship": "customer", "team": null, "lead": null, "is_bot": false, "handles": {"slack": null, "email": "hadi@cedarmarket.example.com"}},
+    "school": {
+      "name": "Riverside School office",
+      "role": "School of Sanad's daughter",
+      "relationship": "family",
+      "team": null,
+      "lead": null,
+      "is_bot": false,
+      "handles": {
+        "slack": null,
+        "email": "office@riverside-school.example.org"
+      }
+    },
+    "newsletter": {
+      "name": "Product Weekly newsletter",
+      "role": "Automated newsletter",
+      "relationship": "bot",
+      "team": null,
+      "lead": null,
+      "is_bot": true,
+      "handles": {
+        "email": "digest@productweekly.example.com"
+      }
+    },
+    "jira": {
+      "name": "Jira",
+      "role": "Ticket notification bot",
+      "relationship": "bot",
+      "team": null,
+      "lead": null,
+      "is_bot": true,
+      "handles": {
+        "email": "jira@example.com"
+      }
+    },
+    "calendar-bot": {
+      "name": "Calendar",
+      "role": "Calendar notification bot",
+      "relationship": "bot",
+      "team": null,
+      "lead": null,
+      "is_bot": true,
+      "handles": {
+        "email": "calendar@example.com"
+      }
+    },
+    "github-actions": {
+      "name": "GitHub Actions",
+      "role": "CI bot",
+      "relationship": "bot",
+      "team": null,
+      "lead": null,
+      "is_bot": true,
+      "handles": {
+        "github": "github-actions[bot]"
+      }
+    }
+  }
+}

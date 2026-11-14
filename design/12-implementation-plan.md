@@ -1,21 +1,21 @@
-# Bouncer Implementation Plan
+# Doorman Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A replayable demo day where Jev judges each event, browser code routes it, the LLM writes text, and the page shows measured Jev vs LLM-only numbers. Plus slides and a public-ready README.
 
-**Architecture:** An offline Python pipeline turns `data/` into `web/results.json` (Jev answers, baseline actions, LLM texts). A static page loads it and runs the routing policy and metrics in the browser, so settings re-route the day instantly. See `design/01-architecture.md`.
+**Architecture:** An offline Python pipeline turns `data/` into `web/results.json` (Jev answers, baseline answers to the same questions, deadline facts, LLM texts). A static page loads it and runs one routing policy on both answer sets, plus the metrics, in the browser, so settings re-route both columns instantly. See `design/01-architecture.md`.
 
-**Tech Stack:** Python 3.11+ (TypeSafe SDK or `httpx`, `anthropic`, `pytest`), plain HTML/CSS/JS ES modules, Node 20+ only for `node --test` on the JS modules.
+**Tech Stack:** Python 3.11+ (`httpx`, `pytest`, `python-dotenv`; every model call goes through OpenRouter), plain HTML/CSS/JS ES modules, Node 20+ only for `node --test` on the JS modules.
 
 **Spec:** `design/README.md` and `design/01`–`11`. Read the spec file a task names before starting it.
 
 ## Global Constraints
-- Public repo: no secrets (keys only via `TYPESAFE_API_KEY`, `ANTHROPIC_API_KEY` from `.env`), fictional data only, no private links (`design/10-public-repo.md`).
+- Public repo: no secrets (the only key is `OPENROUTER_API_KEY`, from a gitignored `.env`), fictional data only, no private links (`design/10-public-repo.md`).
 - Jev never picks the action; all routing lives in `web/policy.js` only (`design/04-policy.md`).
 - All Jev question wording lives in `pipeline/questions.py`; all LLM prompts in `pipeline/llm.py`.
 - LLM model: `claude-sonnet-5-5`. Jev model id: whatever the TypeSafe models page names, recorded in `results.json.models.jev`.
-- Defaults: `yesAt 0.7`, `noAt 0.3`, `interruptBar 0.7`, rising bar on, budget 5, evening start 18:00, family-always-interrupts on, CI silent rerun on.
+- Defaults: `yesAt 0.7`, `noAt 0.3`, `interruptBar 0.7`, rising bar on, budget 5, evening start 18:00, `deadlineMinutes 120`, family-always-interrupts on, CI silent rerun on.
 - A failed model call is an error, never an answer.
 - Day runs 08:00–20:00; times are `"HH:MM"` strings.
 
@@ -33,9 +33,9 @@
 **Files:** Create `requirements.txt`, `.env.example`, `Makefile`, `pipeline/__init__.py`, `pipeline/probe.py`, `pipeline/API_NOTES.md`
 
 - [ ] **Step 1:** Read `https://docs.typesafe.ai/llms.txt`, then `/go/api.md`, `/go/primitives.md` and `/go/models.md` (append `.md`). Write `pipeline/API_NOTES.md` with: endpoint or SDK call, auth header, how one request carries state + several questions, exact type names for yes/no (Noul), Choice and Score, the response shape, model id, context and rate limits, and pricing if published (with its date and URL).
-- [ ] **Step 2:** `requirements.txt`: `anthropic`, `httpx`, `pytest`, `python-dotenv`, plus the TypeSafe SDK package name if one exists. `.env.example` has both keys with empty values. Makefile targets: `install` (venv + pip), `test` (`pytest -q && node --test web/`), `pipeline` (`python -m pipeline.run`), `demo` (`python -m http.server 8000` from the repo root, then open `localhost:8000/web/`), `eval` (`python -m pipeline.run --eval-only`).
-- [ ] **Step 3:** `pipeline/probe.py` sends one Jev request (the state from `design/02` plus the `needs_sanad` Noul) and one Anthropic message, then prints both raw responses.
-- [ ] **Step 4:** Run `make install && python -m pipeline.probe`. Expected: a Jev probability near yes for `needs_sanad` and an Anthropic reply. **Ask the user before the first live call** (it uses their keys and sends mock data only).
+- [ ] **Step 2:** `requirements.txt`: `httpx`, `pytest`, `python-dotenv`. `.env.example` has `OPENROUTER_API_KEY=` with no value. Makefile targets: `install` (venv + pip), `test` (`pytest -q && node --test web/`), `pipeline` (`python -m pipeline.run`), `demo` (`python -m http.server 8000` from the repo root, then open `localhost:8000/web/`), `eval` (`python -m pipeline.run --eval-only`).
+- [ ] **Step 3:** `pipeline/probe.py` sends one Jev request through OpenRouter (the state from `design/02` plus the `needs_sanad` Noul) and one Sonnet 5.5 chat completion, then prints both raw responses.
+- [ ] **Step 4:** Run `make install && python -m pipeline.probe`. Expected: a Jev probability near yes for `needs_sanad` and a Sonnet reply. **Ask the user before the first live call** (it uses their keys and sends mock data only).
 - [ ] **Step 5:** Commit: `chore: scaffold and API notes`.
 
 ### Task 2: Mock data + data checks (0:00–0:50, the user labels)
@@ -44,7 +44,7 @@
 
 **Interfaces:** Produces the shapes in `design/06-data.md` exactly.
 
-- [ ] **Step 1: Write `tests/test_data.py`**: `test_every_event_labelled` (label.action ∈ {interrupt, batch, delegate, drop}), `test_senders_exist` (every sender is in snapshot.people), `test_demo_moments_present` (each of `loud-vs-quiet`, `ci-trio`, `unsure`, `evening` appears), `test_demo_events_not_holdout`, `test_holdout_count` (== 8), `test_budget_interrupts_at_most_5` (interrupt labels from 08:00 to 18:00 on messages that are not family and don't block the release ≤ 5), `test_ci_logs_exist`.
+- [ ] **Step 1: Write `tests/test_data.py`**: `test_every_event_labelled` (label.action ∈ {interrupt, batch, delegate, drop}), `test_senders_exist` (every sender is in snapshot.people), `test_demo_moments_present` (each of `loud-vs-quiet`, `ci-trio`, `unsure`, `evening` appears), `test_demo_events_not_holdout`, `test_holdout_count` (== 8), `test_budget_interrupts_at_most_5` (interrupt labels from 08:00 to 18:00 on messages that are not family and don't block the release ≤ 5), `test_ci_logs_exist`, `test_commitments_present` (snapshot has the CEO deck commitment), `test_evening_school_is_raw_gmail`, `test_customer_deadline_email_is_raw_gmail` (daytime, text contains "before 15:00", label interrupt).
 - [ ] **Step 2:** Run `pytest tests/test_data.py`. Expected: FAIL (no files).
 - [ ] **Step 3:** The agent drafts snapshot + ~35 events + CI logs per `design/06`. **The user sets or confirms every label.**
 - [ ] **Step 4:** Run `pytest tests/test_data.py`. Expected: PASS.
@@ -75,14 +75,17 @@
 
 **Files:** Create `pipeline/state.py`, `tests/test_state.py`
 
-**Interfaces:** Produces `build_state(event: dict, snapshot: dict) -> dict` and `next_free_slot(time: str, snapshot: dict, evening_start: str = "18:00") -> str`.
+**Interfaces:** Produces `build_state(event: dict, snapshot: dict) -> dict`, `deadline_minutes(event: dict, snapshot: dict) -> int | None`, and `next_free_slot(time: str, snapshot: dict, evening_start: str = "18:00") -> str`.
 
 - [ ] **Step 1: Tests:**
-  - `test_rami_state`: evt-031 yields keys `now, sanad, today, sender, channel, message, linked_items`; `linked_items[0]` starts with `"CHK-88"`; `"focus block until 16:00" in now`.
+  - `test_rami_state`: evt-031 yields keys `now, sanad, today, sender, channel, message, linked_items`; `linked_items[0]` starts with `"CHK-88"`; `"focus block until 16:00" in now`; no `commitment` key.
+  - `test_ceo_state_includes_one_commitment` (the deck sentence; no second commitment)
   - `test_ci_state_has_ci_not_message`
   - `test_unknown_sender` → `"Unknown sender"`
   - `test_no_links_omits_linked_items` (the key is absent, not an empty list)
-  - `test_no_budget_in_state`
+  - `test_no_budget_or_deadline_in_state` (`deadline_in_minutes` is absent from the Jev state)
+  - `test_deadline_minutes_before_1500` (a 14:20 "before 15:00" message → 40)
+  - `test_deadline_minutes_none_when_unparsed`
   - `test_next_free_slot`: `("14:20") == "16:00"`, free at `"12:00" → "12:30"`, `("19:10") == "09:00 tomorrow"`
 - [ ] **Step 2:** Run and confirm they fail. **Step 3:** Implement (regexes `[A-Z]+-\d+`, `#\d+`; log tail = last error section, ≤ 40 lines). **Step 4:** Run and confirm they pass. **Step 5:** Commit: `feat: state builder`.
 
@@ -107,16 +110,16 @@
 **Files:** Create `pipeline/llm.py`, `tests/test_llm.py`
 
 **Interfaces:** Produces:
-- `baseline_route(state) -> {action, confidence, reason, latency_ms, tokens:{in,out}, error}`
+- `baseline_judge(state, event_type) -> {answers, latency_ms, tokens:{in,out}, error}` with the same answer ids as `design/03`
 - `auto_reply(state, next_slot: str) -> str`
 - `ci_explain(state, diff: str) -> {likely_cause, suspicious_lines, suggested_fix}`
 - `digest(items: list[dict]) -> {groups: [{title, items: [{event_id, summary, draft_reply|None}]}]}`
 
-All use tool-use structured output, except `auto_reply`, which returns plain text.
+All use tool-use structured output, except `auto_reply`, which returns plain text. Do not implement a direct-action baseline unless the tasks above are done; that call is the first cut in `design/09`.
 
 - [ ] **Step 1: Tests** with a fake Anthropic client:
-  - `test_baseline_action_in_four`
-  - `test_baseline_prompt_has_default_settings_in_words` (contains `"5 interrupts a day"`)
+  - `test_baseline_answers_match_question_ids`
+  - `test_baseline_prompt_has_no_action_names_or_settings` (the prompt contains neither `"interrupt"` nor `"5 interrupts a day"`)
   - `test_auto_reply_mentions_slot`
   - `test_error_is_error`
 - [ ] **Steps 2–5:** Confirm failing, implement, confirm passing, commit `feat: llm jobs`.
@@ -127,12 +130,15 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 
 **Interfaces:**
 - Produces `DEFAULTS` (Global Constraints values + `family: [...]` and `vip: []` sender keys).
-- Produces `decide(event, jev, settings, day) -> {action, rule, reasons, usesBudget, label?}`. `action` ∈ interrupt | batch | delegate | drop | ask | error. `label` is a display string, e.g. "rerun silently", "pinged DevOps", "forwarded to Lina", "until 09:00 tomorrow".
-- Produces `replayDay(events, results, snapshot, settings) -> Map<eventId, decision>`. It sorts by (time, id), tracks the budget and evening, and computes the rising bar: `min(0.95, bar + 0.15 * (budget - left) / max(1, budget - 1))`.
+- Produces `decide(event, answers, settings, day) -> {action, rule, reasons, usesBudget, label?}`. `action` ∈ interrupt | batch | delegate | drop | ask | error. `label` is a display string, e.g. "rerun silently", "pinged DevOps", "forwarded to Lina", "until 09:00 tomorrow", "deadline in 40 minutes". `reasons` includes `deadline_in_minutes` when rule 5 fires.
+- Produces `replayDay(events, results, snapshot, settings) -> {jev: Map<eventId, decision>, baseline: Map<eventId, decision>}`. It sorts by (time, id), tracks the budget and evening **per answer source**, and computes the rising bar: `min(0.95, bar + 0.15 * (budget - left) / max(1, budget - 1))`. Deadline facts come from `results[id].facts`.
 
 - [ ] **Step 1: Tests** (`node --test`), one per row of both truth tables:
-  - Rami → interrupt row 8
-  - CEO URGENT → batch row 5
+  - Rami → interrupt row 9
+  - CEO URGENT → batch row 6
+  - Customer email, `deadline_in_minutes` 40, `no(is_noise)` → interrupt row 5, `usesBudget` false, reason contains "40"
+  - Same email with `yes(is_noise)` → drop row 3
+  - Evening message with `deadline_in_minutes` 30 and `no(is_noise)` → interrupt row 5, not batch row 2
   - Cofounder p(needs_sanad) = 0.5 → ask
   - Evening roadmap → batch row 2
   - Evening school → interrupt row 1
@@ -153,13 +159,14 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 
 **Files:** Create `web/metrics.js`, `web/metrics.test.js`
 
-**Interfaces:** Produces `computeMetrics(events, decisions, results, prices) -> {jev:{accuracy, holdoutAccuracy, byType:{message, ci}, criticalMisses, asks, errors, p50, p95, costPer1k}, llm:{…same minus asks}, settingsChanged: bool}`. "Rerun silently" maps to drop and "pinged DevOps" to delegate. `prices` is read from `web/prices.json` (written by the pipeline).
+**Interfaces:** Produces `computeMetrics(events, jevDecisions, baselineDecisions, results, prices) -> {jev: Column, baseline: Column, settingsChanged: bool}`. `Column` is `{criticalMisses, interruptPrecision, falseAlarmRate, accuracy, accuracyExcludingAsks, holdoutAccuracy, byType:{message, ci}, asks, errors, p50, p95, costPer1k}`. "Rerun silently" maps to drop and "pinged DevOps" to delegate. `prices` is read from `web/prices.json` (written by the pipeline).
 
 - [ ] **Step 1: Tests:**
-  - A 4-event toy set gives exact accuracy and critical-miss counts
-  - Ask counts as wrong and is counted in `asks`
+  - A 4-event toy set gives exact critical-miss counts, interrupt precision, and accuracy
+  - Ask counts as wrong in `accuracy`, is omitted from `accuracyExcludingAsks`, and is counted in `asks`
   - An error counts as wrong and is counted in `errors`
   - `costPer1k` is null when the Jev price is null
+  - Both columns are present and computed from their own decision maps
 - [ ] **Steps 2–5:** Confirm failing, implement, confirm passing, commit `feat: metrics`.
 
 ### Task 8: The page (`design/07`)
@@ -169,7 +176,7 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 **Interfaces:** Consumes Tasks 6–7. It fetches `../data/events.json`, `../data/snapshot.json`, `results.json` and `prices.json` (`make demo` serves the repo root).
 
 - [ ] **Step 1:** Header with clock, ▶ ⏸ ⏭ moment, 1x/10x, budget dots, ⚙ and 👤.
-- [ ] **Step 2:** Three columns: the feed (action chips, urgency badge, inline auto-reply on batched people), snapshot + why (state JSON, a bar per answer, rule fired, baseline action), and the phone (interrupts only, CI explanation, dimmed in the evening). Below them, the metrics strip with the "labels assume defaults" note.
+- [ ] **Step 2:** Three columns: the feed (action chips, urgency badge, inline auto-reply on batched people), snapshot + why (state JSON, deadline fact, a bar per answer, rule fired, baseline action from the same policy), and the phone (interrupts only, CI explanation, dimmed in the evening). Below them, the metrics strip in the order critical misses, interrupt precision, cost, median latency, accuracy, with the "labels assume defaults" note.
 - [ ] **Step 3:** Settings drawer (all `DEFAULTS` fields, including family/VIP tags per person). Any change calls `replayDay` and re-renders. Settings persist to localStorage inside try/catch.
 - [ ] **Step 4:** The ASK modal (two candidate actions; the click is display-only), the sender view (scripted "truly urgent" re-route), and the digest overlay at 20:00.
 - [ ] **Step 5: Verify by hand:** `make demo`, open `localhost:8000/web/`, jump through all 4 moments, and drag the budget to 2 to watch interrupts turn into batches. Then load the page in a private window and check that it still works. Take a screenshot to `docs/assets/screenshot.png`.
@@ -197,7 +204,7 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 **Files:** Create `slides/index.html` (+ `slides/style.css`)
 
 - [ ] **Step 1:** 8 slides per `design/11`. Arrow-key navigation. Visual style matches `web/style.css`.
-- [ ] **Step 2:** Slide 6 imports `../web/metrics.js` and `../web/results.json` and renders the numbers live from them (no hand-typed numbers). Slide 5 has a "Open demo" link and a `<video>` for `docs/assets/demo.mp4` if it exists.
+- [ ] **Step 2:** Slide 6 imports `../web/metrics.js` and `../web/results.json` and renders the numbers live from them, in the order in `design/11` (no hand-typed numbers). Slide 5 has a "Open demo" link and a `<video>` for `docs/assets/demo.mp4` if it exists.
 - [ ] **Step 3: Verify:** `make demo`, open `localhost:8000/slides/`, click through. Commit: `feat: slides`.
 
 ### Task 11: Public README + repo files (`design/10`)
@@ -205,5 +212,5 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 **Files:** Create `README.md`, `LICENSE` (MIT, the user as copyright holder), `AGENTS.md`
 
 - [ ] **Step 1:** README sections 1–7 per `design/10`, with numbers copied from the metrics output plus a link to `web/results.json`, the date and n.
-- [ ] **Step 2: Verify:** fresh clone into the scratchpad → `make demo` works with no `.env`; `make test` passes; `git grep -nE "sk-ant|TYPESAFE_API_KEY=.+"` finds nothing.
+- [ ] **Step 2: Verify:** fresh clone into the scratchpad → `make demo` works with no `.env`; `make test` passes; `git grep -nE "sk-or-|OPENROUTER_API_KEY=.+"` finds nothing.
 - [ ] **Step 3:** Commit and push: `docs: public README`.

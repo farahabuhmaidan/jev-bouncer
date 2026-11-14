@@ -1,0 +1,11 @@
+{
+  "model": "typesafe/jev-1.14-20261014",
+  "answers": {
+    "needs_sanad": {"type": "noul", "noul": 0.74},
+    "failure_type": {"type": "choice", "choice": "code_regression", "probabilities": {"flaky_test": 0.05, "code_regression": 0.88, "infra_problem": 0.04, "config_or_lint": 0.03}, "confidence": 0.8},
+    "urgency": {"type": "score", "score": 3.4, "legend": {"0": "a", "1": "b", "2": "c", "3": "d", "4": "e"}, "probabilities": [0.02, 0.05, 0.1, 0.3, 0.53], "confidence": 0.6}
+  },
+  "usage": {"input_tokens": 433, "output_tokens": 23, "cost": 1.8186e-05},
+  "id": "gen-dec-example",
+  "provider": "TypeSafe"
+}

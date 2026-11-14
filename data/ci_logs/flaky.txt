@@ -1,0 +1,18 @@
+Run: CI / test (main) #4812
+Commit: 3f1c2a9 "Bump eslint to 9.3.1"
+Changed files: package.json, package-lock.json
+
+=== FAILURES ===
+_____________________ test_cart_badge_updates_after_add _____________________
+web/tests/cart.spec.ts:44
+  await page.click('[data-test=add-to-cart]')
+  await expect(page.locator('[data-test=cart-badge]')).toHaveText('1')
+Error: Timed out 5000ms waiting for expect(locator).toHaveText("1")
+  Received: ""
+  Call log:
+    - waiting for locator('[data-test=cart-badge]')
+    - locator resolved to <span data-test="cart-badge"></span>
+    - unexpected value ""
+
+Retry history for this test (last 20 runs on main): 17 passed, 3 failed (timeout)
+1 failed, 412 passed in 3m21s

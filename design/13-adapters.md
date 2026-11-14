@@ -59,7 +59,7 @@ The loader (`pipeline/load.py: load_events(path, snapshot) -> list[dict]`) runs 
 
 **Every example payload is fictional** (`example.com` addresses, made-up Slack IDs) and stored in `data/raw/<source>/*.json`. Each mirrors the real API shape, so the adapter would work on a real payload unchanged.
 
-`fetch()` for Slack and Gmail is a stub that raises `NotImplementedError("needs OAuth; see design/13")`. The README says what a real connection would need: Slack app + Events API subscription, or a Gmail push via Pub/Sub. That's an honest "plugs in here", not a claim of a live integration.
+`fetch()` for Slack and Gmail is a stub that raises `NotImplementedError("needs OAuth; see design/13")`. It stays unimplemented for this demo. The README says what a real connection would need: Slack app + Events API subscription, or a Gmail push via Pub/Sub. That's an honest "plugs in here", not a claim of a live integration. The school email and the daytime customer deadline email (06) are raw Gmail fixtures; they exercise `to_event` only.
 
 ## Contract test (keeps it dynamic)
 `tests/test_adapters.py` is parametrized over `ADAPTERS`. For **every** registered adapter and every fixture in `data/raw/<source>/`:
