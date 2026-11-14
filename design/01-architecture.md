@@ -48,7 +48,11 @@ Writes `web/results.json`. Calls are cached in `pipeline/cache/` by event id plu
 ```
 Noul answers are stored as the probability of yes. Choice answers are stored as the probability per option. The Score is stored as the probability per level.
 
-### Stage 2: `web/index.html` (static page, no server)
+### Stage 2: the app
+
+> **Revised:** the static page below was the first build. The working app (FastAPI + SQLite + React, live events) is specified in [14-app.md](14-app.md); the policy now runs on the server.
+
+#### First build: `web/index.html` (static page, no server)
 Loads `events.json`, `snapshot.json` and `results.json`, then replays the day. **The routing policy (04) and the metrics (08) run in the browser in JS**, so changing a setting re-routes the whole day and updates the numbers instantly. There is exactly one implementation of the policy, and it lives in the browser.
 
 Serve with `python -m http.server` from `web/`.
