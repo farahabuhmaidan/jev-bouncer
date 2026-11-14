@@ -8,7 +8,7 @@ install:
 
 test:
 	$(PY) -m pytest -q
-	node --test web/
+	node --test 'web/*.test.js'
 
 pipeline:
 	$(PY) -m pipeline.run
