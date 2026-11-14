@@ -1,0 +1,9 @@
+Run: CI / build (chk-91-receipt-copy) #4815
+Commit: a77d0e1 "Update receipt email wording"
+Changed files: templates/email/receipt.html
+
+Step: Pull base image
+Error response from daemon: Get "https://registry.example.com/v2/node/manifests/20-alpine": dial tcp 10.4.0.12:443: i/o timeout
+##[error]Process completed with exit code 1.
+Runner: ci-runner-pool-old-07 (disk 96% full)
+No tests were run.

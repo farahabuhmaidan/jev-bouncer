@@ -1,0 +1,24 @@
+Run: CI / test (investor-demo) #4818
+Commit: c09b5e2 "Apply plan discount before tax in checkout summary"
+Changed files: checkout/summary.py
+
+Diff:
+--- a/checkout/summary.py
++++ b/checkout/summary.py
+@@ def order_total(plan, tax_rate):
+-    subtotal = plan.price
+-    total = subtotal * (1 + tax_rate) - plan.discount
++    subtotal = plan.price - plan.discount * plan.price
++    total = round(subtotal * (1 + tax_rate) - plan.discount, 2)
+     return max(total, 0)
+
+=== FAILURES ===
+________________________ test_discounted_plan_total ________________________
+tests/test_summary.py:58
+    plan = Plan(price=30.00, discount=0.20)   # 20% off
+    assert order_total(plan, tax_rate=0.16) == 27.84
+E   AssertionError: assert 27.64 == 27.84
+E    +  where 27.64 = order_total(Plan(price=30.0, discount=0.2), tax_rate=0.16)
+
+tests/test_summary.py:71 test_full_price_plan_total PASSED
+1 failed, 388 passed in 2m02s
