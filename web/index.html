@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bouncer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">Bouncer <span class="sub">Sanad's day, replayed</span></div>
+    <div class="clock" id="clock">08:00</div>
+    <div class="controls">
+      <button id="play" title="Play (space)">▶</button>
+      <button id="pause" title="Pause">⏸</button>
+      <button id="jump" title="Jump to the next demo moment (n)">⏭ moment</button>
+      <button id="speed" title="Replay speed">1x</button>
+      <button id="restart" title="Back to 08:00">↺</button>
+    </div>
+    <div class="budget" id="budget" title="Interrupts left today"></div>
+    <div class="controls">
+      <button id="open-settings">⚙ settings</button>
+      <button id="toggle-sender">👤 sender view</button>
+      <button id="open-digest">📋 digest</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="panel feed">
+      <h2 id="feed-title">Event feed</h2>
+      <ol id="feed"></ol>
+    </section>
+    <section class="panel why">
+      <h2>Snapshot + why</h2>
+      <div id="why"><p class="muted">Click an event to see what Jev was shown, what it answered and which rule fired.</p></div>
+    </section>
+    <section class="panel phone-col">
+      <h2>Sanad's phone</h2>
+      <div class="phone" id="phone-frame">
+        <div class="phone-status"><span id="phone-time">08:00</span><span id="phone-mode"></span></div>
+        <ol id="phone"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="panel metrics" id="metrics"></footer>
+
+  <aside class="drawer" id="settings" hidden>
+    <div class="drawer-head"><h2>Settings</h2><button id="close-settings">✕</button></div>
+    <form id="settings-form"></form>
+    <p class="muted small">Every change replays the day from 08:00 with the same Jev answers. Saved in this browser only.</p>
+  </aside>
+
+  <div class="modal" id="modal" hidden><div class="modal-card" id="modal-card"></div></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
