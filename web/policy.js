@@ -62,8 +62,14 @@ function decideMessage(event, r, s, day) {
   if (r.yes("is_noise")) return out("drop", 3);
   if (r.yes("blocks_release") && r.yes("needs_sanad")) return out("interrupt", 4);
   if (r.yes("wording_only_urgency") && !r.yes("blocks_release")) return out("batch", 5, later);
-  if (r.unsure("needs_sanad") || r.unsure("time_sensitive")) return out("ask", 6);
-  if (r.no("needs_sanad")) return out("delegate", 7, { label: delegateTo(event, day.snapshot) });
+  if (r.unsure("needs_sanad")) return out("ask", 6);
+  if (r.no("needs_sanad")) {
+    // Leadership asked Sanad directly: hold it for him rather than forwarding it.
+    if (day.snapshot.people?.[event.sender]?.relationship === "leadership") return out("batch", 7, later);
+    return out("delegate", 7, { label: delegateTo(event, day.snapshot) });
+  }
+  // Timing only matters once Sanad is needed, so an unsure time_sensitive asks only here.
+  if (r.unsure("time_sensitive")) return out("ask", 6);
   const vip = s.vip.includes(event.sender);
   if (r.yes("time_sensitive") && (vip || day.budgetLeft >= 1) && r.p("time_sensitive") >= day.bar) {
     return out("interrupt", 8, { usesBudget: !vip });

@@ -7,7 +7,7 @@ const SNAPSHOT = {
   people: {
     rami: { name: "Rami", lead: "yousef" }, yousef: { name: "Yousef", lead: "sanad" },
     noor: { name: "Noor", lead: "hana" }, hana: { name: "Hana", lead: null },
-    lina: { name: "Lina", lead: null }, layla: { name: "Layla", lead: null },
+    lina: { name: "Lina", lead: null }, layla: { name: "Layla", lead: null, relationship: "leadership" },
     omar: { name: "Omar", lead: null }, maha: { name: "Maha", lead: null },
     school: { name: "Riverside School office", lead: null }, "github-actions": { name: "GitHub Actions", is_bot: true },
   },
@@ -47,6 +47,20 @@ test("row 7: no(needs_sanad) delegates to the sender's lead", () => {
 test("row 7: no lead (or Sanad is the lead) forwards to the team channel", () => {
   const d = decide(msg("yousef"), jev({ ...quiet, needs_sanad: 0.1 }), DEFAULTS, day());
   assert.equal(d.label, "forwarded to the team channel");
+});
+
+test("row 7: leadership is batched, not delegated (they asked Sanad directly)", () => {
+  const d = decide(msg("layla"), jev({ ...quiet, needs_sanad: 0.1 }), DEFAULTS, day());
+  assert.equal(d.action, "batch"); assert.equal(d.rule, 7);
+});
+
+test("row 6: an unsure time_sensitive does not ask when Sanad is clearly not needed", () => {
+  const d = decide(msg("noor"), jev({ ...quiet, needs_sanad: 0.1, time_sensitive: 0.5 }), DEFAULTS, day());
+  assert.equal(d.action, "delegate");
+});
+
+test("row 6: an unsure time_sensitive still asks when Sanad is needed", () => {
+  assert.equal(decide(msg("rami"), jev({ ...quiet, time_sensitive: 0.5 }), DEFAULTS, day()).action, "ask");
 });
 
 test("row 3: noise is dropped", () => {
