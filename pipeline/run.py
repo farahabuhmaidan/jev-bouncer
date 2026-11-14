@@ -161,6 +161,8 @@ def main(argv: list[str] | None = None) -> None:
     events = load_events(ROOT / "data" / "events.json", snapshot)
     cache = Cache()
     results = build_results(snapshot, events, cache=cache, offline=args.eval_only)
+    if args.eval_only and Path(args.out).exists():  # a rebuild keeps the date of the run it came from
+        results["generated_at"] = json.loads(Path(args.out).read_text())["generated_at"]
     if not args.eval_only:
         print(f"pruned {cache.prune()} stale cache entries")
     Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1))

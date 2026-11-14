@@ -15,6 +15,7 @@ pipeline:
 
 eval:
 	$(PY) -m pipeline.run --eval-only
+	node web/print-metrics.mjs
 
 demo:
 	@echo "Open http://localhost:8000/web/  (slides: http://localhost:8000/slides/)"
