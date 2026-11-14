@@ -94,9 +94,8 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         text = body.text.strip()
         if not text or len(text) > 2000:
             raise HTTPException(422, "text must be 1-2000 characters")
-        event = {"type": "message", "source": "compose", "sender": body.sender, "text": text}
-        if body.channel:
-            event["channel"] = body.channel
+        event = {"type": "message", "source": "compose", "sender": body.sender, "text": text,
+                 "channel": body.channel or "Slack DM"}
         return respond(process_event(store, event, ask=ask, write=write))
 
     @app.post("/api/ingest/{source}")
