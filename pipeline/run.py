@@ -98,6 +98,11 @@ def _top(choice: dict) -> str | None:
     return max(choice, key=choice.get) if choice else None
 
 
+def llm_key_parts(system: str, schema: dict | None, params: dict) -> tuple:
+    """Everything an LLM call sends besides its input: model, prompt, schema, max_tokens, effort."""
+    return (llm.LLM_MODEL, system, schema, params)
+
+
 def _one_event(event, snapshot, cache, offline, ask, route, reply, explain) -> dict:
     eid, etype = event["id"], event["type"]
     state = build_state(event, snapshot)
@@ -107,18 +112,18 @@ def _one_event(event, snapshot, cache, offline, ask, route, reply, explain) -> d
 
     jev = _cached(cache, Cache.key("jev", eid, JEV_MODEL, state, questions_for(etype)),
                   lambda: ask(state, etype), offline, not_cached)
-    baseline = _cached(cache, Cache.key("baseline", eid, llm.LLM_MODEL, llm.BASELINE_SYSTEM, state),
+    baseline = _cached(cache, Cache.key("baseline", eid, *llm_key_parts(llm.BASELINE_SYSTEM, llm.BASELINE_SCHEMA, llm.BASELINE_PARAMS), state),
                        lambda: route(state), offline,
                        {"action": None, "confidence": None, "reason": None, "error": not_cached["error"]})
 
     auto_reply = None
     if _from_person(event, snapshot):
-        auto_reply = _cached(cache, Cache.key("reply", eid, llm.AUTO_REPLY_SYSTEM, state, slot),
+        auto_reply = _cached(cache, Cache.key("reply", eid, *llm_key_parts(llm.AUTO_REPLY_SYSTEM, None, llm.REPLY_PARAMS), state, slot),
                              lambda: _safe(reply, state, slot), offline, None)
 
     ci_explanation = None
     if etype == "ci_failure" and _top(jev.get("answers", {}).get("failure_type", {})) == "code_regression":
-        ci_explanation = _cached(cache, Cache.key("explain", eid, llm.CI_SYSTEM, state),
+        ci_explanation = _cached(cache, Cache.key("explain", eid, *llm_key_parts(llm.CI_SYSTEM, llm.CI_SCHEMA, llm.CI_PARAMS), state),
                                  lambda: _safe(explain, state), offline, None)
 
     return {"state": state, "jev": jev, "baseline": baseline, "auto_reply": auto_reply,
@@ -136,7 +141,7 @@ def build_results(snapshot: dict, events: list[dict], cache: Cache | None = None
     # The digest covers every message from a person; the page shows the ones the current settings held back.
     items = [{"id": e["id"], "time": e["time"], "sender": per_event[e["id"]]["state"]["sender"], "text": e["text"]}
              for e in events if _from_person(e, snapshot)]
-    digest = _cached(cache, Cache.key("digest", "day", llm.DIGEST_SYSTEM, items),
+    digest = _cached(cache, Cache.key("digest", "day", *llm_key_parts(llm.DIGEST_SYSTEM, llm.DIGEST_SCHEMA, llm.DIGEST_PARAMS), items),
                      lambda: _safe(summarize, items), offline, None) or {"groups": []}
 
     return {

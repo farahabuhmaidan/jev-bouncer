@@ -123,3 +123,16 @@ def test_prune_removes_entries_the_run_did_not_use(tmp_path):
     f = Fakes()
     build_results(snap, events, cache=Cache(tmp_path), **f.kw())
     assert f.calls["jev"] == 0
+
+
+def test_llm_cache_keys_cover_model_schema_tokens_effort(monkeypatch):
+    from pipeline import llm
+    from pipeline.run import llm_key_parts
+    base = Cache.key("baseline", "e", *llm_key_parts(llm.BASELINE_SYSTEM, llm.BASELINE_SCHEMA, llm.BASELINE_PARAMS), {})
+    for change in [lambda: monkeypatch.setattr(llm, "LLM_MODEL", "other/model"),
+                   lambda: monkeypatch.setitem(llm.BASELINE_PARAMS, "max_tokens", 1),
+                   lambda: monkeypatch.setitem(llm.BASELINE_PARAMS, "effort", "high"),
+                   lambda: monkeypatch.setattr(llm, "BASELINE_SCHEMA", {"x": 1})]:
+        change()
+        assert Cache.key("baseline", "e", *llm_key_parts(llm.BASELINE_SYSTEM, llm.BASELINE_SCHEMA, llm.BASELINE_PARAMS), {}) != base
+        monkeypatch.undo()

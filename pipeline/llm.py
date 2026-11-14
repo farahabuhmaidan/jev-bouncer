@@ -108,6 +108,13 @@ DIGEST_SCHEMA = {
 }
 
 
+# Every request parameter, per job; also part of each job's cache key in pipeline/run.py.
+BASELINE_PARAMS = {"max_tokens": 3000, "effort": None}
+REPLY_PARAMS = {"max_tokens": 1500, "effort": "low"}
+CI_PARAMS = {"max_tokens": 2500, "effort": "low"}
+DIGEST_PARAMS = {"max_tokens": 8000, "effort": "low"}
+
+
 class LLMError(RuntimeError):
     pass
 
@@ -145,7 +152,7 @@ def _chat(system: str, user: str, schema: dict | None = None, max_tokens: int = 
 def baseline_route(state: dict, client: httpx.Client | None = None) -> dict:
     try:
         content, meta = _chat(BASELINE_SYSTEM, json.dumps(state, ensure_ascii=False, indent=1), BASELINE_SCHEMA,
-                              max_tokens=3000, effort=None, client=client)
+                              **BASELINE_PARAMS, client=client)
         out = json.loads(content)
         if out.get("action") not in ACTIONS:
             raise LLMError(f"action outside the four: {out.get('action')!r}")
@@ -158,17 +165,17 @@ def baseline_route(state: dict, client: httpx.Client | None = None) -> dict:
 def auto_reply(state: dict, next_slot: str, client: httpx.Client | None = None) -> str:
     user = json.dumps({"sender": state["sender"], "message": state.get("message"),
                        "sanad_will_look_at_it": next_slot}, ensure_ascii=False, indent=1)
-    content, _ = _chat(AUTO_REPLY_SYSTEM, user, max_tokens=1500, client=client)
+    content, _ = _chat(AUTO_REPLY_SYSTEM, user, **REPLY_PARAMS, client=client)
     return content.strip()
 
 
 def ci_explain(state: dict, client: httpx.Client | None = None) -> dict:
     content, _ = _chat(CI_SYSTEM, json.dumps(state.get("ci", state), ensure_ascii=False, indent=1), CI_SCHEMA,
-                       max_tokens=2500, client=client)
+                       **CI_PARAMS, client=client)
     return json.loads(content)
 
 
 def digest(items: list[dict], client: httpx.Client | None = None) -> dict:
     content, _ = _chat(DIGEST_SYSTEM, json.dumps(items, ensure_ascii=False, indent=1), DIGEST_SCHEMA,
-                       max_tokens=8000, client=client)
+                       **DIGEST_PARAMS, client=client)
     return json.loads(content)
