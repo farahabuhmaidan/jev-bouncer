@@ -19,6 +19,7 @@ export default function Settings({ settings: s, people, onClose, onChange }) {
         <fieldset><legend>Interrupts</legend>
           {range("interruptBar", "interrupt bar", 0.5, 0.95, 0.05)}{check("risingBar", "bar rises as budget runs out")}
           {range("budget", "daily budget", 1, 10, 1)}
+          {range("deadlineMinutes", "deadline row: within minutes", 15, 480, 15)}
           <label>evening starts<input type="time" value={s.eveningStart} onChange={(e) => e.target.value && save({ eveningStart: e.target.value })} /></label>
         </fieldset>
         <fieldset><legend>Rules</legend>{check("familyAlways", "family can always reach me")}{check("silentRerun", "rerun flaky CI silently")}</fieldset>
@@ -32,7 +33,7 @@ export default function Settings({ settings: s, people, onClose, onChange }) {
             </div>
           ))}
         </fieldset>
-        <button onClick={async () => onChange(await putSettings({ yesAt: 0.7, noAt: 0.3, interruptBar: 0.7, risingBar: true, budget: 5, eveningStart: "18:00", familyAlways: true, silentRerun: true, family: ["maha", "school"], vip: [] }))}>Reset to defaults</button>
+        <button onClick={async () => onChange(await putSettings({ yesAt: 0.7, noAt: 0.3, interruptBar: 0.7, risingBar: true, budget: 5, eveningStart: "18:00", familyAlways: true, silentRerun: true, family: ["maha", "school"], vip: [], deadlineMinutes: 120 }))}>Reset to defaults</button>
       </div>
       <p className="muted small">Saved on the server. Every change re-routes the whole day with the same Jev answers.</p>
     </aside>

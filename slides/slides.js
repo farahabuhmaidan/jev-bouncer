@@ -28,13 +28,16 @@ Promise.all([fetch("/api/metrics").then((r) => r.json()), fetch("/api/day").then
       const lw = j !== null && l !== null && (lowerWins ? l < j : l > j);
       return `<tr><td>${name}</td><td class="j ${jw ? "win" : ""}">${fmt(j)}</td><td class="l ${lw ? "win" : ""}">${fmt(l)}</td></tr>`;
     };
-    document.getElementById("numbers").innerHTML = `<tr><th></th><th>Jev + rules</th><th>LLM only</th></tr>` +
-      row("Accuracy (all)", m.jev.accuracy, m.llm.accuracy, pct) +
-      row("Accuracy (holdout, n=8)", m.jev.holdout_accuracy, m.llm.holdout_accuracy, pct) +
+    document.getElementById("numbers").innerHTML = `<tr><th></th><th>Jev</th><th>LLM baseline</th></tr>` +
       row("Critical misses", m.jev.critical_misses, m.llm.critical_misses, String, true) +
-      row("Asks (counted wrong)", m.jev.asks, 0, String, true) +
+      row("Interrupt precision", m.jev.precision, m.llm.precision, pct) +
+      row("Cost per 1,000 events", m.jev.cost_per_1k, m.llm.cost_per_1k, usd, true) +
       row("Median latency per call", m.jev.p50, m.llm.p50, ms, true) +
-      row("Cost per 1,000 events", m.jev.cost_per_1k, m.llm.cost_per_1k, usd, true);
+      row("p95 latency per call", m.jev.p95, m.llm.p95, ms, true) +
+      row("Accuracy (ask = wrong)", m.jev.accuracy, m.llm.accuracy, pct) +
+      row("Accuracy, excluding asks", m.jev.accuracy_excl_asks, m.llm.accuracy_excl_asks, pct) +
+      row("Accuracy, holdout", m.jev.holdout_accuracy, m.llm.holdout_accuracy, pct) +
+      row("Asks", m.jev.asks, m.llm.asks, String, true);
     document.getElementById("numbers-meta").textContent =
       `typesafe/jev-1.14 vs anthropic/claude-sonnet-5.5 · n=${m.n} labelled events · run 2026-11-14` +
       (m.settings_changed ? " · settings changed in the app" : "");

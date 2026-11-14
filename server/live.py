@@ -5,7 +5,7 @@ import threading
 
 from pipeline import llm
 from pipeline.jev import ask_jev
-from pipeline.state import build_state, next_free_slot
+from pipeline.state import build_state, deadline_minutes, next_free_slot
 
 from .db import Store
 from .policy import replay_day
@@ -20,8 +20,16 @@ def _is_person(event: dict, snapshot: dict) -> bool:
     return event["type"] == "message" and bool(p) and not p.get("is_bot")
 
 
-def decisions(store: Store) -> dict:
-    return replay_day(store.all_events(), store.results(), store.get("snapshot"), store.get("settings"))
+def decisions(store: Store, source: str = "jev") -> dict:
+    """The whole day routed from one answer source; live events have no baseline, so theirs is an error."""
+    return replay_day(store.all_events(), store.results(), store.get("snapshot"), store.get("settings"), source)
+
+
+def baseline_decisions(store: Store) -> dict:
+    """The baseline's answers through the same policy; None for events the baseline never saw (live)."""
+    results = store.results()
+    routed = decisions(store, "baseline")
+    return {eid: (d if (results.get(eid) or {}).get("baseline") else None) for eid, d in routed.items()}
 
 
 def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_thread,
@@ -38,7 +46,8 @@ def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_threa
     jev = ask(state, event["type"])
     if jev.get("error"):
         jev = ask(state, event["type"])
-    result = {"state": state, "jev": jev, "baseline": None, "auto_reply": None, "ci_explanation": None,
+    result = {"state": state, "facts": {"deadline_in_minutes": deadline_minutes(event, snapshot)}, "jev": jev,
+              "baseline": None, "auto_reply": None, "ci_explanation": None,
               "next_free_slot": next_free_slot(clock, snapshot), "writing": False}
     store.add_event(event, result, origin="live")
     decision = decisions(store)[event["id"]]
@@ -63,7 +72,7 @@ def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_threa
         run(work)
 
     out = {"event": {**event, "origin": "live"}, "result": store.results()[event["id"]], "decision": decision,
-           "dry_run": dry_run}
+           "baseline_decision": None, "dry_run": dry_run}
     if dry_run:
         store.delete_event(event["id"])
     return out

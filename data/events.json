@@ -11,6 +11,7 @@
   {"id": "evt-010", "time": "12:10", "type": "message", "source": "slack", "sender": "dina", "text": "lunch? 🌯", "label": {"action": "batch"}, "holdout": false, "demo_moment": null},
   {"id": "evt-011", "time": "12:40", "type": "message", "source": "email", "sender": "maha", "text": "Can you pick up bread on the way home? Not urgent.", "label": {"action": "batch"}, "holdout": false, "demo_moment": null},
   {"id": "evt-012", "time": "13:15", "type": "message", "source": "slack", "sender": "lina", "text": "heads up: CI runners move to the new pool on Thursday, nothing needed from you", "label": {"action": "batch"}, "holdout": true, "demo_moment": null},
+  {"id": "evt-034", "raw_source": "gmail", "raw_file": "raw/gmail/customer-deadline.json", "label": {"action": "interrupt"}, "holdout": false, "demo_moment": null},
   {"id": "evt-013", "time": "13:45", "type": "message", "source": "slack", "sender": "yousef", "text": "PR for CHK-88 is up, would love your review today if you can so we can ship it", "label": {"action": "batch"}, "holdout": false, "demo_moment": null},
   {"id": "evt-014", "raw_source": "slack", "raw_file": "raw/slack/ceo-urgent.json", "label": {"action": "batch"}, "holdout": false, "demo_moment": "loud-vs-quiet"},
   {"id": "evt-015", "raw_source": "slack", "raw_file": "raw/slack/rami-dm.json", "label": {"action": "interrupt"}, "holdout": false, "demo_moment": "loud-vs-quiet"},

@@ -15,6 +15,6 @@ A short HTML deck in `slides/index.html`, committed to the repo so it ships with
 | 8 | What's next | Real adapters, learning from "ask" answers, per-team policies; repo link |
 
 ## Rules
-- Numbers on slide 6 are read from `web/results.json` / `metrics.js` output, never typed by hand.
+- Numbers on slide 6 are read from the running server's `/api/metrics`, never typed by hand.
 - The same public-repo rules apply (10): no private links, fictional data only.
 - Fallback if the live demo fails: slide 5 embeds the backup video.

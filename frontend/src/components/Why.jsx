@@ -11,6 +11,9 @@ function Bar({ q, p, used, s }) {
   );
 }
 
+const deadlineText = (m, d) =>
+  m == null ? "none" : `in ${m} minutes${d.rule === 5 ? " · rule 5 fired" : ""}`;
+
 const ruleText = (d) => (d.rule === "error" ? "not routed" : typeof d.rule === "number" ? `message row ${d.rule}` : d.rule);
 
 export default function Why({ event: e, people, settings, onChoose }) {
@@ -30,8 +33,9 @@ export default function Why({ event: e, people, settings, onChoose }) {
         {d.action === "ask" && <><dt>Your call</dt><dd>{askChoice(e) ? <Chip action={askChoice(e)} /> : <>
           <button className="mini" onClick={() => onChoose(e.id, "interrupt")}>🔔 show me now</button>{" "}
           <button className="mini" onClick={() => onChoose(e.id, "batch")}>later is fine</button></>}</dd></>}
-        <dt>Rule fired</dt><dd>{ruleText(d)}{d.uses_budget ? " · used 1 interrupt" : ""}{d.rule === 8 || d.uses_budget ? ` · bar ${d.bar.toFixed(2)}` : ""}</dd>
-        {r.baseline && <><dt>LLM-only said</dt><dd><Chip action={r.baseline.action} /> <span className="muted">{r.baseline.reason}</span></dd></>}
+        <dt>Rule fired</dt><dd>{ruleText(d)}{d.uses_budget ? " · used 1 interrupt" : ""}{d.rule === 9 || d.uses_budget ? ` · bar ${d.bar.toFixed(2)}` : ""}</dd>
+        {e.type === "message" && <><dt>Deadline</dt><dd>{deadlineText(r.facts?.deadline_in_minutes, d)}</dd></>}
+        {e.baseline_decision && <><dt>Baseline + same policy</dt><dd><Chip action={e.baseline_decision.action} /> {ruleText(e.baseline_decision)}</dd></>}
         {e.label && <><dt>Label</dt><dd><Chip action={e.label.action} />{e.holdout && <span className="tag"> holdout</span>}</dd></>}
         {e.origin === "live" && <><dt>Source</dt><dd>live · {e.source}{e.source_time ? ` (sent ${e.source_time})` : ""}</dd></>}
       </dl>

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-14T14:04:47+03:00",
+ "generated_at": "2026-11-14T14:36:27+03:00",
  "models": {
   "jev": "typesafe/jev-1.14",
   "llm": "anthropic/claude-sonnet-5.5"
@@ -96,6 +96,17 @@
    ],
    "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
    "devops_contact": "lina",
+   "commitments": [
+    {
+     "who": "layla",
+     "what": "Sanad told the CEO the deck was final",
+     "when": "yesterday",
+     "about": [
+      "deck",
+      "slide"
+     ]
+    }
+   ],
    "people": {
     "sanad": {
      "name": "Sanad",
@@ -215,6 +226,18 @@
      "handles": {
       "slack": null,
       "email": "maha@example.org"
+     }
+    },
+    "hadi": {
+     "name": "Hadi",
+     "role": "Operations lead at Cedar Market",
+     "relationship": "customer",
+     "team": null,
+     "lead": null,
+     "is_bot": false,
+     "handles": {
+      "slack": null,
+      "email": "hadi@cedarmarket.example.com"
      }
     },
     "school": {
@@ -434,6 +457,23 @@
      "action": "batch"
     },
     "holdout": true,
+    "demo_moment": null
+   },
+   {
+    "id": "evt-034",
+    "time": "13:20",
+    "type": "message",
+    "source": "email",
+    "sender": "hadi",
+    "channel": "Email",
+    "subject": "Launch today: API key still in test mode",
+    "text": "Launch today: API key still in test mode\n\nHi Sanad,\n\nOur stores go live on your checkout today. Our production API key is still in test mode, so no real payments go through. We need it switched to live before 15:00, when our launch email goes out to 40,000 customers. Can you switch it on?\n\nThanks,\nHadi",
+    "thread": "t18f0a1cedar",
+    "bulk_mail": false,
+    "label": {
+     "action": "interrupt"
+    },
+    "holdout": false,
     "demo_moment": null
    },
    {
@@ -749,6 +789,9 @@
     "message": "Product Weekly #142\n\n9 onboarding patterns we loved this month. Unsubscribe anytime.",
     "mail_type": "Bulk or marketing email (has an unsubscribe link)"
    },
+   "facts": {
+    "deadline_in_minutes": null
+   },
    "jev": {
     "answers": {
      "needs_sanad": 0.06,
@@ -857,15 +900,30 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.95,
-    "reason": "Automated bulk newsletter with an unsubscribe link; no action needed and unrelated to today's CHK-88 release or tomorrow's investor demo.",
-    "latency_ms": 2575,
-    "tokens": {
-     "in": 773,
-     "out": 75
+    "answers": {
+     "needs_sanad": 0.01,
+     "time_sensitive": 0.01,
+     "wording_only_urgency": 0.01,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.99,
+     "urgency": {
+      "score": 0.028,
+      "probabilities": {
+       "0": 0.98,
+       "1": 0.015,
+       "2": 0.003,
+       "3": 0.001,
+       "4": 0.001
+      }
+     }
     },
-    "cost": 0.002296,
+    "latency_ms": 3355,
+    "tokens": {
+     "in": 1805,
+     "out": 124
+    },
+    "cost": 0.00485,
     "error": null
    },
    "auto_reply": null,
@@ -883,6 +941,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 580
    },
    "jev": {
     "answers": {
@@ -994,15 +1055,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.8,
-    "reason": "Routine status update from Yousef on CHK-88: fix is pushed and the PR will open after standup, so nothing is blocked and no decision is needed. Sanad is free now, so it can wait for his next free slot or the digest rather than using one of his 5 interrupts.",
-    "latency_ms": 2790,
-    "tokens": {
-     "in": 812,
-     "out": 111
+    "answers": {
+     "needs_sanad": 0.06,
+     "time_sensitive": 0.07,
+     "wording_only_urgency": 0.01,
+     "family_matter": 0.01,
+     "blocks_release": 0.15,
+     "is_noise": 0.78,
+     "urgency": {
+      "score": 1.19,
+      "probabilities": {
+       "0": 0.4,
+       "1": 0.1,
+       "2": 0.42,
+       "3": 0.07,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002734,
+    "latency_ms": 2718,
+    "tokens": {
+     "in": 1844,
+     "out": 124
+    },
+    "cost": 0.004928,
     "error": null
    },
    "auto_reply": "Morning Yousef! Sanad's tied up at the moment but will take a look at 08:50. If it can't wait until then, just tap \"truly urgent\" and it'll get through.",
@@ -1020,6 +1096,9 @@
     "linked_items": [
      "CHK-91: Receipt email copy tweaks, Low priority, owned by Sanad, due next week"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -1131,15 +1210,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.6,
-    "reason": "Automated Jira status change on a low-priority, non-urgent ticket (CHK-91, due next week) that doesn't block today's CHK-88 release or tomorrow's demo; Sanad owns it so a review request may need action later, so hold it for the digest rather than drop.",
-    "latency_ms": 2701,
-    "tokens": {
-     "in": 785,
-     "out": 113
+    "answers": {
+     "needs_sanad": 0.12,
+     "time_sensitive": 0.02,
+     "wording_only_urgency": 0.01,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.9,
+     "urgency": {
+      "score": 0.20600000000000002,
+      "probabilities": {
+       "0": 0.83,
+       "1": 0.14,
+       "2": 0.025,
+       "3": 0.004,
+       "4": 0.001
+      }
+     }
     },
-    "cost": 0.0027,
+    "latency_ms": 2629,
+    "tokens": {
+     "in": 1817,
+     "out": 124
+    },
+    "cost": 0.004874,
     "error": null
    },
    "auto_reply": null,
@@ -1157,6 +1251,9 @@
     "linked_items": [
      "CHK-91: Receipt email copy tweaks, Low priority, owned by Sanad, due next week"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -1268,15 +1365,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.88,
-    "reason": "Low-priority, no-rush request from Dina about CHK-91 (due next week); doesn't block today's CHK-88 release or tomorrow's investor demo, so hold it for a free slot or the digest.",
-    "latency_ms": 2584,
-    "tokens": {
-     "in": 784,
-     "out": 91
+    "answers": {
+     "needs_sanad": 0.45,
+     "time_sensitive": 0.02,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.05,
+     "urgency": {
+      "score": 0.77,
+      "probabilities": {
+       "0": 0.4,
+       "1": 0.45,
+       "2": 0.13,
+       "3": 0.02,
+       "4": 0.0
+      }
+     }
     },
-    "cost": 0.002478,
+    "latency_ms": 2810,
+    "tokens": {
+     "in": 1816,
+     "out": 124
+    },
+    "cost": 0.004872,
     "error": null
    },
    "auto_reply": "Hi Dina, Sanad is tied up at the moment but will take a look at your message at 09:45. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -1294,6 +1406,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 490
    },
    "jev": {
     "answers": {
@@ -1405,15 +1520,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.72,
-    "reason": "A routine customer question about Apple Pay support is not urgent and doesn't block the CHK-88 release or the investor demo, so it can wait until Sanad's next free slot; he is free now but has demo prep at 11:00, so it is best handled in a batch rather than as an interrupt.",
-    "latency_ms": 2538,
-    "tokens": {
-     "in": 799,
-     "out": 116
+    "answers": {
+     "needs_sanad": 0.2,
+     "time_sensitive": 0.08,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.03,
+     "is_noise": 0.03,
+     "urgency": {
+      "score": 1.43,
+      "probabilities": {
+       "0": 0.2,
+       "1": 0.3,
+       "2": 0.38,
+       "3": 0.11,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002758,
+    "latency_ms": 2409,
+    "tokens": {
+     "in": 1831,
+     "out": 124
+    },
+    "cost": 0.004902,
     "error": null
    },
    "auto_reply": "Hi Noor, Sanad is tied up at the moment but will look at your message at 10:20. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -1432,6 +1562,9 @@
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today",
      "PR #212 on branch investor-demo: Demo flow polish for tomorrow's investor demo"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 45
    },
    "jev": {
     "answers": {
@@ -1544,15 +1677,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.8,
-    "reason": "CTO needs confirmation before 11:00 that the investor-demo checkout flow works with a discounted plan. This is tied to Sanad's own High-priority CHK-88 (wrong totals on discounted plans) and tomorrow's investor demo, so it has a hard deadline and he is the only one who can answer.",
-    "latency_ms": 2073,
-    "tokens": {
-     "in": 862,
-     "out": 128
+    "answers": {
+     "needs_sanad": 0.85,
+     "time_sensitive": 0.8,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.3,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 3.0100000000000002,
+      "probabilities": {
+       "0": 0.01,
+       "1": 0.02,
+       "2": 0.12,
+       "3": 0.65,
+       "4": 0.2
+      }
+     }
     },
-    "cost": 0.003004,
+    "latency_ms": 2493,
+    "tokens": {
+     "in": 1894,
+     "out": 124
+    },
+    "cost": 0.005028,
     "error": null
    },
    "auto_reply": "Hi Omar, Sanad is tied up at the moment but will look at your message at 10:45 and get back to you then. If it can't wait until then, just tap \"truly urgent\" and it will get flagged right away.",
@@ -1567,6 +1715,9 @@
     "sender": "Calendar (automated)",
     "channel": "Email",
     "message": "Reminder: Investor demo prep with the CEO starts at 11:00."
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -1675,15 +1826,30 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.9,
-    "reason": "Automated calendar reminder for a meeting Sanad already knows about and is free for; no action needed.",
-    "latency_ms": 1441,
-    "tokens": {
-     "in": 732,
-     "out": 56
+    "answers": {
+     "needs_sanad": 0.05,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.96,
+     "urgency": {
+      "score": 0.26,
+      "probabilities": {
+       "0": 0.88,
+       "1": 0.04,
+       "2": 0.03,
+       "3": 0.04,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002024,
+    "latency_ms": 2161,
+    "tokens": {
+     "in": 1764,
+     "out": 124
+    },
+    "cost": 0.004768,
     "error": null
    },
    "auto_reply": null,
@@ -1698,6 +1864,9 @@
     "sender": "Rami, Junior developer (Sanad's team: checkout)",
     "channel": "Slack DM",
     "message": "thanks for the review yesterday!! 🙏"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -1806,15 +1975,30 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.95,
-    "reason": "Plain thanks from a teammate for a review; no action needed and not worth an interrupt or digest entry.",
-    "latency_ms": 1599,
-    "tokens": {
-     "in": 740,
-     "out": 58
+    "answers": {
+     "needs_sanad": 0.03,
+     "time_sensitive": 0.01,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.96,
+     "urgency": {
+      "score": 0.06,
+      "probabilities": {
+       "0": 0.95,
+       "1": 0.04,
+       "2": 0.01,
+       "3": 0.0,
+       "4": 0.0
+      }
+     }
     },
-    "cost": 0.00206,
+    "latency_ms": 1550,
+    "tokens": {
+     "in": 1772,
+     "out": 124
+    },
+    "cost": 0.004784,
     "error": null
    },
    "auto_reply": "Hey Rami, glad it helped! 🙌 Sanad's tied up right now but will get back to you around 12:00. If it can't wait, just tap \"truly urgent.\"",
@@ -1829,6 +2013,9 @@
     "sender": "Hana, Support lead (support team)",
     "channel": "Email",
     "message": "Hi Sanad, we're seeing a few tickets asking how to download invoices from the account page. Is there a help article we can link?"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -1937,15 +2124,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.72,
-    "reason": "Non-urgent support question about an invoice help article; Sanad is in investor demo prep, so hold it for his next free slot or the digest.",
-    "latency_ms": 1464,
-    "tokens": {
-     "in": 756,
-     "out": 68
+    "answers": {
+     "needs_sanad": 0.12,
+     "time_sensitive": 0.04,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.04,
+     "urgency": {
+      "score": 1.06,
+      "probabilities": {
+       "0": 0.25,
+       "1": 0.5,
+       "2": 0.2,
+       "3": 0.04,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002192,
+    "latency_ms": 2693,
+    "tokens": {
+     "in": 1788,
+     "out": 124
+    },
+    "cost": 0.004816,
     "error": null
    },
    "auto_reply": "Hi Hana, thanks for the message! Sanad is tied up at the moment but will take a look at 12:00. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -1960,6 +2162,9 @@
     "sender": "Dina, Product manager (product team)",
     "channel": "Slack DM",
     "message": "lunch? 🌯"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -2068,15 +2273,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.8,
-    "reason": "Casual lunch invite from a colleague at 12:10 is not urgent enough to spend one of the 5 daily interrupts. Sanad is free right now, so he can see it in his next free slot and reply.",
-    "latency_ms": 1560,
-    "tokens": {
-     "in": 715,
-     "out": 90
+    "answers": {
+     "needs_sanad": 0.04,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.01,
+     "family_matter": 0.02,
+     "blocks_release": 0.01,
+     "is_noise": 0.06,
+     "urgency": {
+      "score": 1.8800000000000001,
+      "probabilities": {
+       "0": 0.2,
+       "1": 0.05,
+       "2": 0.45,
+       "3": 0.27,
+       "4": 0.03
+      }
+     }
     },
-    "cost": 0.00233,
+    "latency_ms": 2669,
+    "tokens": {
+     "in": 1747,
+     "out": 124
+    },
+    "cost": 0.004734,
     "error": null
    },
    "auto_reply": "Hey Dina! Sanad is tied up at the moment but will check your message at 12:40. If it can't wait, just tap \"truly urgent\" 🌯",
@@ -2091,6 +2311,9 @@
     "sender": "Maha (Sanad's partner, family)",
     "channel": "Email",
     "message": "Can you pick up bread on the way home? Not urgent."
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -2199,15 +2422,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.9,
-    "reason": "Family message that is explicitly not urgent, so it can wait for his next free slot or the end-of-day digest rather than using one of his 5 interrupts.",
-    "latency_ms": 1506,
-    "tokens": {
-     "in": 724,
-     "out": 73
+    "answers": {
+     "needs_sanad": 0.8,
+     "time_sensitive": 0.04,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.98,
+     "blocks_release": 0.01,
+     "is_noise": 0.05,
+     "urgency": {
+      "score": 1.59,
+      "probabilities": {
+       "0": 0.2,
+       "1": 0.1,
+       "2": 0.62,
+       "3": 0.07,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002178,
+    "latency_ms": 1622,
+    "tokens": {
+     "in": 1756,
+     "out": 124
+    },
+    "cost": 0.004752,
     "error": null
    },
    "auto_reply": "Hi Maha! Sanad is tied up at the moment but will see your message at 13:10. If it can't wait until then, just tap \"truly urgent\" and it'll get through. 😊",
@@ -2225,6 +2463,9 @@
     "linked_items": [
      "OPS-14: Migrate CI runners to new pool, Medium priority, owned by Lina, due this sprint"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -2336,20 +2577,190 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.6,
-    "reason": "Informational heads-up from DevOps about a Thursday CI migration that explicitly requires nothing from Sanad, so there is nothing to act on and no need to interrupt him.",
-    "latency_ms": 1383,
-    "tokens": {
-     "in": 792,
-     "out": 81
+    "answers": {
+     "needs_sanad": 0.03,
+     "time_sensitive": 0.02,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.93,
+     "urgency": {
+      "score": 0.09000000000000001,
+      "probabilities": {
+       "0": 0.92,
+       "1": 0.07,
+       "2": 0.01,
+       "3": 0.0,
+       "4": 0.0
+      }
+     }
     },
-    "cost": 0.002394,
+    "latency_ms": 2299,
+    "tokens": {
+     "in": 1824,
+     "out": 124
+    },
+    "cost": 0.004888,
     "error": null
    },
    "auto_reply": "Thanks for the heads up, Lina! Sanad is tied up at the moment but will look at this at 13:45. If it can't wait, just tap \"truly urgent\" and it'll get flagged right away.",
    "ci_explanation": null,
    "next_free_slot": "13:45"
+  },
+  "evt-034": {
+   "state": {
+    "now": "13:20, Sanad is free; next: Focus block at 14:00",
+    "sanad": "Sanad: Product engineer at a startup; works with leadership and leads the Checkout team",
+    "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+    "sender": "Hadi, Operations lead at Cedar Market (customer)",
+    "channel": "Email",
+    "message": "Launch today: API key still in test mode\n\nHi Sanad,\n\nOur stores go live on your checkout today. Our production API key is still in test mode, so no real payments go through. We need it switched to live before 15:00, when our launch email goes out to 40,000 customers. Can you switch it on?\n\nThanks,\nHadi",
+    "linked_items": [
+     "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
+    ]
+   },
+   "facts": {
+    "deadline_in_minutes": 100
+   },
+   "jev": {
+    "answers": {
+     "needs_sanad": 0.58,
+     "time_sensitive": 0.84,
+     "wording_only_urgency": 0.04,
+     "family_matter": 0.01,
+     "blocks_release": 0.96,
+     "is_noise": 0.01,
+     "urgency": {
+      "score": 3.12,
+      "probabilities": {
+       "0": 0,
+       "1": 0,
+       "2": 0.24,
+       "3": 0.39,
+       "4": 0.37
+      }
+     }
+    },
+    "latency_ms": 561,
+    "usage": {
+     "input_tokens": 1172,
+     "output_tokens": 127,
+     "cost": 4.9224e-05,
+     "is_byok": false,
+     "cost_details": {
+      "upstream_inference_cost": 4.9224e-05,
+      "upstream_inference_prompt_cost": 4.9224e-05,
+      "upstream_inference_completions_cost": 0
+     }
+    },
+    "model": "typesafe/jev-1.14-20261014",
+    "request": {
+     "model": "typesafe/jev-1.14",
+     "state": {
+      "now": "13:20, Sanad is free; next: Focus block at 14:00",
+      "sanad": "Sanad: Product engineer at a startup; works with leadership and leads the Checkout team",
+      "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
+      "sender": "Hadi, Operations lead at Cedar Market (customer)",
+      "channel": "Email",
+      "message": "Launch today: API key still in test mode\n\nHi Sanad,\n\nOur stores go live on your checkout today. Our production API key is still in test mode, so no real payments go through. We need it switched to live before 15:00, when our launch email goes out to 40,000 customers. Can you switch it on?\n\nThanks,\nHadi",
+      "linked_items": [
+       "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
+      ]
+     },
+     "questions": {
+      "needs_sanad": {
+       "type": "noul",
+       "instructions": "Does Sanad need to handle `message` himself?",
+       "criteria": {
+        "true": "Only Sanad has the knowledge, ownership or authority to act on it, for example it is about a ticket or decision he owns, or the sender asks for him specifically about his own work.",
+        "false": "A teammate, the support or DevOps team, a doc or anyone on the team could answer or handle it just as well."
+       }
+      },
+      "time_sensitive": {
+       "type": "noul",
+       "instructions": "Will waiting until Sanad's next free slot cause real harm?",
+       "criteria": {
+        "true": "Something breaks or stays broken for customers, a release or the investor demo is put at risk, money is lost, a person or child needs care, or a deadline today is missed if this waits a few hours.",
+        "false": "It would be just as useful answered in a few hours or tomorrow; nothing gets worse in the meantime."
+       }
+      },
+      "wording_only_urgency": {
+       "type": "noul",
+       "instructions": "Does `message` sound urgent while nothing in it is actually time-critical?",
+       "criteria": {
+        "true": "It uses urgent wording such as caps, URGENT, ASAP or several exclamation marks about something that can safely wait, such as a cosmetic change to a slide or a preference.",
+        "false": "It does not sound urgent, or it sounds urgent and the urgency is real (something is broken or a person needs help)."
+       }
+      },
+      "family_matter": {
+       "type": "noul",
+       "instructions": "Is `message` about Sanad's family or personal life?",
+       "criteria": {
+        "true": "It comes from or is about his partner, his child, the child's school, his home or his health.",
+        "false": "It is about work: product, code, customers, colleagues or company matters."
+       }
+      },
+      "blocks_release": {
+       "type": "noul",
+       "instructions": "Does `message` report something broken or missing that would stop today's release, tomorrow's investor demo or a ticket due today from working?",
+       "criteria": {
+        "true": "A bug, outage, failing flow or missing piece that stops one of these from working, for example wrong prices in checkout or errors in production.",
+        "false": "It is unrelated to them, or it is a cosmetic or optional change such as a slide's colour or wording."
+       }
+      },
+      "is_noise": {
+       "type": "noul",
+       "instructions": "Is `message` informational with nothing for Sanad to do or reply to?",
+       "criteria": {
+        "true": "Newsletters, marketing, automated status notifications, reminders he already has, or a plain thanks or reaction.",
+        "false": "It asks a question, requests something, or carries information Sanad needs to act on or reply to."
+       }
+      },
+      "urgency": {
+       "type": "score",
+       "instructions": "How soon does `message` need a response from Sanad?",
+       "criteria": [
+        "It can wait days, or needs no response at all.",
+        "It should be answered sometime this week.",
+        "It should be answered today, but a few hours of delay is fine.",
+        "It should be answered within the hour.",
+        "It needs action within minutes: something is broken, a person needs help, or a deadline is about to pass."
+       ]
+      }
+     }
+    },
+    "error": null
+   },
+   "baseline": {
+    "answers": {
+     "needs_sanad": 0.45,
+     "time_sensitive": 0.9,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.35,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 3.11,
+      "probabilities": {
+       "0": 0.01,
+       "1": 0.02,
+       "2": 0.12,
+       "3": 0.55,
+       "4": 0.3
+      }
+     }
+    },
+    "latency_ms": 2282,
+    "tokens": {
+     "in": 1913,
+     "out": 124
+    },
+    "cost": 0.005066,
+    "error": null
+   },
+   "auto_reply": "Hi Hadi, thanks for flagging this. Sanad is tied up at the moment and will look at your message at 13:50. If it truly can't wait until then, please tap \"truly urgent\" and it will be escalated right away.",
+   "ci_explanation": null,
+   "next_free_slot": "13:50"
   },
   "evt-013": {
    "state": {
@@ -2362,6 +2773,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 255
    },
    "jev": {
     "answers": {
@@ -2473,15 +2887,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.6,
-    "reason": "Yousef's PR review blocks today's CHK-88 release, which Sanad owns and is due today. Sanad is free now before his 14:00 focus block, so he can pick it up right away and not let it slip toward the evening.",
-    "latency_ms": 5047,
-    "tokens": {
-     "in": 809,
-     "out": 488
+    "answers": {
+     "needs_sanad": 0.6,
+     "time_sensitive": 0.55,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.2,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 2.5,
+      "probabilities": {
+       "0": 0.01,
+       "1": 0.03,
+       "2": 0.5,
+       "3": 0.37,
+       "4": 0.09
+      }
+     }
     },
-    "cost": 0.006498,
+    "latency_ms": 2377,
+    "tokens": {
+     "in": 1841,
+     "out": 124
+    },
+    "cost": 0.004922,
     "error": null
    },
    "auto_reply": "Hey Yousef, Sanad is tied up at the moment but will look at this at 16:00. If it can't wait until then, tap \"truly urgent\" and it'll get flagged right away.",
@@ -2495,36 +2924,40 @@
     "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
     "sender": "Layla, CEO (company leadership)",
     "channel": "Slack DM",
-    "message": "URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!"
+    "message": "URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!",
+    "commitment": "Sanad told the CEO the deck was final yesterday"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
-     "needs_sanad": 0.16,
-     "time_sensitive": 0.34,
+     "needs_sanad": 0.19,
+     "time_sensitive": 0.42,
      "wording_only_urgency": 0.94,
      "family_matter": 0.01,
      "blocks_release": 0.01,
      "is_noise": 0.01,
      "urgency": {
-      "score": 3.08,
+      "score": 2.95,
       "probabilities": {
-       "0": 0.01,
+       "0": 0,
        "1": 0.01,
-       "2": 0.24,
+       "2": 0.31,
        "3": 0.39,
-       "4": 0.35
+       "4": 0.29
       }
      }
     },
-    "latency_ms": 325,
+    "latency_ms": 349,
     "usage": {
-     "input_tokens": 1072,
+     "input_tokens": 1091,
      "output_tokens": 127,
-     "cost": 4.5024e-05,
+     "cost": 4.5822e-05,
      "is_byok": false,
      "cost_details": {
-      "upstream_inference_cost": 4.5024e-05,
-      "upstream_inference_prompt_cost": 4.5024e-05,
+      "upstream_inference_cost": 4.5822e-05,
+      "upstream_inference_prompt_cost": 4.5822e-05,
       "upstream_inference_completions_cost": 0
      }
     },
@@ -2537,7 +2970,8 @@
       "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
       "sender": "Layla, CEO (company leadership)",
       "channel": "Slack DM",
-      "message": "URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!"
+      "message": "URGENT!!! Can we make the investor deck background blue instead of grey?? Need it ASAP!!!",
+      "commitment": "Sanad told the CEO the deck was final yesterday"
      },
      "questions": {
       "needs_sanad": {
@@ -2604,18 +3038,33 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.6,
-    "reason": "A background color change for the investor deck is cosmetic and low-effort, so it does not justify breaking Sanad's focus block despite the CEO's urgent tone. The demo is tomorrow at 10:00, so there is time to handle it at his next free slot after 16:00.",
-    "latency_ms": 2305,
-    "tokens": {
-     "in": 741,
-     "out": 111
+    "answers": {
+     "needs_sanad": 0.45,
+     "time_sensitive": 0.2,
+     "wording_only_urgency": 0.9,
+     "family_matter": 0.01,
+     "blocks_release": 0.03,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 2.14,
+      "probabilities": {
+       "0": 0.07,
+       "1": 0.1,
+       "2": 0.5,
+       "3": 0.28,
+       "4": 0.05
+      }
+     }
     },
-    "cost": 0.002592,
+    "latency_ms": 1547,
+    "tokens": {
+     "in": 1800,
+     "out": 124
+    },
+    "cost": 0.00484,
     "error": null
    },
-   "auto_reply": "Hi Layla, Sanad is tied up at the moment but will look at your message at 16:00 and get back to you then. If it truly can't wait, please tap \"truly urgent\" and it will be flagged right away.",
+   "auto_reply": "Hi Layla, Sanad is tied up at the moment but will look at your message at 16:00 and get back to you then. If it truly can't wait until then, please tap \"truly urgent\" and it will be flagged right away.",
    "ci_explanation": null,
    "next_free_slot": "16:00"
   },
@@ -2630,6 +3079,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 220
    },
    "jev": {
     "answers": {
@@ -2741,15 +3193,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.72,
-    "reason": "Checkout showing 0 JOD for some users may be the CHK-88 pricing bug (owned by Sanad, due today, High priority) and could block today's release and tomorrow's investor demo, so it is worth breaking his focus block.",
-    "latency_ms": 1672,
-    "tokens": {
-     "in": 792,
-     "out": 102
+    "answers": {
+     "needs_sanad": 0.6,
+     "time_sensitive": 0.7,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.75,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 2.81,
+      "probabilities": {
+       "0": 0.01,
+       "1": 0.03,
+       "2": 0.3,
+       "3": 0.46,
+       "4": 0.2
+      }
+     }
     },
-    "cost": 0.002604,
+    "latency_ms": 2150,
+    "tokens": {
+     "in": 1824,
+     "out": 124
+    },
+    "cost": 0.004888,
     "error": null
    },
    "auto_reply": "Hey Rami, thanks for flagging this! Sanad is tied up at the moment but will take a look at 16:00. If it can't wait, just tap \"truly urgent\" and it'll get to him sooner.",
@@ -2769,6 +3236,9 @@
      "commit_message": "Bump eslint to 9.3.1",
      "log_tail": "Run: CI / test (main) #4812\nCommit: 3f1c2a9 \"Bump eslint to 9.3.1\"\nChanged files: package.json, package-lock.json\n\n=== FAILURES ===\n_____________________ test_cart_badge_updates_after_add _____________________\nweb/tests/cart.spec.ts:44\n  await page.click('[data-test=add-to-cart]')\n  await expect(page.locator('[data-test=cart-badge]')).toHaveText('1')\nError: Timed out 5000ms waiting for expect(locator).toHaveText(\"1\")\n  Received: \"\"\n  Call log:\n    - waiting for locator('[data-test=cart-badge]')\n    - locator resolved to <span data-test=\"cart-badge\"></span>\n    - unexpected value \"\"\n\nRetry history for this test (last 20 runs on main): 17 passed, 3 failed (timeout)\n1 failed, 412 passed in 3m21s"
     }
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -2841,15 +3311,22 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.8,
-    "reason": "Known flaky timeout test (3 of last 20 runs failed) on an unrelated eslint bump commit; rerun it silently rather than interrupting Sanad's focus block.",
-    "latency_ms": 1721,
-    "tokens": {
-     "in": 1119,
-     "out": 82
+    "answers": {
+     "failure_type": {
+      "flaky_test": 0.86,
+      "code_regression": 0.05,
+      "infra_problem": 0.02,
+      "config_or_lint": 0.07
+     },
+     "cause_identifiable": 0.9,
+     "blocks_release": 0.8
     },
-    "cost": 0.003058,
+    "latency_ms": 1691,
+    "tokens": {
+     "in": 1563,
+     "out": 78
+    },
+    "cost": 0.003906,
     "error": null
    },
    "auto_reply": null,
@@ -2872,6 +3349,9 @@
     "linked_items": [
      "CHK-91: Receipt email copy tweaks, Low priority, owned by Sanad, due next week"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -2947,15 +3427,22 @@
     "error": null
    },
    "baseline": {
-    "action": "delegate",
-    "confidence": 0.6,
-    "reason": "CI build on a low-priority copy branch failed from infrastructure causes (registry timeout, runner disk 96% full), not a code issue; it doesn't block the CHK-88 release or demo, so DevOps should look at the runner and registry while Sanad stays in focus.",
-    "latency_ms": 1916,
-    "tokens": {
-     "in": 1009,
-     "out": 113
+    "answers": {
+     "failure_type": {
+      "flaky_test": 0.02,
+      "code_regression": 0.01,
+      "infra_problem": 0.95,
+      "config_or_lint": 0.02
+     },
+     "cause_identifiable": 0.96,
+     "blocks_release": 0.03
     },
-    "cost": 0.003148,
+    "latency_ms": 1747,
+    "tokens": {
+     "in": 1453,
+     "out": 78
+    },
+    "cost": 0.003686,
     "error": null
    },
    "auto_reply": null,
@@ -2979,6 +3466,9 @@
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today",
      "PR #212 on branch investor-demo: Demo flow polish for tomorrow's investor demo"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 194
    },
    "jev": {
     "answers": {
@@ -3055,15 +3545,22 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.62,
-    "reason": "This is a real, deterministic failure, not a flaky test. Commit c09b5e2 on the investor-demo branch subtracts the discount twice (27.64 vs 27.84), so it breaks CHK-88 (Sanad's ticket, due today) and could break tomorrow's 10:00 demo. The fix is quick and Sanad owns it, so it is worth breaking his focus block.",
-    "latency_ms": 6722,
-    "tokens": {
-     "in": 1318,
-     "out": 744
+    "answers": {
+     "failure_type": {
+      "flaky_test": 0.02,
+      "code_regression": 0.94,
+      "infra_problem": 0.01,
+      "config_or_lint": 0.03
+     },
+     "cause_identifiable": 0.97,
+     "blocks_release": 0.96
     },
-    "cost": 0.010076,
+    "latency_ms": 3224,
+    "tokens": {
+     "in": 1762,
+     "out": 78
+    },
+    "cost": 0.004304,
     "error": null
    },
    "auto_reply": null,
@@ -3089,6 +3586,9 @@
     "linked_items": [
      "CHK-91: Receipt email copy tweaks, Low priority, owned by Sanad, due next week"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -3200,15 +3700,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.9,
-    "reason": "Low-priority receipt copy question (CHK-91, due next week) that doesn't block the CHK-88 release or tomorrow's demo, so it can wait until after Sanad's focus block ends at 16:00.",
-    "latency_ms": 1724,
-    "tokens": {
-     "in": 789,
-     "out": 93
+    "answers": {
+     "needs_sanad": 0.3,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.04,
+     "urgency": {
+      "score": 1.16,
+      "probabilities": {
+       "0": 0.2,
+       "1": 0.5,
+       "2": 0.25,
+       "3": 0.04,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002508,
+    "latency_ms": 1899,
+    "tokens": {
+     "in": 1821,
+     "out": 124
+    },
+    "cost": 0.004882,
     "error": null
    },
    "auto_reply": "Hi Dina! Sanad is tied up right now but will look at this at 16:00. If it can't wait, just tap \"truly urgent\" and it'll get flagged.",
@@ -3223,6 +3738,9 @@
     "sender": "Omar, Cofounder and CTO (company leadership)",
     "channel": "Slack DM",
     "message": "got a sec?"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -3331,15 +3849,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.6,
-    "reason": "Vague 'got a sec?' from the CTO has no stated urgency, so it can wait until the focus block ends at 16:00; interrupting would spend one of 5 daily interrupts on an unspecified ask, though a quick reply after the block is advisable given the demo tomorrow and today's CHK-88 release.",
-    "latency_ms": 2394,
-    "tokens": {
-     "in": 716,
-     "out": 126
+    "answers": {
+     "needs_sanad": 0.6,
+     "time_sensitive": 0.25,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.01,
+     "blocks_release": 0.08,
+     "is_noise": 0.03,
+     "urgency": {
+      "score": 2.5,
+      "probabilities": {
+       "0": 0.03,
+       "1": 0.07,
+       "2": 0.4,
+       "3": 0.37,
+       "4": 0.13
+      }
+     }
     },
-    "cost": 0.002692,
+    "latency_ms": 1529,
+    "tokens": {
+     "in": 1748,
+     "out": 124
+    },
+    "cost": 0.004736,
     "error": null
    },
    "auto_reply": "Hi Omar, Sanad is tied up at the moment but will look at your message at 16:00. If it can't wait until then, just tap \"truly urgent\" and it will reach him right away.",
@@ -3357,6 +3890,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 160
    },
    "jev": {
     "answers": {
@@ -3468,15 +4004,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.6,
-    "reason": "Noor's question is a single customer report that likely maps to the known CHK-88 discount issue. Sanad's focus block ends at 16:00, so it can wait 40 minutes for a reply, and it isn't a release blocker.",
-    "latency_ms": 4988,
-    "tokens": {
-     "in": 793,
-     "out": 514
+    "answers": {
+     "needs_sanad": 0.45,
+     "time_sensitive": 0.35,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.3,
+     "is_noise": 0.03,
+     "urgency": {
+      "score": 2.28,
+      "probabilities": {
+       "0": 0.03,
+       "1": 0.1,
+       "2": 0.5,
+       "3": 0.3,
+       "4": 0.07
+      }
+     }
     },
-    "cost": 0.006726,
+    "latency_ms": 2701,
+    "tokens": {
+     "in": 1825,
+     "out": 124
+    },
+    "cost": 0.00489,
     "error": null
    },
    "auto_reply": "Hi Noor, Sanad is tied up at the moment but will take a look at this at 16:00. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -3499,6 +4050,9 @@
     "linked_items": [
      "CHK-91: Receipt email copy tweaks, Low priority, owned by Sanad, due next week"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -3574,15 +4128,22 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.85,
-    "reason": "Real but minor lint failures (unused import, long line) on low-priority branch chk-91, which is not CHK-88 or the demo; it's not a flaky test so no silent rerun, and Sanad can fix it after his focus block or in the digest.",
-    "latency_ms": 2092,
-    "tokens": {
-     "in": 985,
-     "out": 103
+    "answers": {
+     "failure_type": {
+      "flaky_test": 0.003,
+      "code_regression": 0.007,
+      "infra_problem": 0.003,
+      "config_or_lint": 0.987
+     },
+     "cause_identifiable": 0.99,
+     "blocks_release": 0.02
     },
-    "cost": 0.003,
+    "latency_ms": 1845,
+    "tokens": {
+     "in": 1429,
+     "out": 78
+    },
+    "cost": 0.003638,
     "error": null
    },
    "auto_reply": null,
@@ -3597,6 +4158,9 @@
     "sender": "Layla, CEO (company leadership)",
     "channel": "Email",
     "message": "FYI attaching the board update draft. Comments welcome by Friday."
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -3705,15 +4269,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.93,
-    "reason": "FYI email from the CEO with a Friday deadline, not urgent and not blocking the release or demo, so hold it for the digest instead of interrupting the focus block.",
-    "latency_ms": 2422,
-    "tokens": {
-     "in": 724,
-     "out": 77
+    "answers": {
+     "needs_sanad": 0.2,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.25,
+     "urgency": {
+      "score": 0.79,
+      "probabilities": {
+       "0": 0.3,
+       "1": 0.62,
+       "2": 0.07,
+       "3": 0.01,
+       "4": 0.0
+      }
+     }
     },
-    "cost": 0.002218,
+    "latency_ms": 5377,
+    "tokens": {
+     "in": 1756,
+     "out": 124
+    },
+    "cost": 0.004752,
     "error": null
    },
    "auto_reply": "Hi Layla, thanks for sending the board update draft. Sanad is tied up at the moment but will look at it at 16:00 today. If it truly can't wait, you can tap \"truly urgent\" and it will get his attention sooner.",
@@ -3728,6 +4307,9 @@
     "sender": "Dina, Product manager (product team)",
     "channel": "Slack DM",
     "message": "PM sync moved to tomorrow 2pm, same link"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -3836,15 +4418,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.9,
-    "reason": "Routine meeting reschedule for tomorrow 2pm that needs no immediate action; it doesn't block the release or the investor demo, so hold it for the digest or next free slot.",
-    "latency_ms": 1388,
-    "tokens": {
-     "in": 726,
-     "out": 82
+    "answers": {
+     "needs_sanad": 0.1,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.6,
+     "urgency": {
+      "score": 0.86,
+      "probabilities": {
+       "0": 0.5,
+       "1": 0.2,
+       "2": 0.25,
+       "3": 0.04,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002272,
+    "latency_ms": 1682,
+    "tokens": {
+     "in": 1758,
+     "out": 124
+    },
+    "cost": 0.004756,
     "error": null
    },
    "auto_reply": "Hi Dina, thanks for the heads-up! Sanad is tied up at the moment but will look at this at 16:40. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged.",
@@ -3862,6 +4459,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": 95
    },
    "jev": {
     "answers": {
@@ -3973,15 +4573,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.93,
-    "reason": "Prod checkout error rate at 8% after the 16:15 deploy, and his tech lead needs Sanad's rollback call now. It also affects the CHK-88 release and tomorrow's investor demo, and Sanad is free and not yet in evening mode.",
-    "latency_ms": 1545,
-    "tokens": {
-     "in": 818,
-     "out": 110
+    "answers": {
+     "needs_sanad": 0.8,
+     "time_sensitive": 0.97,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.93,
+     "is_noise": 0.01,
+     "urgency": {
+      "score": 3.83,
+      "probabilities": {
+       "0": 0.0,
+       "1": 0.0,
+       "2": 0.02,
+       "3": 0.13,
+       "4": 0.85
+      }
+     }
     },
-    "cost": 0.002736,
+    "latency_ms": 2218,
+    "tokens": {
+     "in": 1850,
+     "out": 124
+    },
+    "cost": 0.00494,
     "error": null
    },
    "auto_reply": "Hey Yousef, Sanad is tied up right now and will look at this at 16:55. If it can't wait until then, tap \"truly urgent\" and it'll get through to him right away.",
@@ -3996,6 +4611,9 @@
     "sender": "Product Weekly newsletter (automated)",
     "channel": "Email",
     "message": "Last chance: early-bird tickets for ProductConf end tonight!"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4104,15 +4722,30 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.95,
-    "reason": "Automated promotional newsletter email about conference tickets; no relevance to the CHK-88 release or tomorrow's investor demo and no action needed.",
-    "latency_ms": 1581,
-    "tokens": {
-     "in": 729,
-     "out": 72
+    "answers": {
+     "needs_sanad": 0.02,
+     "time_sensitive": 0.02,
+     "wording_only_urgency": 0.5,
+     "family_matter": 0.01,
+     "blocks_release": 0.01,
+     "is_noise": 0.97,
+     "urgency": {
+      "score": 0.096,
+      "probabilities": {
+       "0": 0.93,
+       "1": 0.05,
+       "2": 0.015,
+       "3": 0.004,
+       "4": 0.001
+      }
+     }
     },
-    "cost": 0.002178,
+    "latency_ms": 2201,
+    "tokens": {
+     "in": 1761,
+     "out": 124
+    },
+    "cost": 0.004762,
     "error": null
    },
    "auto_reply": null,
@@ -4127,6 +4760,9 @@
     "sender": "Rami, Junior developer (Sanad's team: checkout)",
     "channel": "Slack DM",
     "message": "where do we keep the staging credentials for the payments sandbox?"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4235,15 +4871,30 @@
     "error": null
    },
    "baseline": {
-    "action": "delegate",
-    "confidence": 0.6,
-    "reason": "A routine question about where staging credentials are kept is not urgent for Sanad; a teammate or DevOps can answer it and point Rami to the secrets manager, so there is no need to interrupt before school pickup. It is a credentials question, so it should be answered by someone who can safely direct him to the proper vault rather than by sharing them in chat.",
-    "latency_ms": 2274,
-    "tokens": {
-     "in": 736,
-     "out": 134
+    "answers": {
+     "needs_sanad": 0.1,
+     "time_sensitive": 0.12,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.08,
+     "is_noise": 0.03,
+     "urgency": {
+      "score": 2.04,
+      "probabilities": {
+       "0": 0.12,
+       "1": 0.1,
+       "2": 0.45,
+       "3": 0.28,
+       "4": 0.05
+      }
+     }
     },
-    "cost": 0.002812,
+    "latency_ms": 1514,
+    "tokens": {
+     "in": 1768,
+     "out": 124
+    },
+    "cost": 0.004776,
     "error": null
    },
    "auto_reply": "Hey Rami, Sanad's tied up at the moment but will look at this at 09:00 tomorrow. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -4258,6 +4909,9 @@
     "sender": "Riverside School office (School of Sanad's daughter, family)",
     "channel": "Email",
     "message": "Reminder: pickup is at the east gate today because of maintenance work."
+   },
+   "facts": {
+    "deadline_in_minutes": 40
    },
    "jev": {
     "answers": {
@@ -4366,15 +5020,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.86,
-    "reason": "School pickup is at 17:30, ten minutes away, and the gate has moved to the east gate. This is time-sensitive family information that would be useless in a digest.",
-    "latency_ms": 2426,
-    "tokens": {
-     "in": 734,
-     "out": 200
+    "answers": {
+     "needs_sanad": 0.9,
+     "time_sensitive": 0.85,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.99,
+     "blocks_release": 0.01,
+     "is_noise": 0.1,
+     "urgency": {
+      "score": 3.35,
+      "probabilities": {
+       "0": 0.02,
+       "1": 0.02,
+       "2": 0.1,
+       "3": 0.31,
+       "4": 0.55
+      }
+     }
     },
-    "cost": 0.003468,
+    "latency_ms": 2621,
+    "tokens": {
+     "in": 1766,
+     "out": 124
+    },
+    "cost": 0.004772,
     "error": null
    },
    "auto_reply": "Hello, thanks for the message. Sanad is busy at the moment and will look at it at 09:00 tomorrow. If it can't wait, please tap \"truly urgent\" and it will be flagged right away.",
@@ -4389,6 +5058,9 @@
     "sender": "Dina, Product manager (product team)",
     "channel": "Slack DM",
     "message": "updated the sprint board, take a look tomorrow"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4497,15 +5169,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.88,
-    "reason": "Dina's note is a non-urgent sprint board update that she says can wait until tomorrow. It doesn't block the CHK-88 release or the investor demo, and it's evening mode, so hold it for the morning digest.",
-    "latency_ms": 1500,
-    "tokens": {
-     "in": 716,
-     "out": 94
+    "answers": {
+     "needs_sanad": 0.08,
+     "time_sensitive": 0.03,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.8,
+     "urgency": {
+      "score": 0.26,
+      "probabilities": {
+       "0": 0.8,
+       "1": 0.15,
+       "2": 0.04,
+       "3": 0.01,
+       "4": 0.0
+      }
+     }
     },
-    "cost": 0.002372,
+    "latency_ms": 1612,
+    "tokens": {
+     "in": 1748,
+     "out": 124
+    },
+    "cost": 0.004736,
     "error": null
    },
    "auto_reply": "Thanks, Dina! Sanad is tied up right now but will check the sprint board at 09:00 tomorrow. If it can't wait until then, just tap \"truly urgent.\"",
@@ -4520,6 +5207,9 @@
     "sender": "Riverside School office (School of Sanad's daughter, family)",
     "channel": "Email",
     "message": "Your daughter is in the nurse's office\n\nYour daughter has a mild fever and is resting in the nurse's office. Please call us back when you can."
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4628,15 +5318,30 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.8,
-    "reason": "The school says his daughter has a fever and is in the nurse's office. This is family and needs a call back, so it should reach him now even though it's evening. 'When you can' and the mild fever make it slightly less urgent, but a sick child at school is worth a prompt notification.",
-    "latency_ms": 1634,
-    "tokens": {
-     "in": 753,
-     "out": 110
+    "answers": {
+     "needs_sanad": 0.95,
+     "time_sensitive": 0.8,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.99,
+     "blocks_release": 0.02,
+     "is_noise": 0.02,
+     "urgency": {
+      "score": 3.0,
+      "probabilities": {
+       "0": 0.01,
+       "1": 0.02,
+       "2": 0.2,
+       "3": 0.5,
+       "4": 0.27
+      }
+     }
     },
-    "cost": 0.002606,
+    "latency_ms": 2356,
+    "tokens": {
+     "in": 1785,
+     "out": 124
+    },
+    "cost": 0.00481,
     "error": null
    },
    "auto_reply": "Hello, this is an auto-reply on behalf of Sanad, who is busy at the moment and will look at your message at 09:00 tomorrow. If this can't wait, please tap \"truly urgent\" so it reaches him right away. Thank you for understanding.",
@@ -4651,6 +5356,9 @@
     "sender": "Layla, CEO (company leadership)",
     "channel": "Slack DM",
     "message": "thinking about next quarter's roadmap, thoughts on moving subscriptions up? let's discuss"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4759,15 +5467,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.88,
-    "reason": "It's evening mode (19:30) and Layla's roadmap question about moving subscriptions up is non-urgent, doesn't block the CHK-88 release or tomorrow's investor demo, so hold it for the morning digest.",
-    "latency_ms": 1606,
-    "tokens": {
-     "in": 734,
-     "out": 97
+    "answers": {
+     "needs_sanad": 0.8,
+     "time_sensitive": 0.04,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.02,
+     "is_noise": 0.04,
+     "urgency": {
+      "score": 1.11,
+      "probabilities": {
+       "0": 0.2,
+       "1": 0.55,
+       "2": 0.2,
+       "3": 0.04,
+       "4": 0.01
+      }
+     }
     },
-    "cost": 0.002438,
+    "latency_ms": 4557,
+    "tokens": {
+     "in": 1766,
+     "out": 124
+    },
+    "cost": 0.004772,
     "error": null
    },
    "auto_reply": "Hi Layla, thanks for your message. Sanad is tied up at the moment and will review it at 09:00 tomorrow. If it can't wait until then, please tap \"truly urgent\" and it will be flagged right away.",
@@ -4785,6 +5508,9 @@
     "linked_items": [
      "CHK-88: Checkout pricing: wrong totals for discounted plans, High priority, owned by Sanad, due today"
     ]
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -4896,15 +5622,30 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
-    "confidence": 0.62,
-    "reason": "Automated Jira status notice that CHK-88 was marked Done by Yousef. It needs no action and doesn't block the release or demo, so it shouldn't interrupt Sanad in evening mode.",
-    "latency_ms": 3949,
-    "tokens": {
-     "in": 788,
-     "out": 390
+    "answers": {
+     "needs_sanad": 0.15,
+     "time_sensitive": 0.1,
+     "wording_only_urgency": 0.02,
+     "family_matter": 0.01,
+     "blocks_release": 0.04,
+     "is_noise": 0.8,
+     "urgency": {
+      "score": 1.0,
+      "probabilities": {
+       "0": 0.5,
+       "1": 0.12,
+       "2": 0.28,
+       "3": 0.08,
+       "4": 0.02
+      }
+     }
     },
-    "cost": 0.005476,
+    "latency_ms": 2133,
+    "tokens": {
+     "in": 1820,
+     "out": 124
+    },
+    "cost": 0.00488,
     "error": null
    },
    "auto_reply": null,
@@ -4919,6 +5660,9 @@
     "sender": "Maha (Sanad's partner, family)",
     "channel": "Slack DM",
     "message": "dinner's ready 🍲"
+   },
+   "facts": {
+    "deadline_in_minutes": null
    },
    "jev": {
     "answers": {
@@ -5027,15 +5771,30 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.6,
-    "reason": "Maha's 'dinner's ready' is a family message that can wait only briefly and isn't urgent, so it doesn't merit using one of the 5 interrupts. Holding it for his next free slot fits the rule that family which can wait is held.",
-    "latency_ms": 1489,
-    "tokens": {
-     "in": 712,
-     "out": 101
+    "answers": {
+     "needs_sanad": 0.8,
+     "time_sensitive": 0.2,
+     "wording_only_urgency": 0.03,
+     "family_matter": 0.99,
+     "blocks_release": 0.01,
+     "is_noise": 0.1,
+     "urgency": {
+      "score": 2.52,
+      "probabilities": {
+       "0": 0.1,
+       "1": 0.03,
+       "2": 0.27,
+       "3": 0.45,
+       "4": 0.15
+      }
+     }
     },
-    "cost": 0.002434,
+    "latency_ms": 1582,
+    "tokens": {
+     "in": 1744,
+     "out": 124
+    },
+    "cost": 0.004728,
     "error": null
    },
    "auto_reply": "Thanks Maha! 🍲 Sanad's tied up at the moment and will see this at 09:00 tomorrow. If it can't wait, tap \"truly urgent\" and it'll reach him sooner.",
@@ -5046,57 +5805,87 @@
  "digest": {
   "groups": [
    {
-    "title": "Urgent: needs action now",
+    "title": "Urgent: production and customer launch",
     "items": [
      {
-      "event_id": "evt-030",
-      "summary": "School nurse says your daughter has a mild fever and is resting in the nurse's office; they asked you to call back.",
-      "draft_reply": null
+      "event_id": "evt-025",
+      "summary": "Yousef: prod checkout error rate jumped to 8% after the 16:15 deploy; he is asking whether to roll back and needs your call.",
+      "draft_reply": "Yes, roll back now. We can dig into the root cause once error rates are back to normal."
      },
      {
-      "event_id": "evt-025",
-      "summary": "Yousef: prod checkout error rate jumped to 8% after the 16:15 deploy; he is asking for your call on a rollback.",
-      "draft_reply": "Yes, roll back now. Please confirm once error rates are back to normal, and we'll do a postmortem tomorrow."
+      "event_id": "evt-034",
+      "summary": "Hadi (Cedar Market): their production API key is still in test mode and needs to be live before 15:00, when their launch email goes to 40,000 customers.",
+      "draft_reply": "Hi Hadi, sorry for the delay. I'm checking on the live switch for your production API key now and will confirm as soon as it's done."
      }
     ]
    },
    {
-    "title": "Omar (leadership)",
+    "title": "Family",
+    "items": [
+     {
+      "event_id": "evt-030",
+      "summary": "Riverside School: your daughter has a mild fever and is resting in the nurse's office; they ask you to call back.",
+      "draft_reply": null
+     },
+     {
+      "event_id": "evt-028",
+      "summary": "Riverside School: pickup is at the east gate today because of maintenance work.",
+      "draft_reply": null
+     },
+     {
+      "event_id": "evt-011",
+      "summary": "Maha asks you to pick up bread on the way home (not urgent).",
+      "draft_reply": "Sure, I'll grab some on the way home."
+     },
+     {
+      "event_id": "evt-033",
+      "summary": "Maha: dinner's ready.",
+      "draft_reply": null
+     }
+    ]
+   },
+   {
+    "title": "Omar (CTO)",
     "items": [
      {
       "event_id": "evt-006",
-      "summary": "Omar needed confirmation before 11 that checkout on the investor-demo branch works end to end with a discounted plan for tomorrow's demo.",
-      "draft_reply": "Sorry for the delay, Omar. I'm testing the investor-demo branch end to end with a discounted plan now and will confirm shortly."
+      "summary": "Omar wants confirmation that checkout on the investor-demo branch works end to end with a discounted plan, needed before 11 for tomorrow's demo.",
+      "draft_reply": "Hi Omar, sorry for the late reply. I'll run the investor-demo checkout with a discounted plan end to end and confirm the result shortly."
      },
      {
       "event_id": "evt-020",
-      "summary": "Omar asked 'got a sec?' with no details.",
+      "summary": "Omar: asked 'got a sec?' with no details.",
       "draft_reply": "Hi Omar, I'm free now. What's up?"
      }
     ]
    },
    {
-    "title": "Yousef and checkout team",
+    "title": "Yousef (checkout team)",
     "items": [
      {
-      "event_id": "evt-002",
-      "summary": "Yousef said the CHK-88 fix is on a branch and the PR would follow after standup.",
-      "draft_reply": null
+      "event_id": "evt-013",
+      "summary": "Yousef: the CHK-88 PR is up and he'd like your review today so it can ship.",
+      "draft_reply": "Hi Yousef, I'll review the CHK-88 PR first thing tomorrow."
      },
      {
-      "event_id": "evt-013",
-      "summary": "Yousef opened the CHK-88 PR and wants your review today so it can ship.",
-      "draft_reply": "Thanks Yousef, I'll review CHK-88 first thing tomorrow. Given the prod incident, let's hold the ship until then."
-     },
+      "event_id": "evt-002",
+      "summary": "Yousef: pushed the CHK-88 fix to a branch and planned to open the PR after standup.",
+      "draft_reply": null
+     }
+    ]
+   },
+   {
+    "title": "Rami (checkout team)",
+    "items": [
      {
       "event_id": "evt-015",
-      "summary": "Rami asks whether checkout is supposed to show 0 JOD for some users, which may be linked to the prod issue.",
-      "draft_reply": "No, that's not expected. Can you send an example user or order and the steps to reproduce? It may be related to today's deploy issue."
+      "summary": "Rami reports checkout showing 0 JOD for some users and asks if that's expected.",
+      "draft_reply": "No, that's not expected. Can you send me an example account or order so I can investigate?"
      },
      {
       "event_id": "evt-027",
       "summary": "Rami asks where the staging credentials for the payments sandbox are kept.",
-      "draft_reply": "They're in our team password manager under the payments sandbox entry. If you can't see it, tell me and I'll get you access."
+      "draft_reply": "Hi Rami, I'll send you the location shortly. Please don't share the credentials in chat."
      },
      {
       "event_id": "evt-008",
@@ -5111,17 +5900,17 @@
      {
       "event_id": "evt-005",
       "summary": "Noor: a customer asks whether checkout supports Apple Pay yet.",
-      "draft_reply": "Hi Noor, I need to double-check the current status before you answer the customer. I'll get back to you tomorrow."
+      "draft_reply": "Hi Noor, I'll confirm Apple Pay status and get back to you so you have a firm answer for the customer."
      },
      {
       "event_id": "evt-021",
-      "summary": "Noor: a customer says discount code SPRING20 isn't applying at checkout and asks if it's a known issue.",
-      "draft_reply": "Thanks Noor, I'm looking into it and it may be related to today's checkout problems. Please send the customer's order or account details and the exact error shown."
+      "summary": "Noor: a customer's SPRING20 discount code isn't applying at checkout; she asks if it's a known issue.",
+      "draft_reply": "Hi Noor, I haven't confirmed that as a known issue yet. Can you send the customer's cart details and the time they tried so I can check?"
      },
      {
       "event_id": "evt-009",
       "summary": "Hana: several tickets ask how to download invoices from the account page; she asks if there's a help article to link.",
-      "draft_reply": "Hi Hana, I'll check whether we have a help article and send the link tomorrow. If not, I'll get one drafted."
+      "draft_reply": "Hi Hana, I'll check whether we have an article on invoice downloads and send you the link, or get one written if not."
      }
     ]
    },
@@ -5134,14 +5923,14 @@
       "draft_reply": null
      },
      {
-      "event_id": "evt-029",
-      "summary": "Dina says she updated the sprint board herself and asks you to take a look tomorrow.",
-      "draft_reply": null
+      "event_id": "evt-019",
+      "summary": "Dina asks whether the receipt should say 'Thanks for your order' or 'Thank you for your purchase'.",
+      "draft_reply": "I'd go with 'Thank you for your purchase'. It reads a bit more polished."
      },
      {
-      "event_id": "evt-019",
-      "summary": "Dina asks which receipt wording to use: 'Thanks for your order' or 'Thank you for your purchase'.",
-      "draft_reply": "I'd go with 'Thank you for your purchase'. It reads a bit more polished for a receipt."
+      "event_id": "evt-029",
+      "summary": "Dina updated the sprint board and asks you to take a look tomorrow.",
+      "draft_reply": null
      },
      {
       "event_id": "evt-024",
@@ -5150,7 +5939,7 @@
      },
      {
       "event_id": "evt-010",
-      "summary": "Dina invited you to lunch at 12:10.",
+      "summary": "Dina asked if you wanted lunch.",
       "draft_reply": null
      }
     ]
@@ -5161,37 +5950,17 @@
      {
       "event_id": "evt-014",
       "summary": "Layla urgently asks to change the investor deck background from grey to blue.",
-      "draft_reply": "Hi Layla, I'll check with whoever owns the deck design and get back to you. Blue is fine by me."
+      "draft_reply": "Hi Layla, sorry for the late reply. I'll check on the deck background and get back to you."
      },
      {
       "event_id": "evt-023",
-      "summary": "Layla shared the board update draft; comments are welcome by Friday.",
+      "summary": "Layla shared the board update draft; comments welcome by Friday.",
       "draft_reply": null
      },
      {
       "event_id": "evt-031",
       "summary": "Layla wants to discuss moving subscriptions up in next quarter's roadmap.",
-      "draft_reply": "Happy to discuss. Let's find a time tomorrow, and I'll prepare the impact on the current roadmap."
-     }
-    ]
-   },
-   {
-    "title": "Family",
-    "items": [
-     {
-      "event_id": "evt-011",
-      "summary": "Maha asked you to pick up bread on the way home (not urgent).",
-      "draft_reply": null
-     },
-     {
-      "event_id": "evt-028",
-      "summary": "School reminder: pickup is at the east gate today because of maintenance.",
-      "draft_reply": null
-     },
-     {
-      "event_id": "evt-033",
-      "summary": "Maha says dinner is ready.",
-      "draft_reply": null
+      "draft_reply": "Happy to discuss. I can share my thoughts on timing and scope tomorrow. When works for you?"
      }
     ]
    },

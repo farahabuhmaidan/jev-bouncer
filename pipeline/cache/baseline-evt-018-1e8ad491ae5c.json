@@ -1,0 +1,19 @@
+{
+ "answers": {
+  "failure_type": {
+   "flaky_test": 0.02,
+   "code_regression": 0.94,
+   "infra_problem": 0.01,
+   "config_or_lint": 0.03
+  },
+  "cause_identifiable": 0.97,
+  "blocks_release": 0.96
+ },
+ "latency_ms": 3224,
+ "tokens": {
+  "in": 1762,
+  "out": 78
+ },
+ "cost": 0.004304,
+ "error": null
+}

@@ -4,6 +4,8 @@ import pytest
 from server.db import Store, seed_store
 from server.live import process_event
 
+N_EVENTS = len(__import__("json").loads((__import__("pathlib").Path(__file__).resolve().parent.parent / "data" / "events.json").read_text()))
+
 BLOCKER = {"needs_sanad": 0.9, "time_sensitive": 0.9, "wording_only_urgency": 0.05, "family_matter": 0.02,
            "blocks_release": 0.93, "is_noise": 0.02}
 LOUD = {**BLOCKER, "blocks_release": 0.05, "wording_only_urgency": 0.93, "time_sensitive": 0.4}
@@ -32,9 +34,9 @@ def store(tmp_path):
     return s
 
 
-def test_seed_loads_33_events_with_results(store):
+def test_seed_loads_every_event_with_results(store):
     events = store.all_events()
-    assert len(events) == 33 and all(e["origin"] == "seed" for e in events)
+    assert len(events) == N_EVENTS and all(e["origin"] == "seed" for e in events)
     assert set(store.results()) == {e["id"] for e in events}
     assert store.get("clock") == "08:00" and store.get("snapshot")["people"]["rami"]["name"] == "Rami"
 
@@ -46,7 +48,7 @@ def test_live_event_gets_id_time_and_decision(store):
     assert out["event"]["id"] == "live-1" and out["event"]["time"] == "14:12" and out["event"]["origin"] == "live"
     assert out["decision"]["action"] == "interrupt" and out["decision"]["rule"] == 4
     assert out["result"]["state"]["message"] == "checkout is broken"
-    assert len(store.all_events()) == 34
+    assert len(store.all_events()) == N_EVENTS + 1
 
 
 def test_live_jev_error_is_stored_as_error_after_one_retry(store):
@@ -104,7 +106,7 @@ def test_reset_live_keeps_seed(store):
     store.add_feedback("evt-020", "ask", "interrupt")
     store.put("clock", "15:00")
     store.reset_live()
-    assert len(store.all_events()) == 33 and store.feedback() == {} and store.get("clock") == "08:00"
+    assert len(store.all_events()) == N_EVENTS and store.feedback() == {} and store.get("clock") == "08:00"
     assert "live-1" not in store.results()
 
 
@@ -114,3 +116,15 @@ def test_live_ids_keep_counting_after_restart(tmp_path):
     s2 = Store(tmp_path / "t.db")
     out = process_event(s2, {"type": "message", "source": "compose", "sender": "rami", "text": "y"}, ask=fake_ask(BLOCKER), write=None)
     assert out["event"]["id"] == "live-2"
+
+
+def test_live_event_gets_deadline_fact_and_row5(store):
+    store.put("clock", "14:12")
+    quiet = {**BLOCKER, "blocks_release": 0.1, "time_sensitive": 0.5, "needs_sanad": 0.5}
+    out = process_event(store, {"type": "message", "source": "compose", "sender": "noor",
+                                "text": "the customer needs the refund export before 15:00"},
+                        ask=fake_ask(quiet), write=None)
+    assert out["result"]["facts"] == {"deadline_in_minutes": 48}
+    assert (out["decision"]["action"], out["decision"]["rule"]) == ("interrupt", 5)
+    assert "deadline_in_minutes" not in out["result"]["state"]
+    assert out["baseline_decision"] is None

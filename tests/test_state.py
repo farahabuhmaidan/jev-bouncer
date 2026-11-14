@@ -64,3 +64,61 @@ def test_evening_now(snap, events):
                                         ("17:40", "09:00 tomorrow"), ("09:35", "09:45")])
 def test_next_free_slot(snap, t, expected):
     assert next_free_slot(t, snap) == expected
+
+
+# --- deadline fact and commitments (design/02, teammate update 6fdb305) ---
+from pipeline.state import deadline_minutes  # noqa: E402
+
+
+def _msg(text, time="14:00", sender="noor"):
+    return {"id": "x", "time": time, "type": "message", "source": "slack", "sender": sender, "text": text}
+
+
+def test_deadline_by_and_before_hhmm(snap):
+    assert deadline_minutes(_msg("please confirm by 14:40"), snap) == 40
+    assert deadline_minutes(_msg("we need it live before 15:00 for our launch"), snap) == 60
+
+
+def test_deadline_today_ends_at_18(snap):
+    assert deadline_minutes(_msg("can you look at this today?"), snap) == 240
+
+
+def test_deadline_linked_ticket_due_today(snap, events):
+    assert deadline_minutes(events["evt-015"], snap) == 220  # Rami 14:20, CHK-88 due today → 18:00
+
+
+def test_deadline_none_when_nothing_matches_or_passed(snap):
+    assert deadline_minutes(_msg("lunch?"), snap) is None
+    assert deadline_minutes(_msg("please confirm by 13:00"), snap) is None
+
+
+def test_deadline_takes_the_nearest(snap):
+    assert deadline_minutes(_msg("by 17:00 at the latest, ideally before 14:30, today"), snap) == 30
+
+
+def test_deadline_not_in_state(snap):
+    s = build_state(_msg("please confirm by 14:40"), snap)
+    assert "deadline" not in str(s).lower() or "by 14:40" in s["message"]
+    assert "deadline_in_minutes" not in s
+
+
+def test_commitment_for_matching_sender(snap, events):
+    assert build_state(events["evt-014"], snap)["commitment"] == "Sanad told the CEO the deck was final yesterday"
+
+
+def test_no_commitment_otherwise(snap, events):
+    assert "commitment" not in build_state(events["evt-015"], snap)
+
+
+def test_customer_sender_sentence():
+    snap = load_snapshot(DATA / "snapshot.json")
+    assert build_state(_msg("hi", sender="hadi"), snap)["sender"] == "Hadi, Operations lead at Cedar Market (customer)"
+
+
+def test_commitment_only_when_about_matches(snap):
+    roadmap = _msg("thinking about next quarter's roadmap, thoughts on moving subscriptions up?", sender="layla")
+    assert "commitment" not in build_state(roadmap, snap)
+
+
+def test_deadline_tonight_is_not_a_workday_deadline(snap):
+    assert deadline_minutes(_msg("early-bird tickets end tonight!", time="16:50"), snap) is None

@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 from server.app import create_app
 from server.db import Store, seed_store
 
+N_EVENTS = len(__import__("json").loads((__import__("pathlib").Path(__file__).resolve().parent.parent / "data" / "events.json").read_text()))
+
 ROOT = Path(__file__).resolve().parent.parent
 BLOCKER = {"needs_sanad": 0.9, "time_sensitive": 0.9, "wording_only_urgency": 0.05, "family_matter": 0.02,
            "blocks_release": 0.93, "is_noise": 0.02}
@@ -80,20 +82,20 @@ def test_post_event_live(make):
 def test_post_event_unknown_sender_422(make):
     c, store = make()
     assert c.post("/api/events", json={"sender": "nobody", "text": "hi"}).status_code == 422
-    assert len(store.all_events()) == 33
+    assert len(store.all_events()) == N_EVENTS
 
 
 def test_post_event_empty_text_422(make):
     c, store = make()
     assert c.post("/api/events", json={"sender": "rami", "text": "   "}).status_code == 422
-    assert len(store.all_events()) == 33
+    assert len(store.all_events()) == N_EVENTS
 
 
 def test_post_event_jev_down_502_and_stored(make):
     c, store = make(ask=ask_down)
     r = c.post("/api/events", json={"sender": "rami", "text": "hello"})
     assert r.status_code == 502 and r.json()["decision"]["action"] == "error"
-    assert len(store.all_events()) == 34
+    assert len(store.all_events()) == N_EVENTS + 1
 
 
 def test_post_event_without_key_is_clear_error(make):
@@ -145,7 +147,11 @@ def test_feedback_validation(make):
 def test_metrics_shape(make):
     c, _ = make()
     m = c.get("/api/metrics").json()
-    assert round(m["jev"]["accuracy"] * 100) == 64 and m["n"] == 33 and m["settings_changed"] is False
+    assert m["n"] == N_EVENTS and m["settings_changed"] is False
+    for col in ("jev", "llm"):
+        assert {"critical_misses", "precision", "false_alarm_rate", "cost_per_1k", "p50", "accuracy",
+                "accuracy_excl_asks", "asks", "errors"} <= set(m[col])
+    assert m["llm"]["errors"] == 0
 
 
 def test_metrics_ignore_live_events(make):
@@ -175,7 +181,7 @@ def test_reset(make):
     c.post("/api/events", json={"sender": "rami", "text": "x"})
     c.post("/api/clock", json={"time": "15:00"})
     assert c.post("/api/reset").status_code == 200
-    assert len(store.all_events()) == 33 and c.get("/api/day").json()["clock"] == "08:00"
+    assert len(store.all_events()) == N_EVENTS and c.get("/api/day").json()["clock"] == "08:00"
 
 
 def test_moments_in_time_order(make):
@@ -200,7 +206,7 @@ def test_dry_run_returns_full_response_and_stores_nothing(make):
     assert r.status_code == 200
     body = r.json()
     assert body["decision"]["action"] == "interrupt" and body["result"]["state"]["message"] == "checkout broken"
-    assert body["dry_run"] is True and len(store.all_events()) == 33
+    assert body["dry_run"] is True and len(store.all_events()) == N_EVENTS
 
 
 def test_custom_time_source_and_channel(make):
@@ -235,3 +241,19 @@ def test_outsider_sender_by_name(make):
     c, _ = make()
     r = c.post("/api/events", json={"sender_name": "Acme Corp sales", "text": "special offer", "dry_run": True}).json()
     assert r["event"]["sender"] == "unknown:Acme Corp sales" and "Acme Corp sales" in r["result"]["state"]["sender"]
+
+
+def test_day_has_baseline_decision_for_seeded_events_only(make):
+    c, _ = make()
+    c.post("/api/clock", json={"time": "14:30"})
+    c.post("/api/events", json={"sender": "rami", "text": "checkout is broken"})
+    events = {e["id"]: e for e in c.get("/api/day").json()["events"]}
+    assert events["evt-015"]["baseline_decision"]["action"] in {"interrupt", "batch", "delegate", "drop", "ask"}
+    assert events["evt-034"]["result"]["facts"]["deadline_in_minutes"] == 100
+    assert events["live-1"]["baseline_decision"] is None
+
+
+def test_settings_accept_deadline_minutes(make):
+    c, _ = make()
+    assert c.put("/api/settings", json={"deadlineMinutes": 60}).json()["deadlineMinutes"] == 60
+    assert c.put("/api/settings", json={"deadlineMinutes": 2}).json()["deadlineMinutes"] == 120

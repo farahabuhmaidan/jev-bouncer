@@ -67,6 +67,9 @@
   ],
   "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
   "devops_contact": "lina",
+  "commitments": [
+    {"who": "layla", "what": "Sanad told the CEO the deck was final", "when": "yesterday", "about": ["deck", "slide"]}
+  ],
   "people": {
     "sanad": {
       "name": "Sanad",
@@ -188,6 +191,7 @@
         "email": "maha@example.org"
       }
     },
+    "hadi": {"name": "Hadi", "role": "Operations lead at Cedar Market", "relationship": "customer", "team": null, "lead": null, "is_bot": false, "handles": {"slack": null, "email": "hadi@cedarmarket.example.com"}},
     "school": {
       "name": "Riverside School office",
       "role": "School of Sanad's daughter",

@@ -1,0 +1,27 @@
+{
+ "answers": {
+  "needs_sanad": 0.6,
+  "time_sensitive": 0.25,
+  "wording_only_urgency": 0.03,
+  "family_matter": 0.01,
+  "blocks_release": 0.08,
+  "is_noise": 0.03,
+  "urgency": {
+   "score": 2.5,
+   "probabilities": {
+    "0": 0.03,
+    "1": 0.07,
+    "2": 0.4,
+    "3": 0.37,
+    "4": 0.13
+   }
+  }
+ },
+ "latency_ms": 1529,
+ "tokens": {
+  "in": 1748,
+  "out": 124
+ },
+ "cost": 0.004736,
+ "error": null
+}

@@ -10,7 +10,7 @@ import re
 DEFAULTS = {
     "yesAt": 0.7, "noAt": 0.3, "interruptBar": 0.7, "risingBar": True, "budget": 5,
     "eveningStart": "18:00", "familyAlways": True, "silentRerun": True,
-    "family": ["maha", "school"], "vip": [],
+    "family": ["maha", "school"], "vip": [], "deadlineMinutes": 120,
 }
 MORNING = "until 09:00 tomorrow"
 _HHMM = re.compile(r"([01]\d|2[0-3]):[0-5]\d")
@@ -26,6 +26,7 @@ def effective_settings(settings: dict | None) -> dict:
     for k, lo, hi in [("yesAt", 0, 1), ("noAt", 0, 1), ("interruptBar", 0, 1)]:
         s[k] = _num(s[k], DEFAULTS[k], lo, hi)
     s["budget"] = int(_num(s["budget"], DEFAULTS["budget"], 0, 50))
+    s["deadlineMinutes"] = int(_num(s["deadlineMinutes"], DEFAULTS["deadlineMinutes"], 15, 480))
     for k in ("risingBar", "familyAlways", "silentRerun"):
         if not isinstance(s[k], bool):
             s[k] = DEFAULTS[k]
@@ -88,32 +89,39 @@ def _decide_message(event, r, s, day):
     people = day["snapshot"].get("people", {})
 
     family = event["sender"] in s["family"] or r.yes("family_matter")
+    deadline = day.get("deadline")
+    # Row 5 is checked here so evening mode (row 2) can step aside for it; it applies after rows 3-4.
+    deadline_soon = deadline is not None and deadline < s["deadlineMinutes"]
     if s["familyAlways"] and family:
         # Family can always reach Sanad, past the budget and evening mode, but only when it can't wait.
         # Family that can wait is held for his next free slot: never asked about or forwarded.
         return _out(r, "batch", 1, label=later) if r.no("time_sensitive") else _out(r, "interrupt", 1)
-    if day["evening"] and not family and not r.yes("blocks_release"):
+    if day["evening"] and not family and not r.yes("blocks_release") and not (deadline_soon and r.no("is_noise")):
         return _out(r, "batch", 2, label=MORNING)
     if r.yes("is_noise"):
         return _out(r, "drop", 3)
     if r.yes("blocks_release") and r.yes("needs_sanad"):
         return _out(r, "interrupt", 4)
+    if deadline_soon and r.no("is_noise"):
+        # A deadline the clock can read beats wording and budget; it never spends budget.
+        r.reasons.append({"q": "deadline_in_minutes", "value": deadline})
+        return _out(r, "interrupt", 5)
     if r.yes("wording_only_urgency") and not r.yes("blocks_release"):
-        return _out(r, "batch", 5, label=later)
+        return _out(r, "batch", 6, label=later)
     if r.unsure("needs_sanad"):
-        return _out(r, "ask", 6)
+        return _out(r, "ask", 7)
     if r.no("needs_sanad"):
         # Leadership asked Sanad directly: hold it for him rather than forwarding it.
         if (people.get(event["sender"]) or {}).get("relationship") == "leadership":
-            return _out(r, "batch", 7, label=later)
-        return _out(r, "delegate", 7, label=_delegate_to(event, day["snapshot"]))
+            return _out(r, "batch", 8, label=later)
+        return _out(r, "delegate", 8, label=_delegate_to(event, day["snapshot"]))
     # Timing only matters once Sanad is needed, so an unsure time_sensitive asks only here.
     if r.unsure("time_sensitive"):
-        return _out(r, "ask", 6)
+        return _out(r, "ask", 7)
     vip = event["sender"] in s["vip"]
     if r.yes("time_sensitive") and (vip or day["budget_left"] >= 1) and r.p("time_sensitive") >= day["bar"]:
-        return _out(r, "interrupt", 8, uses_budget=not vip)
-    return _out(r, "batch", 9, label=later)
+        return _out(r, "interrupt", 9, uses_budget=not vip)
+    return _out(r, "batch", 10, label=later)
 
 
 def _top(dist):
@@ -141,27 +149,32 @@ def _decide_ci(event, r, s, day, answers):
     return _out(r, "batch", "ci-regression", label="explanation in the digest")
 
 
-def decide(event: dict, jev: dict | None, settings: dict, day: dict) -> dict:
-    if not jev or jev.get("error"):
+def decide(event: dict, answers_result: dict | None, settings: dict, day: dict) -> dict:
+    """Route one event from one answer set (Jev's or the baseline's). day["deadline"] is the
+    deadline fact from code (minutes or None)."""
+    if not answers_result or answers_result.get("error"):
         return {"action": "error", "rule": "error", "reasons": [], "uses_budget": False,
-                "label": (jev or {}).get("error") or "no result"}
+                "label": (answers_result or {}).get("error") or "no result"}
     s = effective_settings(settings)
-    answers = jev.get("answers") or {}
+    answers = answers_result.get("answers") or {}
     r = _Reader(answers, s)
     if event["type"] == "ci_failure":
         return _decide_ci(event, r, s, day, answers)
     return _decide_message(event, r, s, day)
 
 
-def replay_day(events: list[dict], results: dict, snapshot: dict, settings: dict | None) -> dict:
-    """Routes the whole day in (time, id) order under the settings. Returns {event_id: decision}."""
+def replay_day(events: list[dict], results: dict, snapshot: dict, settings: dict | None,
+               source: str = "jev") -> dict:
+    """Routes the whole day in (time, id) order under the settings, from one answer source
+    ("jev" or "baseline"), each with its own budget. Returns {event_id: decision}."""
     s = effective_settings(settings)
     out, left = {}, s["budget"]
     for event in sorted(events, key=lambda e: (e["time"], e["id"])):
         res = results.get(event["id"]) or {}
         day = {"budget_left": left, "snapshot": snapshot, "bar": rising_bar(s, left),
-               "evening": event["time"] >= s["eveningStart"], "next_slot": res.get("next_free_slot")}
-        d = decide(event, res.get("jev"), s, day)
+               "evening": event["time"] >= s["eveningStart"], "next_slot": res.get("next_free_slot"),
+               "deadline": (res.get("facts") or {}).get("deadline_in_minutes")}
+        d = decide(event, res.get(source), s, day)
         if d["uses_budget"]:
             left -= 1
         out[event["id"]] = {**d, "bar": day["bar"], "budget_left_after": left}

@@ -81,3 +81,19 @@
 
 - [ ] **Step 1:** `make test` green; fresh clone → `make install seed app` works with no `.env` (live posts show ERROR with a clear message).
 - [ ] **Step 2:** Commit `docs: app README and slides`; push `build`.
+
+### Task 6: Same-policy comparison and the deadline row (teammate design update, commit a41d645)
+
+**Files:** Modify `pipeline/state.py`, `pipeline/llm.py`, `pipeline/run.py`, `server/policy.py`, `server/metrics.py`, `server/print_metrics.py`, `server/live.py`, `server/app.py`, `frontend/src/components/{Why,Metrics,Settings}.jsx`, `slides/`, `data/{snapshot,events}.json`, `data/raw/gmail/customer-deadline.json`, `data/CHANGELOG.md`, README. Spec: 02, 04, 05, 06, 07, 08 as updated.
+
+**Interfaces:**
+- `deadline_minutes(event, snapshot) -> int | None` ("by/before HH:MM", "today" and a linked ticket due today end at 18:00; nearest future one). Stored as `result.facts.deadline_in_minutes`, never in the state.
+- `snapshot.commitments[{who, what, when, about?}]` → `state.commitment` when `who` is the sender and the text mentions an `about` keyword (or a linked ticket matches).
+- `llm.baseline_judge(state, event_type) -> {answers (Jev shape), latency_ms, tokens, cost, error}`; `baseline_route` removed.
+- `decide(event, answers_result, settings, day)` reads `day["deadline"]`; row 5 = deadline < `deadlineMinutes` (15–480, default 120) and `no(is_noise)` → interrupt, no budget, reason `{q: "deadline_in_minutes", value}`; row 2 steps aside for it; rows 6–10 renumbered.
+- `replay_day(..., source="jev"|"baseline")`; `compute_metrics(events, decisions, results, settings, baseline=decisions)` adds precision, false_alarm_rate, accuracy_excl_asks, asks for both columns.
+- `/api/day` and `/api/events/{id}` add `baseline_decision` (None for live).
+
+- [x] **Step 1:** Tests first: `test_state` (deadline, commitment, customer sender), `test_data` (evt-034), `test_llm` (judge shape, prompt has no actions/settings, normalisation, out-of-range error), `test_run` (facts, judge in cache key), `test_policy` (row 5 cases, renumbering, source), `test_metrics` (precision, excl. asks, baseline errors), `test_live`/`test_api` (facts, baseline_decision, deadlineMinutes). Watched each fail.
+- [x] **Step 2:** Implement; UI: Why shows deadline and "baseline + same policy"; metrics strip and slide 6 in the new order; settings stepper.
+- [x] **Step 3:** `make pipeline` (≈ $0.20: 34 baseline calls, Jev + reply for evt-014 and evt-034, digest), then `make eval`, update README numbers, `make test` green, commit.

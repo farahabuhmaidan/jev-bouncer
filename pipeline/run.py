@@ -4,7 +4,8 @@
     python -m pipeline.run --eval-only  # rebuild results.json from the cache, no network
 
 The pipeline never decides what happens to an event. It records Jev's answers, the
-LLM-only baseline and the text the LLM writes; the policy runs in the browser.
+baseline LLM's answers to the same questions, the deadline fact and the text the LLM writes;
+server/policy.py routes both answer sets.
 """
 from __future__ import annotations
 
@@ -21,7 +22,7 @@ from .adapters.base import DEMO_TZ
 from .jev import JEV_MODEL, ask_jev
 from .load import load_events, load_snapshot
 from .questions import questions_for
-from .state import build_state, next_free_slot
+from .state import build_state, deadline_minutes, next_free_slot
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = ROOT / "pipeline" / "cache"
@@ -102,7 +103,7 @@ def llm_key_parts(system: str, schema: dict | None, params: dict) -> tuple:
     return (llm.LLM_MODEL, system, schema, params)
 
 
-def _one_event(event, snapshot, cache, offline, ask, route, reply, explain) -> dict:
+def _one_event(event, snapshot, cache, offline, ask, judge, reply, explain) -> dict:
     eid, etype = event["id"], event["type"]
     state = build_state(event, snapshot)
     slot = next_free_slot(event["time"], snapshot)
@@ -111,9 +112,9 @@ def _one_event(event, snapshot, cache, offline, ask, route, reply, explain) -> d
 
     jev = _cached(cache, Cache.key("jev", eid, JEV_MODEL, state, questions_for(etype)),
                   lambda: ask(state, etype), offline, not_cached)
-    baseline = _cached(cache, Cache.key("baseline", eid, *llm_key_parts(llm.BASELINE_SYSTEM, llm.BASELINE_SCHEMA, llm.BASELINE_PARAMS), state),
-                       lambda: route(state), offline,
-                       {"action": None, "confidence": None, "reason": None, "error": not_cached["error"]})
+    baseline = _cached(cache, Cache.key("baseline", eid, *llm_key_parts(llm.BASELINE_SYSTEM, llm.baseline_schema(etype), llm.BASELINE_PARAMS),
+                                        questions_for(etype), state),
+                       lambda: judge(state, etype), offline, {"answers": {}, "error": not_cached["error"]})
 
     auto_reply = None
     if _from_person(event, snapshot):
@@ -125,16 +126,16 @@ def _one_event(event, snapshot, cache, offline, ask, route, reply, explain) -> d
         ci_explanation = _cached(cache, Cache.key("explain", eid, *llm_key_parts(llm.CI_SYSTEM, llm.CI_SCHEMA, llm.CI_PARAMS), state),
                                  lambda: _safe(explain, state), offline, None)
 
-    return {"state": state, "jev": jev, "baseline": baseline, "auto_reply": auto_reply,
-            "ci_explanation": ci_explanation, "next_free_slot": slot}
+    return {"state": state, "facts": {"deadline_in_minutes": deadline_minutes(event, snapshot)}, "jev": jev,
+            "baseline": baseline, "auto_reply": auto_reply, "ci_explanation": ci_explanation, "next_free_slot": slot}
 
 
 def build_results(snapshot: dict, events: list[dict], cache: Cache | None = None, offline: bool = False,
-                  ask=ask_jev, route=llm.baseline_route, reply=llm.auto_reply, explain=llm.ci_explain,
+                  ask=ask_jev, judge=llm.baseline_judge, reply=llm.auto_reply, explain=llm.ci_explain,
                   summarize=llm.digest) -> dict:
     cache = cache or Cache()
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        outs = list(pool.map(lambda e: _one_event(e, snapshot, cache, offline, ask, route, reply, explain), events))
+        outs = list(pool.map(lambda e: _one_event(e, snapshot, cache, offline, ask, judge, reply, explain), events))
     per_event = {e["id"]: out for e, out in zip(events, outs)}
 
     # The digest covers every message from a person; the page shows the ones the current settings held back.

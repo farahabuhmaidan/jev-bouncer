@@ -37,9 +37,9 @@ def S(**over):
     return {**DEFAULTS, **over}
 
 
-def test_row8_quiet_time_sensitive_interrupts_and_uses_budget():
+def test_row9_quiet_time_sensitive_interrupts_and_uses_budget():
     d = decide(msg("rami"), jev(time_sensitive=0.9), DEFAULTS, day())
-    assert (d["action"], d["rule"], d["uses_budget"]) == ("interrupt", 8, True)
+    assert (d["action"], d["rule"], d["uses_budget"]) == ("interrupt", 9, True)
     assert any(r["q"] == "time_sensitive" for r in d["reasons"])
 
 
@@ -48,35 +48,35 @@ def test_row4_blocks_and_needs_interrupts_without_budget():
     assert (d["action"], d["rule"], d["uses_budget"]) == ("interrupt", 4, False)
 
 
-def test_row5_wording_only_urgency_batched_until_next_slot():
+def test_row6_wording_only_urgency_batched_until_next_slot():
     d = decide(msg("layla"), jev(time_sensitive=0.8, wording_only_urgency=0.93), DEFAULTS, day())
-    assert (d["action"], d["rule"], d["label"]) == ("batch", 5, "until 16:00")
+    assert (d["action"], d["rule"], d["label"]) == ("batch", 6, "until 16:00")
 
 
-def test_row6_unsure_needs_sanad_asks():
+def test_row7_unsure_needs_sanad_asks():
     d = decide(msg("omar"), jev(needs_sanad=0.5), DEFAULTS, day())
-    assert (d["action"], d["rule"]) == ("ask", 6)
+    assert (d["action"], d["rule"]) == ("ask", 7)
 
 
-def test_row7_delegates_to_lead():
+def test_row8_delegates_to_lead():
     d = decide(msg("noor"), jev(needs_sanad=0.1), DEFAULTS, day())
     assert (d["action"], d["label"]) == ("delegate", "forwarded to Hana")
 
 
-def test_row7_no_lead_or_sanad_lead_goes_to_team_channel():
+def test_row8_no_lead_or_sanad_lead_goes_to_team_channel():
     assert decide(msg("yousef"), jev(needs_sanad=0.1), DEFAULTS, day())["label"] == "forwarded to the team channel"
 
 
-def test_row7_leadership_is_batched_not_delegated():
+def test_row8_leadership_is_batched_not_delegated():
     d = decide(msg("layla"), jev(needs_sanad=0.1), DEFAULTS, day())
-    assert (d["action"], d["rule"]) == ("batch", 7)
+    assert (d["action"], d["rule"]) == ("batch", 8)
 
 
-def test_row6_unsure_timing_does_not_ask_when_not_needed():
+def test_row7_unsure_timing_does_not_ask_when_not_needed():
     assert decide(msg("noor"), jev(needs_sanad=0.1, time_sensitive=0.5), DEFAULTS, day())["action"] == "delegate"
 
 
-def test_row6_unsure_timing_asks_when_needed():
+def test_row7_unsure_timing_asks_when_needed():
     assert decide(msg("rami"), jev(time_sensitive=0.5), DEFAULTS, day())["action"] == "ask"
 
 
@@ -84,9 +84,9 @@ def test_row3_noise_dropped():
     assert decide(msg("noor"), jev(is_noise=0.9), DEFAULTS, day())["action"] == "drop"
 
 
-def test_row9_otherwise_batch():
+def test_row10_otherwise_batch():
     d = decide(msg("rami"), jev(), DEFAULTS, day())
-    assert (d["action"], d["rule"]) == ("batch", 9)
+    assert (d["action"], d["rule"]) == ("batch", 10)
 
 
 def test_row2_evening_batched_to_morning():
@@ -214,3 +214,54 @@ def test_evening_from_event_time_and_setting():
 
 def test_same_minute_ordered_by_id():
     assert list(replay([urgent("b", "14:00"), urgent("a", "14:00")])) == ["a", "b"]
+
+
+# Row 5: a deadline the clock can read (design/04). It is a fact from code, read from day["deadline"].
+def test_row5_deadline_soon_interrupts_without_budget():
+    d = decide(msg("hadi"), jev(needs_sanad=0.5), DEFAULTS, day(budget_left=0, deadline=40))
+    assert (d["action"], d["rule"], d["uses_budget"]) == ("interrupt", 5, False)
+    assert {"q": "deadline_in_minutes", "value": 40} in d["reasons"]
+
+
+def test_row5_deadline_far_or_none_does_not_fire():
+    assert decide(msg("rami"), jev(), DEFAULTS, day(deadline=220))["rule"] != 5
+    assert decide(msg("rami"), jev(), DEFAULTS, day(deadline=None))["rule"] != 5
+    assert decide(msg("rami"), jev(), DEFAULTS, day())["rule"] != 5
+
+
+def test_row5_noise_with_deadline_still_dropped():
+    d = decide(msg("noor"), jev(is_noise=0.9), DEFAULTS, day(deadline=30))
+    assert (d["action"], d["rule"]) == ("drop", 3)
+
+
+def test_row5_needs_no_noise_to_fire():
+    assert decide(msg("noor"), jev(is_noise=0.5), DEFAULTS, day(deadline=30))["rule"] != 5
+
+
+def test_row5_threshold_comes_from_settings():
+    assert decide(msg("rami"), jev(), S(deadlineMinutes=30), day(deadline=40))["rule"] != 5
+    assert decide(msg("rami"), jev(), S(deadlineMinutes=60), day(deadline=40))["rule"] == 5
+
+
+def test_row2_evening_skipped_when_deadline_row_fires():
+    d = decide(msg("hadi", "18:30"), jev(), DEFAULTS, day(evening=True, deadline=20))
+    assert (d["action"], d["rule"]) == ("interrupt", 5)
+
+
+def test_deadline_minutes_setting_validated():
+    assert effective_settings({"deadlineMinutes": 5})["deadlineMinutes"] == 120
+    assert effective_settings({"deadlineMinutes": "x"})["deadlineMinutes"] == 120
+    assert effective_settings({"deadlineMinutes": 480})["deadlineMinutes"] == 480
+
+
+def test_replay_reads_deadline_fact_and_routes_either_source():
+    events = [msg("hadi", "13:20", "a")]
+    results = {"a": {"facts": {"deadline_in_minutes": 100}, "jev": jev(), "baseline": jev(is_noise=0.9)}}
+    assert replay_day(events, results, SNAPSHOT, DEFAULTS)["a"]["rule"] == 5
+    assert replay_day(events, results, SNAPSHOT, DEFAULTS, source="baseline")["a"]["rule"] == 3
+
+
+def test_replay_baseline_missing_is_error():
+    events = [msg("rami", "13:20", "a")]
+    d = replay_day(events, {"a": {"jev": jev(), "baseline": None}}, SNAPSHOT, DEFAULTS, source="baseline")["a"]
+    assert d["action"] == "error"

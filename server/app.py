@@ -13,7 +13,7 @@ from pipeline.adapters import ADAPTERS
 from pipeline.jev import ask_jev
 
 from .db import DB_PATH, Store, seed_store
-from .live import decisions, process_event
+from .live import baseline_decisions, decisions, process_event
 from .metrics import compute_metrics
 from .policy import effective_settings
 
@@ -76,6 +76,7 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
     def day():
         clock, settings = store.get("clock"), effective_settings(store.get("settings"))
         results, routed, fb = store.results(), decisions(store), store.feedback()
+        base = baseline_decisions(store)
         visible = [e for e in store.all_events() if e["time"] <= clock]
         visible.sort(key=lambda e: (e["time"], e["id"]), reverse=True)
         urgent = {k for k, items in fb.items() if any(i["kind"] == "urgent" for i in items)}
@@ -83,8 +84,8 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         return {
             "clock": clock, "settings": settings, "evening": clock >= settings["eveningStart"],
             "budget": {"total": settings["budget"], "left": settings["budget"] - used},
-            "events": [{**e, "result": results.get(e["id"]), "decision": routed[e["id"]], "feedback": fb.get(e["id"], [])}
-                       for e in visible],
+            "events": [{**e, "result": results.get(e["id"]), "decision": routed[e["id"]],
+                        "baseline_decision": base.get(e["id"]), "feedback": fb.get(e["id"], [])} for e in visible],
             "phone": [e["id"] for e in visible if routed[e["id"]]["action"] == "interrupt" or e["id"] in urgent],
         }
 
@@ -94,7 +95,7 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         if not event:
             raise HTTPException(404, "no such event")
         return {**event, "result": store.results().get(event_id), "decision": decisions(store)[event_id],
-                "feedback": store.feedback().get(event_id, [])}
+                "baseline_decision": baseline_decisions(store).get(event_id), "feedback": store.feedback().get(event_id, [])}
 
     @app.post("/api/events")
     def new_event(body: NewEvent):
@@ -165,7 +166,8 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
 
     @app.get("/api/metrics")
     def metrics():
-        return compute_metrics(store.all_events(), decisions(store), store.results(), store.get("settings"))
+        return compute_metrics(store.all_events(), decisions(store), store.results(), store.get("settings"),
+                               baseline=decisions(store, "baseline"))
 
     @app.get("/api/digest")
     def digest():

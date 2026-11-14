@@ -36,6 +36,7 @@
   <table class="tt">
     <tr><td>family, can't wait</td><td><span class="chip interrupt">interrupt</span></td></tr>
     <tr><td>blocks the release and needs Sanad</td><td><span class="chip interrupt">interrupt</span></td></tr>
+    <tr><td>a deadline in under 2 hours (read by code, not a model)</td><td><span class="chip interrupt">interrupt</span></td></tr>
     <tr><td>sounds urgent, isn't</td><td><span class="chip batch">batch + auto-reply</span></td></tr>
     <tr><td>Jev unsure if Sanad is needed</td><td><span class="chip ask">ask Sanad</span></td></tr>
     <tr><td>doesn't need Sanad</td><td><span class="chip delegate">delegate</span></td></tr>
@@ -75,16 +76,16 @@
   <h2>The numbers</h2>
   <p class="muted" id="numbers-meta">loading…</p>
   <table class="numbers" id="numbers"></table>
-  <p class="muted small">Computed live by the Bouncer server (<code>/api/metrics</code>) over the 33 labelled events at the current settings. An “ask” counts as wrong.</p>
+  <p class="muted small">Both models answer the same questions; the same policy routes both. Computed live by the Bouncer server (<code>/api/metrics</code>) over every labelled event at the current settings.</p>
 </section>
 
 <section class="slide">
   <h2>Privacy and limits</h2>
   <ul class="steps">
     <li>Personal sources (Gmail, Calendar) are opt-in; nothing leaves the laptop except the model calls.</li>
-    <li>All people and data are fictional. One day, 33 hand-labelled events, 8 held out: a small set.</li>
+    <li>All people and data are fictional. One day, 34 hand-labelled events, 8 held out: a small set.</li>
     <li>Labels and rules were corrected after the first real run; every change is logged in <code>data/CHANGELOG.md</code>.</li>
-    <li>The LLM baseline is one prompt at default reasoning; a better prompt might do better.</li>
+    <li>The LLM baseline answers the same questions in one prompt at default reasoning; a better prompt might do better.</li>
   </ul>
 </section>
 

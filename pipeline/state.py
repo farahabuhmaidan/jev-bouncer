@@ -68,6 +68,8 @@ def _sender(key: str, snapshot: dict) -> str:
         return f"{p['name']}, {p['role']} (Sanad's team: {p['team']})"
     if rel == "family":
         return f"{p['name']} ({p['role']}, family)"
+    if rel == "customer":
+        return f"{p['name']}, {p['role']} (customer)"
     if rel == "leadership":
         return f"{p['name']}, {p['role']} (company leadership)"
     return f"{p['name']}, {p['role']} ({p['team']} team)"
@@ -90,6 +92,49 @@ def _linked(text: str, snapshot: dict, branch: str | None = None) -> list[str]:
         if str(pr["number"]) in prs or pr["branch"] == branch or any(k.lower() in lowered for k in pr.get("keywords", [])):
             out.append(f"PR #{pr['number']} on branch {pr['branch']}: {pr['title']}")
     return out
+
+
+_BY_TIME = re.compile(r"\b(?:by|before)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b", re.I)
+_TODAY = re.compile(r"\b(today|end of (the )?day|EOD)\b", re.I)
+DAY_END = "18:00"  # "today" and a ticket due today end at 18:00 (design/02)
+
+
+def _linked_tickets(text: str, snapshot: dict) -> list[dict]:
+    lowered, keys = text.lower(), set(_TICKET.findall(text))
+    return [t for t in snapshot.get("tickets", [])
+            if t["key"] in keys or any(k.lower() in lowered for k in t.get("keywords", []))]
+
+
+def deadline_minutes(event: dict, snapshot: dict) -> int | None:
+    """Minutes from the event until the nearest deadline it states or links to, or None.
+
+    Code, not a Jev field: stored as `facts.deadline_in_minutes` and applied by the policy (row 5).
+    Understands "by/before HH:MM" (or "before 11", "by 3pm"), "today", and a linked ticket due today.
+    """
+    text = event.get("text") or f"{event.get('branch', '')} {event.get('commit_message', '')}"
+    now = _minutes(event["time"])
+    targets = []
+    for h, m, ampm in _BY_TIME.findall(text):
+        hour = int(h) % 12 + (12 if ampm.lower() == "pm" else 0) if ampm else int(h)
+        if not ampm and hour < 8:  # "before 5" in a workday means 17:00
+            hour += 12
+        if hour < 24:
+            targets.append(hour * 60 + int(m or 0))
+    if _TODAY.search(text) or any(t.get("due") == "today" for t in _linked_tickets(text, snapshot)):
+        targets.append(_minutes(DAY_END))
+    ahead = [t - now for t in targets if t > now]
+    return min(ahead) if ahead else None
+
+
+def _commitment(event: dict, text: str, snapshot: dict) -> str | None:
+    """At most one past promise that matches the sender or a linked ticket (design/02, 06)."""
+    tickets = {t["key"] for t in _linked_tickets(text, snapshot)}
+    for c in snapshot.get("commitments", []):
+        about = c.get("about") or []
+        on_topic = not about or any(k.lower() in text.lower() for k in about)
+        if (c.get("who") == event["sender"] and on_topic) or c.get("ticket") in tickets:
+            return f"{c['what']} {c['when']}".strip()
+    return None
 
 
 def _log_tail(event: dict) -> str:
@@ -129,4 +174,7 @@ def build_state(event: dict, snapshot: dict) -> dict:
         linked = _linked(event["text"], snapshot)
     if linked:
         state["linked_items"] = linked
+    commitment = _commitment(event, event.get("text") or event.get("commit_message", ""), snapshot)
+    if commitment and event["type"] == "message":
+        state["commitment"] = commitment
     return state

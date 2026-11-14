@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 
 from pipeline.load import load_events, load_snapshot
+from pipeline.state import deadline_minutes
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 ACTIONS = {"interrupt", "batch", "delegate", "drop"}
@@ -75,6 +76,7 @@ def test_budget_interrupts_at_most_5():
         and e["label"]["action"] == "interrupt"
         and e["time"] < "18:00"
         and people[e["sender"]]["relationship"] != "family"
+        and not (deadline_minutes(e, _snapshot()) or 999) < 120  # the deadline row spends no budget
     )
     assert n <= 5
 
@@ -84,3 +86,12 @@ def test_ci_events_have_logs_and_failure_type():
         if e["type"] == "ci_failure":
             assert e.get("log_tail") or (DATA / e["log_file"]).is_file(), e["id"]
             assert e["label"]["failure_type"] in {"flaky_test", "code_regression", "infra_problem", "config_or_lint"}
+
+
+def test_customer_deadline_email_is_raw_gmail_with_a_parseable_deadline():
+    from pipeline.state import deadline_minutes
+    entry = next(e for e in json.loads((DATA / "events.json").read_text()) if e["id"] == "evt-034")
+    assert entry["raw_source"] == "gmail" and entry["label"]["action"] == "interrupt"
+    e = next(e for e in _events() if e["id"] == "evt-034")
+    assert e["sender"] == "hadi" and "08:00" < e["time"] < "18:00"
+    assert deadline_minutes(e, _snapshot()) < 120
