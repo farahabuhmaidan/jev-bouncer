@@ -93,7 +93,7 @@ How to read it:
 
 | # | When | Action |
 |---|---|---|
-| 1 | Family, unless Jev is sure it can wait | interrupt (a family message that can wait is held) |
+| 1 | Family, unless Jev is sure it can wait or the urgency is only in the wording | interrupt (otherwise held) |
 | 2 | Evening, not family, doesn't block the release, no deadline row | hold until 09:00 |
 | 3 | Noise | drop |
 | 4 | Blocks the release and needs Sanad | interrupt |

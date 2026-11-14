@@ -7,7 +7,7 @@ Notation: `yes(q)` means p ≥ `settings.yesAt`, `no(q)` means p ≤ `settings.n
 ## Message truth table (first matching row wins)
 | # | Condition | Action | Uses budget |
 |---|---|---|---|
-| 1 | Rule "family can always reach me" on, and `yes(family_matter)` or sender marked family | interrupt, unless `no(time_sensitive)`: then batch to the next free slot (never ask or delegate family) | no |
+| 1 | Rule "family can always reach me" on, and `yes(family_matter)` or sender marked family | interrupt, unless `no(time_sensitive)` or `yes(wording_only_urgency)`: then batch to the next free slot (never ask or delegate family) | no |
 | 2 | Evening mode active and not family and not `yes(blocks_release)` and the deadline row would not fire | batch (to morning) | n/a |
 | 3 | `yes(is_noise)` | drop | n/a |
 | 4 | `yes(blocks_release)` and `yes(needs_sanad)` | interrupt | no |

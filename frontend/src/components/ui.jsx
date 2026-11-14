@@ -74,7 +74,11 @@ export function explain(e, d, people) {
   const deadline = e.result?.facts?.deadline_in_minutes;
   const r = d.rule;
   if (d.action === "error") return "Doorman couldn't reach the model, so it didn't guess. A failed call is never treated as a no.";
-  if (r === 1) return d.action === "interrupt" ? `${name} is family, and this can't wait. Family always gets through.` : `${name} is family, but this can wait. Held for your next break.`;
+  if (r === 1) {
+    if (d.action === "interrupt") return `${name} is family, and this can't wait. Family always gets through.`;
+    const loud = d.reasons.some((x) => x.q === "wording_only_urgency");
+    return loud ? `${name} is family, but the urgency is only in the wording. Held for your next break.` : `${name} is family, but this can wait. Held for your next break.`;
+  }
   if (r === 2) return "It's after hours and this doesn't block the release. Held until the morning.";
   if (r === 3) return "There's nothing for you to do or reply to here, so it was filtered out.";
   if (r === 4) return "It blocks today's release or the demo, and it needs you specifically.";

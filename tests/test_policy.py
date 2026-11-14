@@ -265,3 +265,14 @@ def test_replay_baseline_missing_is_error():
     events = [msg("rami", "13:20", "a")]
     d = replay_day(events, {"a": {"jev": jev(), "baseline": None}}, SNAPSHOT, DEFAULTS, source="baseline")["a"]
     assert d["action"] == "error"
+
+
+def test_row1_family_loud_but_not_critical_is_batched():
+    # "URGENT!!! the SHEIN discount code expires in 3 hours": family, but the urgency is only in the wording.
+    d = decide(msg("maha"), jev(family_matter=0.73, time_sensitive=0.74, wording_only_urgency=0.73), DEFAULTS, day())
+    assert (d["action"], d["rule"], d["label"]) == ("batch", 1, "until 16:00")
+
+
+def test_row1_family_real_urgency_still_interrupts_in_the_evening():
+    d = decide(msg("school", "19:10"), jev(family_matter=0.95, time_sensitive=0.9, wording_only_urgency=0.1), DEFAULTS, day(evening=True))
+    assert (d["action"], d["rule"]) == ("interrupt", 1)

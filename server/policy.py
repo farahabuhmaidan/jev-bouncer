@@ -94,8 +94,11 @@ def _decide_message(event, r, s, day):
     deadline_soon = deadline is not None and deadline < s["deadlineMinutes"]
     if s["familyAlways"] and family:
         # Family can always reach Sanad, past the budget and evening mode, but only when it can't wait.
-        # Family that can wait is held for his next free slot: never asked about or forwarded.
-        return _out(r, "batch", 1, label=later) if r.no("time_sensitive") else _out(r, "interrupt", 1)
+        # Family that can wait, or that is only loud ("URGENT!!! discount code expires"), is held for his
+        # next free slot: never asked about or forwarded.
+        if r.no("time_sensitive") or r.yes("wording_only_urgency"):
+            return _out(r, "batch", 1, label=later)
+        return _out(r, "interrupt", 1)
     if day["evening"] and not family and not r.yes("blocks_release") and not (deadline_soon and r.no("is_noise")):
         return _out(r, "batch", 2, label=MORNING)
     if r.yes("is_noise"):

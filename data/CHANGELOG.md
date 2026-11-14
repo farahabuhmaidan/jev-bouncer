@@ -26,3 +26,7 @@ Applied before rerunning either model on the changes below.
 - **Commitments in the snapshot:** "Sanad told the CEO the deck was final yesterday", added to the state only for Layla's messages about the deck or slides (evt-014). It is scoped by topic, so it is not added to her board-update or roadmap messages. This changes evt-014's state, so Jev is rerun for it.
 - **Deadline row (policy row 5):** a deadline under `deadlineMinutes` (default 120) that code parses from the text or a linked ticket interrupts without spending budget, unless the event is noise. Rows 5–9 became 6–10.
 - **Baseline:** the LLM no longer picks the action. It answers the same questions as Jev, and the same policy routes both answer sets, at the same settings. The old one-prompt router and its numbers are retired.
+
+## Family rule: loud is not urgent (2026-11-14)
+
+A live test message from Maha, "URGENT!!! the SHEIN discount code is going to expire in 3 hours", interrupted Sanad. Jev read it correctly as wording-only urgency (0.73), but rule 1 only held family messages when `no(time_sensitive)`, and Jev was not sure it could wait (0.74, an expiring discount reads as "money is lost"). Rule 1 now also holds a family message when `yes(wording_only_urgency)`. No labelled event changes outcome for either model, so the numbers are unchanged.
