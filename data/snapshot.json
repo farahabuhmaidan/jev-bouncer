@@ -20,28 +20,49 @@
       "title": "Checkout pricing: wrong totals for discounted plans",
       "priority": "High",
       "due": "today",
-      "owner": "sanad"
+      "owner": "sanad",
+      "keywords": [
+        "checkout",
+        "pricing",
+        "price",
+        "discount",
+        "total",
+        "JOD"
+      ]
     },
     {
       "key": "CHK-91",
       "title": "Receipt email copy tweaks",
       "priority": "Low",
       "due": "next week",
-      "owner": "sanad"
+      "owner": "sanad",
+      "keywords": [
+        "receipt"
+      ]
     },
     {
       "key": "OPS-14",
       "title": "Migrate CI runners to new pool",
       "priority": "Medium",
       "due": "this sprint",
-      "owner": "lina"
+      "owner": "lina",
+      "keywords": [
+        "runner",
+        "runners",
+        "CI pool"
+      ]
     }
   ],
   "prs": [
     {
       "number": 212,
       "branch": "investor-demo",
-      "title": "Demo flow polish for tomorrow's investor demo"
+      "title": "Demo flow polish for tomorrow's investor demo",
+      "keywords": [
+        "investor-demo",
+        "demo branch",
+        "demo flow"
+      ]
     }
   ],
   "today": "Investor demo is tomorrow at 10:00. Release of CHK-88 is planned for today.",
