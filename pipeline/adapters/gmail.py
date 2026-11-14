@@ -1,7 +1,7 @@
 """Gmail API message resources → unified events.
 
-Input: the JSON from `users.messages.get(format="full")`. A real connection
-needs Google OAuth and Gmail push notifications via Pub/Sub; see design/13.
+Input: the JSON from `users.messages.get(format="full")`. The real connection
+(OAuth, "Fetch new mail") is server/google.py, design/17; push via Pub/Sub is not built.
 """
 from __future__ import annotations
 

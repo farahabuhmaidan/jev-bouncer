@@ -403,3 +403,12 @@ a { color: var(--accent); }
 @media (max-width: 1200px) { .today.no-phone { grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.3fr); } .phone-rail { display: none; } }
 @media (max-width: 860px) { .today.no-phone { grid-template-columns: 1fr; } }
 .padd-match { display: flex; align-items: center; gap: 6px; align-self: center; margin: 0; }
+
+/* Connections (design/17) */
+.conn .dot.demo { background: var(--border-strong); box-shadow: none; }
+.conn-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.btn.disabled { opacity: .5; pointer-events: none; }
+.ok-line { display: flex; align-items: center; gap: 6px; color: var(--ok); font-size: 13px; padding: 0 0 12px; }
+.panel-card > .error-line { padding: 0 0 12px; }
+.banner.ok { background: var(--ok-bg); color: var(--ok); border-color: #bbf7d0; }
+.banner-x { margin-left: auto; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; color: inherit; }

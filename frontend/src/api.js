@@ -23,6 +23,9 @@ export const addPerson = (person) => call("POST", "/api/people", person);
 export const deletePerson = (key) => call("DELETE", `/api/people/${encodeURIComponent(key)}`);
 export const getMoments = () => call("GET", "/api/moments");
 export const reset = () => call("POST", "/api/reset");
+export const getConnections = () => call("GET", "/api/connections");
+export const googleDisconnect = () => call("POST", "/api/connections/google/disconnect");
+export const gmailSync = (limit = 10) => call("POST", "/api/connections/gmail/sync", { limit });
 export const getCalendar = () => call("GET", "/api/calendar");
 export const reminderAction = (id, action) => call("POST", `/api/events/${encodeURIComponent(id)}/reminder`, { action });
 

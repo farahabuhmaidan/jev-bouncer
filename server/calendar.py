@@ -58,16 +58,18 @@ def _plus(hhmm: str, minutes: int) -> str:
     return _hhmm(t)
 
 
-def clashes(day: str, start: str, minutes: int = 30) -> list[dict]:
+def clashes(day: str, start: str, minutes: int = 30, source=None) -> list[dict]:
+    """Events overlapping [start, start+minutes). `source(day)` lists the day's events (demo by default,
+    Google Calendar when connected, see server/google.py)."""
     end = _plus(start, minutes)
-    return [e for e in events_on(day) if e["start"] < end and start < e["end"]]
+    return [e for e in (source or events_on)(day) if e["start"] < end and start < e["end"]]
 
 
-def next_free(day: str, start: str, minutes: int = 30, latest: str = "18:00") -> str | None:
+def next_free(day: str, start: str, minutes: int = 30, latest: str = "18:00", source=None) -> str | None:
     """The first start at or after `start` with no clash, stepping to the end of whatever is in the way."""
     t = start
     while t <= latest:
-        hit = clashes(day, t, minutes)
+        hit = clashes(day, t, minutes, source)
         if not hit:
             return t
         t = max(e["end"] for e in hit)

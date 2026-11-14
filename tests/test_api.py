@@ -325,3 +325,150 @@ def test_delete_person_only_custom(make):
     c, _ = make()
     assert c.delete("/api/people/maha").status_code == 409
     assert c.delete("/api/people/nobody").status_code == 404
+
+
+# ---- Real Google connection (design/17), with a fake Google ----
+from server.google import GoogleError  # noqa: E402
+
+
+class FakeGoogle:
+    def __init__(self, configured=True, connected=False, fail=False):
+        self.configured, self.connected, self.fail = configured, connected, fail
+        self.inserted, self.mail = [], [_gmail_raw("m1", "Pay the invoice"), _gmail_raw("m2", "lunch?")]
+
+    def status(self):
+        return {"configured": self.configured, "connected": self.connected,
+                "account": "me@example.com" if self.connected else None}
+
+    def auth_url(self):
+        if not self.configured:
+            raise GoogleError("not set up")
+        return "https://accounts.google.com/o/oauth2/v2/auth?state=s"
+
+    def finish(self, code, state):
+        if state != "s":
+            raise GoogleError("bad state")
+        self.connected = True
+        return "me@example.com"
+
+    def disconnect(self):
+        self.connected = False
+
+    def calendar_events(self, day):
+        if self.fail:
+            raise GoogleError("HTTP 500")
+        return [{"title": "Real meeting", "start": "09:00", "end": "09:45"}]
+
+    def insert_event(self, day, start, minutes, title, description=""):
+        self.inserted.append((day, start, minutes, title))
+        return {"id": "g1", "link": "https://calendar.google.com/event?eid=g1"}
+
+    def gmail_recent(self, limit=10):
+        return self.mail[:limit]
+
+
+def _gmail_raw(mid, subject):
+    import base64
+    return {"id": mid, "threadId": "t", "internalDate": "1794650000000",
+            "payload": {"mimeType": "text/plain", "headers": [{"name": "From", "value": "Someone <someone@example.com>"},
+                                                              {"name": "Subject", "value": subject}],
+                        "body": {"data": base64.urlsafe_b64encode(b"see subject").decode()}}}
+
+
+def ask_task(state, etype):
+    answers = {"task_later": 0.9} if etype == "reminder" else BLOCKER
+    return {"answers": answers, "latency_ms": 5, "usage": {}, "request": {}, "error": None}
+
+
+@pytest.fixture
+def gmake(tmp_path):
+    def _make(google, ask=ask_task):
+        store = Store(tmp_path / "g.db")
+        seed_store(store)
+        return TestClient(create_app(store, ask=ask, write=False, google=google), follow_redirects=False), store
+    return _make
+
+
+def test_connections_default_to_demo(gmake):
+    c, _ = gmake(FakeGoogle(configured=False))
+    out = c.get("/api/connections").json()
+    assert out["google"]["configured"] is False
+    assert out["calendar"]["source"] == "demo" and out["gmail"]["source"] == "demo"
+    assert c.get("/api/connections/google/start").status_code == 400
+
+
+def test_google_sign_in_round_trip(gmake):
+    g = FakeGoogle()
+    c, _ = gmake(g)
+    r = c.get("/api/connections/google/start")
+    assert r.status_code in (302, 307) and r.headers["location"].startswith("https://accounts.google.com/")
+    r = c.get("/api/connections/google/callback", params={"code": "x", "state": "s"})
+    assert r.headers["location"] == "/?connected=google"
+    out = c.get("/api/connections").json()
+    assert out["calendar"] == {"source": "google", "account": "me@example.com"}
+    assert out["gmail"]["source"] == "google"
+
+
+def test_google_sign_in_errors_come_back_to_the_app(gmake):
+    c, _ = gmake(FakeGoogle())
+    assert "connect_error=" in c.get("/api/connections/google/callback", params={"code": "x", "state": "bad"}).headers["location"]
+    assert "connect_error=access_denied" in c.get("/api/connections/google/callback", params={"error": "access_denied"}).headers["location"]
+
+
+def test_reminder_clashes_use_the_real_calendar_when_connected(gmake):
+    c, _ = gmake(FakeGoogle(connected=True))
+    out = c.post("/api/events", json={"sender": "maha", "text": "pay the school fees on 3 December at 9"}).json()
+    rem = out["result"]["reminder"]
+    assert rem["clashes"] == [{"title": "Real meeting", "start": "09:00", "end": "09:45"}] and rem["suggested"] == "09:45"
+    cal = c.get("/api/calendar").json()
+    assert cal["connection"]["demo"] is False and cal["connection"]["account"] == "me@example.com"
+    assert cal["reminders"][0]["day"] == [{"title": "Real meeting", "start": "09:00", "end": "09:45"}]
+
+
+def test_reminder_shows_error_when_google_calendar_fails(gmake):
+    c, _ = gmake(FakeGoogle(connected=True, fail=True))
+    rem = c.post("/api/events", json={"sender": "maha", "text": "pay the school fees on 3 December"}).json()["result"]["reminder"]
+    assert rem["status"] == "error" and "HTTP 500" in rem["error"]
+
+
+def test_push_reminder_to_google_calendar(gmake):
+    g = FakeGoogle(connected=True)
+    c, _ = gmake(g)
+    eid = c.post("/api/events", json={"sender": "maha", "text": "pay the school fees on 3 December at 4pm"}).json()["event"]["id"]
+    rem = c.post(f"/api/events/{eid}/reminder", json={"action": "push"}).json()
+    assert g.inserted == [("2026-12-03", "16:00", 30, rem["title"])]
+    assert rem["google"] == {"id": "g1", "link": "https://calendar.google.com/event?eid=g1"}
+
+
+def test_push_needs_a_connection(gmake):
+    c, _ = gmake(FakeGoogle(connected=False))
+    eid = c.post("/api/events", json={"sender": "maha", "text": "pay the school fees on 3 December"}).json()["event"]["id"]
+    assert c.post(f"/api/events/{eid}/reminder", json={"action": "push"}).status_code == 409
+
+
+def test_gmail_sync_routes_new_mail_once(gmake):
+    c, _ = gmake(FakeGoogle(connected=True))
+    first = c.post("/api/connections/gmail/sync", json={}).json()
+    assert first["fetched"] == 2 and len(first["added"]) == 2 and first["skipped"] == 0
+    day = c.get("/api/day").json()
+    assert {e["id"] for e in day["events"]} >= set(first["added"])
+    again = c.post("/api/connections/gmail/sync", json={}).json()
+    assert again["added"] == [] and again["skipped"] == 2
+
+
+def test_gmail_sync_needs_a_connection(gmake):
+    c, _ = gmake(FakeGoogle(connected=False))
+    assert c.post("/api/connections/gmail/sync", json={}).status_code == 409
+
+
+def test_disconnect_returns_to_demo(gmake):
+    c, _ = gmake(FakeGoogle(connected=True))
+    assert c.post("/api/connections/google/disconnect").status_code == 200
+    assert c.get("/api/connections").json()["calendar"]["source"] == "demo"
+
+
+def test_reseed_keeps_the_google_connection(tmp_path):
+    store = Store(tmp_path / "k.db")
+    store.put("google", {"refresh_token": "rt"})
+    seed_store(store)
+    assert store.get("google") == {"refresh_token": "rt"}

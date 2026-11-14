@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addPerson, deletePerson, putSettings } from "../api.js";
+import { addPerson, deletePerson, gmailSync, googleDisconnect, putSettings } from "../api.js";
 import { Icon } from "./ui.jsx";
 
 const DEFAULTS = { yesAt: 0.7, noAt: 0.3, interruptBar: 0.7, risingBar: true, budget: 5, eveningStart: "18:00",
@@ -74,7 +74,43 @@ function PeopleList({ title, icon, help, members, people, onAdd, onRemove, onCre
   );
 }
 
-export default function Settings({ settings: s, people, onChange, onPeople }) {
+function Connections({ conn, onConn, onRouted }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  if (!conn) return <p className="hint">Checking connections…</p>;
+  const g = conn.google;
+  const run = async (fn) => { setBusy(true); setMsg(null); try { await fn(); } catch (e) { setMsg({ ok: false, text: e.message }); } finally { setBusy(false); } };
+  const fetchMail = () => run(async () => {
+    const out = await gmailSync(10);
+    await onRouted();
+    setMsg({ ok: true, text: out.added.length ? `Routed ${out.added.length} new email${out.added.length > 1 ? "s" : ""} into Today.` : "No new mail since the last fetch." });
+  });
+  const live = (on, text) => <span className="conn">{on ? <span className="dot" /> : <span className="dot demo" />}{text}</span>;
+  return (
+    <>
+      <Row title="Google account" help={g.connected
+        ? "Doorman reads your inbox when you fetch mail, and checks your real calendar for clashes. It only writes to your calendar when you press “Add to Google Calendar”."
+        : g.configured
+          ? "Connect to use your real Gmail and Google Calendar instead of the demo data. You can disconnect any time."
+          : "Not set up on this server. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env and restart (see design/17). Until then Doorman uses demo data."}>
+        {g.connected
+          ? <div className="conn-actions">{live(true, g.account)}<button className="btn small" disabled={busy} onClick={() => run(async () => { await googleDisconnect(); await onConn(); })}>Disconnect</button></div>
+          : <a className={`btn small primary ${g.configured ? "" : "disabled"}`} href={g.configured ? "/api/connections/google/start" : undefined} aria-disabled={!g.configured}><Icon name="link" size={14} />Connect Google account</a>}
+      </Row>
+      <Row title="Google Calendar" help="Reminders for tasks with a later date, checked for clashes.">
+        {conn.calendar.source === "google" ? live(true, `Your calendar · ${conn.calendar.account}`) : live(false, <>Demo calendar · sanad@example.com <span className="pill">Demo data</span></>)}
+      </Row>
+      <Row title="Gmail" help={conn.gmail.source === "google" ? "Fetch your newest inbox mail (last day, up to 10). Each new email is routed like any message: one Jev call each." : "The demo day's email comes from sample Gmail messages."}>
+        {conn.gmail.source === "google"
+          ? <button className="btn small" disabled={busy} onClick={fetchMail}><Icon name="inbox" size={14} />{busy ? "Fetching…" : "Fetch new mail"}</button>
+          : live(false, <>Demo inbox <span className="pill">Demo data</span></>)}
+      </Row>
+      {msg && <p className={msg.ok ? "hint ok-line" : "error-line"} role="status"><Icon name={msg.ok ? "check" : "alert"} size={14} />{msg.text}</p>}
+    </>
+  );
+}
+
+export default function Settings({ settings: s, people, onChange, onPeople, conn, onConn }) {
   const save = async (patch) => onChange(await putSettings({ ...s, ...patch }));
   const create = async (name, role, relationship, list) => {
     const p = await addPerson({ name, role, relationship });
@@ -145,9 +181,7 @@ export default function Settings({ settings: s, people, onChange, onPeople }) {
 
       <section className="panel-card">
         <h2>Connections</h2>
-        <Row title="Google Calendar" help="Doorman adds reminders for tasks with a later date and checks them for clashes. Demo: sample calendar data, no account is contacted.">
-          <span className="conn"><span className="dot" />Connected · sanad@example.com</span>
-        </Row>
+        <Connections conn={conn} onConn={onConn} onRouted={onChange} />
       </section>
 
       <section className="panel-card">

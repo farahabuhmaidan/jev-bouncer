@@ -15,7 +15,7 @@ function Signal({ q, p, used, s }) {
 
 const ruleRef = (d) => (d.rule === "error" ? "not routed" : typeof d.rule === "number" ? `rule ${d.rule}` : d.rule);
 
-export default function Why({ event: e, people, settings, onChoose, onChange }) {
+export default function Why({ event: e, people, settings, onChoose, onChange, google }) {
   if (!e) {
     return (
       <div className="empty tall">
@@ -65,7 +65,7 @@ export default function Why({ event: e, people, settings, onChoose, onChange }) 
         </section>
       )}
 
-      <Reminder eventId={e.id} reminder={r.reminder} onChange={onChange} />
+      <Reminder eventId={e.id} reminder={r.reminder} onChange={onChange} google={google} />
 
       {r.ci_explanation && (
         <section className="card">

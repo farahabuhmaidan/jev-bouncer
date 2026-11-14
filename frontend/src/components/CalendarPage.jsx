@@ -51,7 +51,7 @@ export default function CalendarPage({ version }) {
           </div>
           <div className="rem-day-body">
             <DayAgenda r={r} />
-            <Reminder eventId={r.event_id} reminder={r} onChange={load} />
+            <Reminder eventId={r.event_id} reminder={r} onChange={load} google={!cal.connection.demo} />
           </div>
         </section>
       ))}

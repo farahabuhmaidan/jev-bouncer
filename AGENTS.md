@@ -14,6 +14,7 @@ Guide for AI agents working in this repo. The design in `design/` is the source 
 - `make test`: `pytest -q`. Keep it green.
 - `make app`: build the frontend, serve everything on :8000. `make dev` for hot reload.
 - `make eval`: rebuild `data/results.json` from the cache and print the metrics table. No network.
+- Optional real Google (Gmail + Calendar): `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` in `.env`; `server/google.py`, design/17. Tokens stay in the local db.
 - `make pipeline`: calls Jev and the LLM through OpenRouter (`OPENROUTER_API_KEY` in `.env`). Costs money; ask first.
 
 ## Rules

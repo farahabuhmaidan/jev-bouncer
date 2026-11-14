@@ -3,10 +3,14 @@ import { reminderAction } from "../api.js";
 import { Icon, niceDate } from "./ui.jsx";
 
 // The calendar reminder Doorman added for a message with a later task (design/16).
-export default function Reminder({ eventId, reminder: r, onChange }) {
+export default function Reminder({ eventId, reminder: r, onChange, google }) {
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState(null);
   if (!r) return null;
-  const act = async (action) => { setBusy(true); try { await reminderAction(eventId, action); await onChange?.(); } finally { setBusy(false); } };
+  const act = async (action) => {
+    setBusy(true); setErr(null);
+    try { await reminderAction(eventId, action); await onChange?.(); } catch (e) { setErr(e.message); } finally { setBusy(false); }
+  };
 
   if (r.status === "error") {
     return <section className="card"><h3><Icon name="calendar" size={14} />Reminder</h3>
@@ -18,7 +22,7 @@ export default function Reminder({ eventId, reminder: r, onChange }) {
   }
   return (
     <section className={`card reminder ${r.clashes.length ? "clash" : ""}`}>
-      <h3><Icon name="calendar" size={14} />Added to your calendar</h3>
+      <h3><Icon name="calendar" size={14} />{google && !r.google ? "Reminder · not in Google Calendar yet" : "Added to your calendar"}</h3>
       <div className="rem-main">
         <div className="rem-date"><b>{niceDate(r.date).split(" ")[1]}</b><span>{niceDate(r.date).split(" ")[2]}</span></div>
         <div>
@@ -34,8 +38,11 @@ export default function Reminder({ eventId, reminder: r, onChange }) {
       )}
       <div className="actions">
         {r.suggested && <button className="btn small primary" disabled={busy} onClick={() => act("move")}><Icon name="clock" size={14} />Move to {r.suggested}</button>}
+        {google && !r.google && <button className="btn small" disabled={busy} onClick={() => act("push")}><Icon name="calendar" size={14} />Add to Google Calendar</button>}
+        {r.google?.link && <a className="btn small" href={r.google.link} target="_blank" rel="noreferrer"><Icon name="check" size={14} />In Google Calendar</a>}
         <button className="btn small" disabled={busy} onClick={() => act("remove")}><Icon name="x" size={14} />Remove</button>
       </div>
+      {err && <p className="error-line"><Icon name="alert" size={14} />{err}</p>}
     </section>
   );
 }

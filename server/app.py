@@ -5,7 +5,9 @@ import re
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from urllib.parse import quote
+
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -14,6 +16,7 @@ from pipeline.jev import ask_jev
 
 from . import calendar
 from .db import DB_PATH, Store, seed_store
+from .google import Google, GoogleError
 from .live import baseline_decisions, decisions, place_reminder, process_event
 from .metrics import compute_metrics
 from .policy import effective_settings
@@ -25,6 +28,10 @@ ACTIONS = {"interrupt", "batch", "delegate", "drop"}
 
 
 RELATIONSHIPS = ("family", "contact", "leadership", "team", "peer", "customer")
+
+
+class GmailSync(BaseModel):
+    limit: int = 10
 
 
 class NewPerson(BaseModel):
@@ -75,9 +82,20 @@ def _safe(ask):
     return call
 
 
-def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
+def create_app(store: Store, ask=ask_jev, write=True, google=None) -> FastAPI:
     app = FastAPI(title="Doorman")
     ask = _safe(ask)
+    google = google or Google(store)
+
+    def cal_events(day: str) -> list[dict]:
+        """The calendar Doorman checks: Google Calendar once connected, the demo calendar otherwise."""
+        return google.calendar_events(day) if google.status()["connected"] else calendar.events_on(day)
+
+    def cal_connection() -> dict:
+        s = google.status()
+        if s["connected"]:
+            return {"connected": True, "provider": "Google Calendar", "account": s["account"], "demo": False}
+        return calendar.connection()
 
     def snapshot():
         return store.get("snapshot")
@@ -135,7 +153,7 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
                      "channel": body.channel or ("Email" if body.source in ("email", "gmail") else "Slack DM")}
         else:
             raise HTTPException(422, "type must be 'message' or 'ci_failure'")
-        out = process_event(store, event, ask=ask, write=write, at=body.time, dry_run=body.dry_run)
+        out = process_event(store, event, ask=ask, write=write, at=body.time, dry_run=body.dry_run, events_on=cal_events)
         if body.dry_run:
             return JSONResponse(out, status_code=200)
         return respond(out)
@@ -149,7 +167,7 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
             event = adapter.to_event(await request.json(), snapshot()["people"])
         except Exception as exc:  # noqa: BLE001 - a payload the adapter can't read
             raise HTTPException(422, f"{source} adapter could not read the payload: {type(exc).__name__}: {exc}")
-        return respond(process_event(store, event, ask=ask, write=write))
+        return respond(process_event(store, event, ask=ask, write=write, events_on=cal_events))
 
     @app.get("/api/settings")
     def get_settings():
@@ -183,10 +201,10 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         """The connected calendar and the reminders Doorman added, each with that day's events."""
         events = {e["id"]: e for e in store.all_events()}
         reminders = [{"event_id": eid, "sender": (r.get("state") or {}).get("sender"), "message": events[eid].get("text"),
-                      **r["reminder"], "day": calendar.events_on(r["reminder"]["date"])}
+                      **r["reminder"], "day": _day_or_error(r["reminder"]["date"])}
                      for eid, r in store.results().items()
                      if eid in events and (r.get("reminder") or {}).get("status") == "added"]
-        return {"connection": calendar.connection(), "today": calendar.TODAY,
+        return {"connection": cal_connection(), "today": calendar.TODAY,
                 "reminders": sorted(reminders, key=lambda x: (x["date"], x["time"]))}
 
     @app.post("/api/events/{event_id}/reminder")
@@ -194,16 +212,91 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         rem = (store.results().get(event_id) or {}).get("reminder")
         if not rem or rem.get("status") == "error":
             raise HTTPException(404, "this message has no reminder")
-        if body.action == "move" and rem.get("suggested"):
-            rem = place_reminder({**rem, "time": rem["suggested"]}, rem["title"], rem["p"])
+        if body.action == "push":
+            if not google.status()["connected"]:
+                raise HTTPException(409, "connect your Google account first (Rules → Connections)")
+            event = next((e for e in store.all_events() if e["id"] == event_id), None)
+            try:
+                rem = {**rem, "google": google.insert_event(rem["date"], rem["time"], rem["minutes"], rem["title"],
+                                                            f"Added by Doorman from: {(event or {}).get('text', '')}".strip())}
+            except GoogleError as e:
+                raise HTTPException(502, str(e))
+        elif body.action == "move" and rem.get("suggested"):
+            rem = _place({**rem, "time": rem["suggested"]}, rem)
         elif body.action == "remove":
             rem = {**rem, "status": "removed"}
         elif body.action == "add":
-            rem = place_reminder(rem, rem["title"], rem["p"])
+            rem = _place(rem, rem)
         elif body.action != "keep":
-            raise HTTPException(422, "action must be move, keep, remove or add")
+            raise HTTPException(422, "action must be move, keep, remove, add or push")
         store.set_result(event_id, {"reminder": rem})
         return rem
+
+    def _place(when: dict, rem: dict) -> dict:
+        try:
+            placed = place_reminder(when, rem["title"], rem["p"], cal_events)
+        except GoogleError as e:
+            raise HTTPException(502, f"couldn't check your calendar: {e}")
+        return {**placed, **({"google": rem["google"]} if rem.get("google") and when["time"] == rem["time"] else {})}
+
+    def _day_or_error(day: str) -> list[dict]:
+        try:
+            return cal_events(day)
+        except GoogleError:
+            return []
+
+    # ---- Connections (design/17): real Google Calendar and Gmail, demo data otherwise ----
+    @app.get("/api/connections")
+    def connections():
+        s = google.status()
+        src = "google" if s["connected"] else "demo"
+        return {"google": s,
+                "calendar": {"source": src, "account": s["account"] if s["connected"] else "sanad@example.com"},
+                "gmail": {"source": src, "account": s["account"] if s["connected"] else None}}
+
+    @app.get("/api/connections/google/start")
+    def google_start():
+        try:
+            return RedirectResponse(google.auth_url(), status_code=307)
+        except GoogleError as e:
+            raise HTTPException(400, str(e))
+
+    @app.get("/api/connections/google/callback")
+    def google_callback(code: str | None = None, state: str | None = None, error: str | None = None):
+        if error or not code:
+            return RedirectResponse(f"/?connect_error={quote(error or 'no code')}", status_code=303)
+        try:
+            google.finish(code, state or "")
+        except GoogleError as e:
+            return RedirectResponse(f"/?connect_error={quote(str(e))}", status_code=303)
+        return RedirectResponse("/?connected=google", status_code=303)
+
+    @app.post("/api/connections/google/disconnect")
+    def google_disconnect():
+        google.disconnect()
+        return google.status()
+
+    @app.post("/api/connections/gmail/sync")
+    def gmail_sync(body: GmailSync | None = None):
+        """Fetch recent inbox mail and route each new message, oldest first. Each one is a Jev call."""
+        if not google.status()["connected"]:
+            raise HTTPException(409, "connect your Google account first (Rules → Connections)")
+        limit = max(1, min(25, (body or GmailSync()).limit))
+        try:
+            msgs = google.gmail_recent(limit=limit)
+        except GoogleError as e:
+            raise HTTPException(502, str(e))
+        seen, added, skipped = set(store.get("gmail_seen") or []), [], 0
+        for raw in reversed(msgs):
+            if raw["id"] in seen:
+                skipped += 1
+                continue
+            event = ADAPTERS["gmail"].to_event(raw, snapshot()["people"])
+            out = process_event(store, event, ask=ask, write=write, events_on=cal_events)
+            seen.add(raw["id"])
+            added.append(out["event"]["id"])
+        store.put("gmail_seen", sorted(seen))
+        return {"fetched": len(msgs), "added": added, "skipped": skipped}
 
     @app.get("/api/metrics")
     def metrics():
