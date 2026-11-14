@@ -51,3 +51,4 @@ Doorman puts every event through one Jev call that answers a few small judgments
 14. [14-app.md](14-app.md): **the working app**: backend API, SQLite schema, frontend screens, live demo script (supersedes the stage-2 page in 01 and the layout in 07)
 15. [15-app-plan.md](15-app-plan.md): task-by-task build plan for the app
 16. [16-reminders.md](16-reminders.md): reminders from messages, clashes with the calendar
+17. [17-google.md](17-google.md): real Gmail and Google Calendar connections (optional; demo data otherwise)

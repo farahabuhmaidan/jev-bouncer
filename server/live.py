@@ -12,6 +12,7 @@ from pipeline.when import resolve_when
 
 from .db import Store
 from .calendar import TODAY, clashes, next_free
+from .google import GoogleError
 from .policy import effective_settings, replay_day
 
 REMINDER_MINUTES = 30
@@ -55,14 +56,15 @@ def baseline_decisions(store: Store) -> dict:
     return {eid: (d if (results.get(eid) or {}).get("baseline") else None) for eid, d in routed.items()}
 
 
-def place_reminder(when: dict, title: str, p: float) -> dict:
-    """The reminder at the time the message implies, with any clashes and the next free start."""
-    hit = clashes(when["date"], when["time"], REMINDER_MINUTES)
+def place_reminder(when: dict, title: str, p: float, events_on=None) -> dict:
+    """The reminder at the time the message implies, with any clashes and the next free start.
+    `events_on(day)` is the calendar to check: the demo one, or Google Calendar when connected."""
+    hit = clashes(when["date"], when["time"], REMINDER_MINUTES, events_on)
     return {**when, "title": title, "minutes": REMINDER_MINUTES, "p": p, "status": "added", "clashes": hit,
-            "suggested": next_free(when["date"], when["time"], REMINDER_MINUTES) if hit else None}
+            "suggested": next_free(when["date"], when["time"], REMINDER_MINUTES, source=events_on) if hit else None}
 
 
-def _reminder(event: dict, state: dict, clock: str, ask, settings: dict) -> dict | None:
+def _reminder(event: dict, state: dict, clock: str, ask, settings: dict, events_on=None) -> dict | None:
     """Code finds a future date; Jev says whether Sanad has a task then; code adds the reminder."""
     when = resolve_when(event.get("text", ""), date.fromisoformat(TODAY), clock) if event["type"] == "message" else None
     if not when:
@@ -76,12 +78,15 @@ def _reminder(event: dict, state: dict, clock: str, ask, settings: dict) -> dict
     if not isinstance(p, (int, float)) or p < effective_settings(settings)["yesAt"]:
         return None
     text = event["text"].strip()
-    return place_reminder(when, text if len(text) <= 60 else text[:57] + "…", p)
+    try:
+        return place_reminder(when, text if len(text) <= 60 else text[:57] + "…", p, events_on)
+    except GoogleError as e:  # the calendar couldn't be checked: say so, never pretend it's free
+        return {**when, "status": "error", "error": f"couldn't check your calendar: {e}"}
 
 
 def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_thread,
                   reply=llm.auto_reply, explain=llm.ci_explain, title=llm.reminder_title,
-                  at: str | None = None, dry_run: bool = False) -> dict:
+                  at: str | None = None, dry_run: bool = False, events_on=None) -> dict:
     """Store a new event stamped with the demo clock (or `at`), route it, and (if write) let the LLM write
     its text. A dry run routes it against the real day, writes the text inline, then removes it again."""
     snapshot = with_settings(store.get("snapshot"), effective_settings(store.get("settings")))
@@ -94,7 +99,7 @@ def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_threa
     jev = ask(state, event["type"])
     if jev.get("error"):
         jev = ask(state, event["type"])
-    reminder = None if jev.get("error") else _reminder(event, state, clock, ask, store.get("settings"))
+    reminder = None if jev.get("error") else _reminder(event, state, clock, ask, store.get("settings"), events_on)
     result = {"state": state, "facts": {"deadline_in_minutes": deadline_minutes(event, snapshot)}, "jev": jev,
               "baseline": None, "auto_reply": None, "ci_explanation": None, "reminder": reminder,
               "next_free_slot": next_free_slot(clock, snapshot), "writing": False}

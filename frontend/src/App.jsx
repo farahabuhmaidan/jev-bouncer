@@ -26,6 +26,14 @@ export default function App() {
   const [senderView, setSenderView] = useState(false);
   const [digest, setDigest] = useState(null);
   const [error, setError] = useState(null);
+  const [conn, setConn] = useState(null);
+  const [notice, setNotice] = useState(() => {
+    const q = new URLSearchParams(location.search); // back from Google sign-in
+    if (q.get("connected") === "google") return { ok: true, text: "Google account connected. Doorman now checks your real calendar, and can fetch your mail." };
+    if (q.get("connect_error")) return { ok: false, text: `Couldn't connect Google: ${q.get("connect_error")}` };
+    return null;
+  });
+  const loadConn = useCallback(() => api.getConnections().then(setConn).catch(() => {}), []);
   const [showPhone, setShowPhone] = useState(() => { try { return localStorage.getItem("doorman.phone") !== "hidden"; } catch { return true; } });
   const togglePhone = () => setShowPhone((v) => { try { localStorage.setItem("doorman.phone", v ? "hidden" : "shown"); } catch { /* private mode */ } return !v; });
   const loadPeople = useCallback(() => api.getPeople().then((ps) => setPeople(Object.fromEntries(ps.map((p) => [p.key, p])))), []);
@@ -44,12 +52,14 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    loadPeople();
+    loadPeople(); loadConn();
+    if (location.search) { history.replaceState(null, "", "/"); }
     api.getMoments().then(setMoments);
     refresh();
     const t = setInterval(refresh, 1000); // live events and LLM text arrive by polling
     return () => clearInterval(t);
-  }, [refresh, loadPeople]);
+  }, [refresh, loadPeople, loadConn]);
+  useEffect(() => { if (notice) setTab("rules"); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
   // Only an ask that arrives now pops up; older ones wait in the Why panel ("Answer" there).
@@ -117,6 +127,8 @@ export default function App() {
         onSpeed={() => setSpeed((s) => (s === 1 ? 10 : 1))} onReset={resetDay}
         onDigest={async () => setDigest(await api.getDigest())} />
       {error && <div className="banner" role="alert"><Icon name="alert" size={14} />{error}</div>}
+      {notice && <div className={`banner ${notice.ok ? "ok" : ""}`} role="status"><Icon name={notice.ok ? "check" : "alert"} size={14} />{notice.text}
+        <button className="banner-x" onClick={() => setNotice(null)} aria-label="Dismiss"><Icon name="x" size={14} /></button></div>}
 
       {tab === "today" && (
         <main className={`today ${showPhone ? "" : "no-phone"}`}>
@@ -141,7 +153,7 @@ export default function App() {
             </div>
           </section>
           <section className="col detail-col" aria-label="Details">
-            <div className="scroll"><Why event={byId[selected]} people={people} settings={day.settings} onChoose={choose} onChange={refresh} /></div>
+            <div className="scroll"><Why event={byId[selected]} people={people} settings={day.settings} onChoose={choose} onChange={refresh} google={conn?.google?.connected} /></div>
           </section>
           {showPhone ? (
             <aside className="col phone-col" aria-label="Phone preview">
@@ -160,8 +172,9 @@ export default function App() {
           )}
         </main>
       )}
-      {tab === "calendar" && <CalendarPage version={day.events.length} />}
-      {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} onPeople={loadPeople} />}
+      {tab === "calendar" && <CalendarPage version={day.events.length} clock={day.clock}
+        onOpenMessage={(id) => { setTab("today"); setFilter("all"); setSelected(id); }} />}
+      {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} onPeople={loadPeople} conn={conn} onConn={loadConn} />}
 
       <footer className="foot">
         <span>Doorman · decisions by fixed rules on judgments from TypeSafe Jev</span>

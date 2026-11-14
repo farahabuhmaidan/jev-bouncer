@@ -45,6 +45,7 @@ class Store:
         return self._q("SELECT COUNT(*) FROM events")[0][0] == 0
 
     def seed(self, snapshot: dict, events: list[dict], results: dict) -> None:
+        google = self.get("google")  # a real account connection survives re-seeding the demo day
         with self.lock:
             for table in ("events", "results", "kv", "feedback"):
                 self.conn.execute(f"DELETE FROM {table}")
@@ -54,6 +55,8 @@ class Store:
             self.put("snapshot", snapshot)
             self.put("settings", DEFAULTS)
             self.put("clock", DAY_START)
+            if google:
+                self.put("google", google)
 
     def add_event(self, event: dict, result: dict, origin: str = "live") -> None:
         event = {**event, "origin": origin}
@@ -114,6 +117,7 @@ class Store:
             self.conn.execute("DELETE FROM feedback")
             self.conn.commit()
             self.put("clock", DAY_START)
+            self.put("gmail_seen", [])  # fetched mail was removed with the live events; fetch it again
 
 
 def seed_store(store: Store) -> None:

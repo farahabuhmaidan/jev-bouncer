@@ -10,7 +10,7 @@ Doorman is an attention filter for people at work who get hundreds of pings a da
 
 The app has three pages: **Today** (every message with what Doorman did and why, in plain words), **Calendar** (reminders Doorman added for tasks with a later date, with clashes) and **Rules** (budget, deadlines, quiet hours, connections, and who counts as family or VIP: add anyone, including new people, and remove them).
 
-When a message gives you something to do later ("you need to pay school fees next month"), code finds the date, Jev confirms it's a task for you, and Doorman adds a reminder to your calendar, flags clashes and suggests the next free slot. The calendar connection is demo data in the Google Calendar API format (design/16).
+When a message gives you something to do later ("you need to pay school fees next month"), code finds the date, Jev confirms it's a task for you, and Doorman adds a reminder to your calendar, flags clashes and suggests the next free slot. The calendar connection is demo data in the Google Calendar API format (design/16). You can also connect a real Google account (Rules → Connections): clashes are then checked against your real calendar, reminders go into it when you press a button, and "Fetch new mail" routes your newest Gmail. Setup is in design/17; without it, everything stays on demo data.
 
 ## What it does
 
@@ -121,7 +121,7 @@ The full design is in [`design/`](design/README.md).
 ## Real integrations and privacy
 
 - **Adding a source.** A new source is one adapter module plus a fixture in `data/raw/<source>/`, and the contract tests pick it up automatically. Slack, Gmail, GitHub Actions and Google Calendar adapters are included. `github_actions` can fetch a real failed run with the `gh` CLI.
-- **Privacy.** Personal sources (Gmail, Calendar) are meant to be opt-in. Only the state for each event is sent to the models, and keys stay in `.env`, which is gitignored.
+- **Privacy.** Personal sources (Gmail, Calendar) are opt-in: nothing is read until you connect, and Google tokens stay in the local, gitignored database. Only the state for each event is sent to the models, and keys stay in `.env`, which is gitignored.
 - **Slides.** The deck is in [`slides/`](slides/index.html). It reads `/api/metrics` from the running server, so its numbers always match this table.
 
 ## License

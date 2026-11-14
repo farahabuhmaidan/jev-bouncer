@@ -22,7 +22,7 @@ Demo only: `connection()` reports Google Calendar, `sanad@example.com`, `demo: t
 
 ## UI
 - **Today → message detail:** "Added to your calendar" card: date tile, title, when and the phrase it came from, a clash line ("Clashes with Quarterly planning (09:00–10:30)"), buttons **Move to 10:30** and **Remove** (then **Add it back**). The inbox row gets a "Reminder" / "Reminder · clash" tag.
-- **Calendar page:** each reminder with that day's agenda (the reminder highlighted, clashing events marked) and the same card.
+- **Calendar page:** a full calendar app. A sidebar holds a mini month (reminder days dotted), calendar toggles ("Sanad (demo calendar)" or the Google account, and "Doorman reminders") and the list of reminders from messages. The main area has Today and ‹ › controls and a **Day / Week / Month** switch (week by default, day on phones). Events sit on an hour grid starting at 08:00, overlaps cascade side by side, reminders are violet with the Doorman icon, clashes have an amber outline, and a red line marks the demo clock. Clicking a reminder opens a popover with the message it came from, the clash, **Move to …**, **Add to Google Calendar** (when connected), **Open message** and **Remove**. The data comes from `GET /api/calendar/range?start=YYYY-MM-DD&days=1..42` (`{connection, today, days:[{date, events}]}`; Google in one request when connected, `502` if it fails) plus `GET /api/calendar` for the reminders.
 - **Rules → Connections:** Google Calendar, connected (demo data).
 
 ## Tests
