@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bouncer</title>
-  <link rel="stylesheet" href="../web/style.css">
+  <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,10 +49,12 @@
     <div>Slack</div><div>Gmail</div><div>GitHub Actions</div><div>Calendar</div>
   </div>
   <div class="arrow">↓ adapters (one file per source)</div>
-  <div class="flow single"><div>unified event + context builder</div></div>
-  <div class="arrow">↓ state + typed questions</div>
-  <div class="flow"><div class="jev">Jev</div><div>policy.js (rules)</div><div class="llm">LLM writes text</div></div>
-  <p class="muted">A new source is one adapter module plus a fixture; the contract tests pick it up. Today's data is fictional and replayed.</p>
+  <div class="flow single"><div>FastAPI server · unified event + context builder · SQLite</div></div>
+  <div class="arrow">↓ state + typed questions (~0.3 s)</div>
+  <div class="flow"><div class="jev">Jev</div><div>policy.py (rules)</div><div class="llm">LLM writes text</div></div>
+  <div class="arrow">↓ polled every second</div>
+  <div class="flow"><div>React app: inbox · why · settings</div><div>Sanad's phone (/phone)</div></div>
+  <p class="muted">A new source is one adapter module plus a fixture; <code>POST /api/ingest/&lt;source&gt;</code> takes its raw payload. Today's people and data are fictional.</p>
 </section>
 
 <section class="slide">
@@ -60,11 +62,12 @@
   <ol class="steps">
     <li>Loud vs quiet: the CEO's URGENT deck colour vs Rami's 0 JOD bug</li>
     <li>The CI trio: flaky → rerun silently · infra → DevOps · regression → interrupt + explanation</li>
+    <li><b>Live:</b> type a message as anyone; Jev routes it in a second, the LLM writes the auto-reply</li>
     <li>“got a sec?” from the cofounder: Jev is unsure, so Bouncer asks</li>
     <li>Evening mode: work waits for morning, the school still gets through</li>
     <li>Drag the budget and the sure band: the whole day re-routes, the numbers update</li>
   </ol>
-  <p><a class="button" href="../web/" target="_blank">Open the demo →</a></p>
+  <p><a class="button" href="/" target="_blank">Open the app →</a></p>
   <video id="backup" src="../docs/assets/demo.mp4" controls muted hidden></video>
 </section>
 
@@ -72,7 +75,7 @@
   <h2>The numbers</h2>
   <p class="muted" id="numbers-meta">loading…</p>
   <table class="numbers" id="numbers"></table>
-  <p class="muted small">Computed live from <code>web/results.json</code> by <code>web/metrics.js</code> at default settings. An “ask” counts as wrong.</p>
+  <p class="muted small">Computed live by the Bouncer server (<code>/api/metrics</code>) over the 33 labelled events at the current settings. An “ask” counts as wrong.</p>
 </section>
 
 <section class="slide">

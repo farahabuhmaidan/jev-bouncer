@@ -75,7 +75,7 @@ def test_ci_aliases():
 
 
 def test_metrics_match_first_build():
-    r = json.loads((ROOT / "web" / "results.json").read_text())
+    r = json.loads((ROOT / "data" / "results.json").read_text())
     events, snap = r["day"]["events"], r["day"]["snapshot"]
     m = compute_metrics(events, replay_day(events, r["events"], snap, DEFAULTS), r["events"])
     assert round(m["jev"]["accuracy"] * 100) == 64 and round(m["llm"]["accuracy"] * 100) == 76

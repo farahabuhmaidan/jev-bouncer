@@ -23,10 +23,20 @@ HHMM = re.compile(r"([01]\d|2[0-3]):[0-5]\d")
 ACTIONS = {"interrupt", "batch", "delegate", "drop"}
 
 
-class NewMessage(BaseModel):
-    sender: str
-    text: str
+class NewEvent(BaseModel):
+    """A message (sender + text) or a CI failure (branch, test_name, log_tail). Used by Compose and /test."""
+    type: str = "message"
+    source: str | None = None
+    sender: str | None = None
+    sender_name: str | None = None  # someone not in the snapshot, e.g. an outside company
+    text: str | None = None
     channel: str | None = None
+    time: str | None = None
+    branch: str | None = None
+    test_name: str | None = None
+    commit_message: str | None = None
+    log_tail: str | None = None
+    dry_run: bool = False
 
 
 class Clock(BaseModel):
@@ -87,16 +97,33 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
                 "feedback": store.feedback().get(event_id, [])}
 
     @app.post("/api/events")
-    def new_event(body: NewMessage):
-        person = snapshot()["people"].get(body.sender)
-        if not person or body.sender == "sanad":
-            raise HTTPException(422, f"unknown sender {body.sender!r}")
-        text = body.text.strip()
-        if not text or len(text) > 2000:
-            raise HTTPException(422, "text must be 1-2000 characters")
-        event = {"type": "message", "source": "compose", "sender": body.sender, "text": text,
-                 "channel": body.channel or "Slack DM"}
-        return respond(process_event(store, event, ask=ask, write=write))
+    def new_event(body: NewEvent):
+        if body.time is not None and not HHMM.fullmatch(body.time):
+            raise HTTPException(422, "time must be HH:MM")
+        if body.type == "ci_failure":
+            if not (body.branch and body.test_name and body.log_tail):
+                raise HTTPException(422, "a CI failure needs branch, test_name and log_tail")
+            event = {"type": "ci_failure", "source": body.source or "github_actions", "sender": "github-actions",
+                     "branch": body.branch, "test_name": body.test_name,
+                     "commit_message": body.commit_message or "", "log_tail": body.log_tail}
+        elif body.type == "message":
+            if body.sender_name and body.sender_name.strip():
+                sender = f"unknown:{body.sender_name.strip()}"
+            elif body.sender in snapshot()["people"] and body.sender != "sanad":
+                sender = body.sender
+            else:
+                raise HTTPException(422, f"unknown sender {body.sender!r}; pick a person or give sender_name")
+            text = (body.text or "").strip()
+            if not text or len(text) > 2000:
+                raise HTTPException(422, "text must be 1-2000 characters")
+            event = {"type": "message", "source": body.source or "compose", "sender": sender, "text": text,
+                     "channel": body.channel or ("Email" if body.source in ("email", "gmail") else "Slack DM")}
+        else:
+            raise HTTPException(422, "type must be 'message' or 'ci_failure'")
+        out = process_event(store, event, ask=ask, write=write, at=body.time, dry_run=body.dry_run)
+        if body.dry_run:
+            return JSONResponse(out, status_code=200)
+        return respond(out)
 
     @app.post("/api/ingest/{source}")
     async def ingest(source: str, request: Request):

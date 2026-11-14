@@ -182,3 +182,56 @@ def test_moments_in_time_order(make):
     c, _ = make()
     m = c.get("/api/moments").json()
     assert [x["name"] for x in m] == ["loud-vs-quiet", "ci-trio", "unsure", "evening"] and m[0]["time"] == "14:05"
+
+
+# --- test page support: any source, CI events, custom time, dry runs ---
+
+def ask_ci(state, etype):
+    if etype == "ci_failure":
+        return {"answers": {"failure_type": {"flaky_test": 0.9, "infra_problem": 0.04, "config_or_lint": 0.03,
+                                             "code_regression": 0.03}, "cause_identifiable": 0.9, "blocks_release": 0.1},
+                "latency_ms": 5, "usage": {}, "request": {}, "error": None}
+    return ask_ok(state, etype)
+
+
+def test_dry_run_returns_full_response_and_stores_nothing(make):
+    c, store = make()
+    r = c.post("/api/events", json={"sender": "rami", "text": "checkout broken", "dry_run": True})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["decision"]["action"] == "interrupt" and body["result"]["state"]["message"] == "checkout broken"
+    assert body["dry_run"] is True and len(store.all_events()) == 33
+
+
+def test_custom_time_source_and_channel(make):
+    c, _ = make()
+    r = c.post("/api/events", json={"sender": "layla", "text": "hi", "source": "email", "channel": "Email",
+                                    "time": "19:30", "dry_run": True}).json()
+    assert r["event"]["time"] == "19:30" and r["event"]["source"] == "email"
+    assert r["result"]["state"]["channel"] == "Email" and "evening" in r["result"]["state"]["now"]
+    assert r["decision"]["rule"] == 4  # blocks the release, so evening mode doesn't hold it
+
+
+def test_bad_time_422(make):
+    c, _ = make()
+    assert c.post("/api/events", json={"sender": "rami", "text": "x", "time": "7pm"}).status_code == 422
+
+
+def test_ci_event(make):
+    c, _ = make(ask=ask_ci)
+    r = c.post("/api/events", json={"type": "ci_failure", "branch": "main", "test_name": "test_cart",
+                                    "log_tail": "FAILED test_cart - TimeoutError", "commit_message": "bump deps",
+                                    "dry_run": True}).json()
+    assert r["event"]["sender"] == "github-actions" and r["result"]["state"]["ci"]["branch"] == "main"
+    assert r["decision"]["label"] == "rerun silently"
+
+
+def test_ci_event_needs_branch_test_and_log(make):
+    c, _ = make(ask=ask_ci)
+    assert c.post("/api/events", json={"type": "ci_failure", "branch": "main"}).status_code == 422
+
+
+def test_outsider_sender_by_name(make):
+    c, _ = make()
+    r = c.post("/api/events", json={"sender_name": "Acme Corp sales", "text": "special offer", "dry_run": True}).json()
+    assert r["event"]["sender"] == "unknown:Acme Corp sales" and "Acme Corp sales" in r["result"]["state"]["sender"]

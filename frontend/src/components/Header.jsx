@@ -19,6 +19,7 @@ export default function Header({ day, playing, speed, onPlay, onPause, onJump, o
         <button className={senderView ? "on" : ""} onClick={onSenderView}>👤 sender view</button>
         <button onClick={onDigest}>📋 digest</button>
         <a className="btnlink" href="/phone" target="_blank" rel="noreferrer">📱 phone</a>
+        <a className="btnlink" href="/test" target="_blank" rel="noreferrer">🧪 test</a>
       </div>
     </header>
   );

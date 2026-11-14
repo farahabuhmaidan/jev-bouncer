@@ -29,7 +29,7 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
 |---|---|---|
 | `GET /api/day` | | `{clock, settings, events:[{...event, result, decision, feedback}] (time ≤ clock, newest first), phone:[ids], budget:{total, left}, evening}` |
 | `GET /api/events/{id}` | | the event, its full result (state, Jev answers, baseline, LLM text) and decision |
-| `POST /api/events` | `{sender, text, channel?}` (message) | `201` + the event with result and decision; `502` + stored ERROR event if Jev failed |
+| `POST /api/events` | message `{sender \| sender_name, text, source?, channel?, time?, dry_run?}` or CI `{type:"ci_failure", branch, test_name, log_tail, commit_message?, time?, dry_run?}` | `201` + the event with result and decision (`200` for a dry run, nothing stored); `502` + stored ERROR event if Jev failed |
 | `POST /api/ingest/{source}` | raw payload for a registered adapter | as above; `404` unknown source |
 | `GET/PUT /api/settings` | settings object | the effective settings |
 | `POST /api/clock` | `{time:"HH:MM"}` | `{clock}` |
@@ -51,6 +51,7 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
 - **Phone** (right): interrupts and sender "truly urgent" re-routes; dimmed in evening. Also served alone at `/phone` (open on a real phone on the same wifi).
 - **Compose** (top of inbox): sender dropdown (people), text box, Send. Shows a spinner, then the decision lands in the inbox and the Why panel opens on it.
 - **Header**: clock, ▶ ⏸ ⏭ moment, 1x/10x, ↺ reset, budget dots, ⚙ settings, 👤 sender view, 📋 digest.
+- **Test bench** (`/test`): a form for any notification (type, source, sender or an outside name, channel, time, text; or a CI failure's branch, test, commit and log). It shows the full response: decision, rule, Jev answers, state, auto-reply, raw JSON. **Dry run** by default (`dry_run: true` routes it against the real day, then removes it), so testing never pollutes the demo inbox.
 - **Ask modal**: when a visible event's decision is "ask" and has no feedback, show it (only the question that was unsure: `needs_sanad`, else `time_sensitive`); the choice is POSTed as feedback and shown, never fed to metrics.
 - **Metrics strip** (bottom): from `/api/metrics`.
 - Play is client-driven: a 1 s timer POSTs the next clock value (1 or 10 replay minutes per second).

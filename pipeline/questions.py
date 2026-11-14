@@ -1,6 +1,6 @@
 """Every question Jev is asked, in one place (design/03-jev-questions.md).
 
-Jev answers judgments; it never picks the action. web/policy.js turns these
+Jev answers judgments; it never picks the action. server/policy.py turns these
 answers into interrupt / batch / delegate / drop. Question ids are for code
 only: they are not sent to the model, so each instruction is a full question.
 State paths in backticks refer to fields built by pipeline/state.py.

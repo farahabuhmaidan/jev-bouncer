@@ -1,4 +1,4 @@
-"""Routing policy (design/04). Ported from the first build's web/policy.test.js, same cases."""
+"""Routing policy (design/04). Ported from the first build's JS policy tests, same cases."""
 import pytest
 
 from server.policy import DEFAULTS, decide, effective_settings, replay_day

@@ -90,6 +90,12 @@ class Store:
         n = max((int(r[0].split("-", 1)[1]) for r in rows), default=0)
         return f"live-{n + 1}"
 
+    def delete_event(self, event_id: str) -> None:
+        with self.lock:
+            self.conn.execute("DELETE FROM events WHERE id = ?", (event_id,))
+            self.conn.execute("DELETE FROM results WHERE event_id = ?", (event_id,))
+            self.conn.commit()
+
     def add_feedback(self, event_id: str, kind: str, value: str | None) -> dict:
         at = datetime.now(DEMO_TZ).isoformat(timespec="seconds")
         self._q("INSERT INTO feedback (event_id, kind, value, at) VALUES (?,?,?,?)", (event_id, kind, value, at))

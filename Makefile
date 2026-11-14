@@ -9,18 +9,15 @@ install:
 
 test:
 	$(PY) -m pytest -q
-	node --test 'web/*.test.js'
 
 pipeline:
 	$(PY) -m pipeline.run
 
 eval:
 	$(PY) -m pipeline.run --eval-only
-	node web/print-metrics.mjs
+	$(PY) -m server.print_metrics
 
-demo:
-	@echo "Open http://localhost:8000/web/  (slides: http://localhost:8000/slides/)"
-	python3 -m http.server 8000
+demo: app
 
 seed:
 	$(PY) -c "from server.db import Store, seed_store; seed_store(Store()); print('seeded data/bouncer.db')"

@@ -1,4 +1,4 @@
-"""Offline pipeline: one pass over the day, writes web/results.json (design/01-architecture.md).
+"""Offline pipeline: one pass over the day, writes data/results.json (design/01-architecture.md).
 
     python -m pipeline.run              # call Jev and the LLM for anything not cached
     python -m pipeline.run --eval-only  # rebuild results.json from the cache, no network
@@ -20,7 +20,6 @@ from . import llm
 from .adapters.base import DEMO_TZ
 from .jev import JEV_MODEL, ask_jev
 from .load import load_events, load_snapshot
-from .prices import PRICES
 from .questions import questions_for
 from .state import build_state, next_free_slot
 
@@ -156,7 +155,7 @@ def build_results(snapshot: dict, events: list[dict], cache: Cache | None = None
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--eval-only", action="store_true", help="rebuild from the cache without calling any model")
-    parser.add_argument("--out", default=str(ROOT / "web" / "results.json"))
+    parser.add_argument("--out", default=str(ROOT / "data" / "results.json"))
     args = parser.parse_args(argv)
     if not args.eval_only:
         from dotenv import load_dotenv
@@ -171,7 +170,6 @@ def main(argv: list[str] | None = None) -> None:
     if not args.eval_only:
         print(f"pruned {cache.prune()} stale cache entries")
     Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1))
-    (Path(args.out).parent / "prices.json").write_text(json.dumps(PRICES, indent=1))
 
     errors = [eid for eid, r in results["events"].items() if r["jev"].get("error") or r["baseline"].get("error")]
     print(f"wrote {args.out}: {len(events)} events, {len(errors)} with errors {errors if errors else ''}")

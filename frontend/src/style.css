@@ -170,3 +170,18 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: v
 .linkish { background: none; border: none; color: var(--muted); text-decoration: underline; padding: 8px 0 0; }
 .mini { font-size: 12px; padding: 2px 8px; }
 .notif .x { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+
+/* /test */
+.test-grid { flex: 1; display: grid; grid-template-columns: minmax(380px, 1fr) minmax(460px, 1.3fr); gap: 14px; padding: 14px 20px; }
+.test-grid .panel { max-height: calc(100vh - 90px); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.test-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.test-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.test-form .wide { grid-column: 1 / -1; }
+.test-form .check { flex-direction: row; align-items: center; gap: 8px; }
+.test-form input, .test-form select, .test-form textarea { font: 14px/1.4 inherit; font-family: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; }
+.test-form textarea { font-family: var(--mono); font-size: 13px; resize: vertical; }
+.primary { background: var(--ok); color: #0b1a12; border-color: var(--ok); font-weight: 600; padding: 10px; }
+.verdict-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--panel-2); border-radius: 10px; margin-bottom: 12px; }
+.verdict-card .big { font-size: 20px; font-weight: 600; }
+details summary { cursor: pointer; color: var(--muted); margin-top: 12px; }

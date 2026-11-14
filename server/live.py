@@ -25,10 +25,13 @@ def decisions(store: Store) -> dict:
 
 
 def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_thread,
-                  reply=llm.auto_reply, explain=llm.ci_explain) -> dict:
-    """Store a new event stamped with the demo clock, route it, and (if write) let the LLM write its text."""
+                  reply=llm.auto_reply, explain=llm.ci_explain, at: str | None = None, dry_run: bool = False) -> dict:
+    """Store a new event stamped with the demo clock (or `at`), route it, and (if write) let the LLM write
+    its text. A dry run routes it against the real day, writes the text inline, then removes it again."""
     snapshot = store.get("snapshot")
-    clock = store.get("clock")
+    clock = at or store.get("clock")
+    if dry_run:
+        run = lambda fn: fn()  # noqa: E731  the caller waits for the full response
     event = {**event, "id": store.next_live_id(), "time": clock, "label": None, "holdout": False,
              "demo_moment": None, **({"source_time": event["time"]} if event.get("time") else {})}
     state = build_state(event, snapshot)
@@ -59,4 +62,8 @@ def process_event(store: Store, event: dict, ask=ask_jev, write=True, run=_threa
             store.set_result(event["id"], patch)
         run(work)
 
-    return {"event": {**event, "origin": "live"}, "result": store.results()[event["id"]], "decision": decision}
+    out = {"event": {**event, "origin": "live"}, "result": store.results()[event["id"]], "decision": decision,
+           "dry_run": dry_run}
+    if dry_run:
+        store.delete_event(event["id"])
+    return out

@@ -1,6 +1,4 @@
-// Arrow keys / click to move; slide 6 numbers come from results.json via the same metrics code as the page.
-import { DEFAULTS, replayDay } from "../web/policy.js";
-import { computeMetrics } from "../web/metrics.js";
+// Arrow keys / click to move; slide 6 numbers come live from the Bouncer server (/api/metrics).
 
 const slides = [...document.querySelectorAll(".slide")];
 let i = Math.max(0, Math.min(slides.length - 1, Number(location.hash.slice(1)) - 1 || 0));
@@ -23,12 +21,8 @@ const pct = (x) => (x === null ? "–" : `${Math.round(x * 100)}%`);
 const ms = (x) => (x === null ? "–" : x >= 1000 ? `${(x / 1000).toFixed(1)} s` : `${x} ms`);
 const usd = (x) => (x === null ? "–" : `$${x < 0.1 ? x.toFixed(3) : x.toFixed(2)}`);
 
-Promise.all([fetch("../web/results.json").then((r) => r.json()), fetch("../web/prices.json").then((r) => r.json()).catch(() => ({}))])
-  .then(([results, prices]) => {
-    const { events, snapshot } = results.day;
-    const decisions = replayDay(events, results.events, snapshot, DEFAULTS);
-    const m = computeMetrics(events, decisions, results.events, prices, DEFAULTS);
-    const holdout = events.filter((e) => e.holdout).length;
+Promise.all([fetch("/api/metrics").then((r) => r.json()), fetch("/api/day").then((r) => r.json())])
+  .then(([m, day]) => {
     const row = (name, j, l, fmt, lowerWins = false) => {
       const jw = j !== null && l !== null && (lowerWins ? j < l : j > l);
       const lw = j !== null && l !== null && (lowerWins ? l < j : l > j);
@@ -36,12 +30,13 @@ Promise.all([fetch("../web/results.json").then((r) => r.json()), fetch("../web/p
     };
     document.getElementById("numbers").innerHTML = `<tr><th></th><th>Jev + rules</th><th>LLM only</th></tr>` +
       row("Accuracy (all)", m.jev.accuracy, m.llm.accuracy, pct) +
-      row(`Accuracy (holdout, n=${holdout})`, m.jev.holdoutAccuracy, m.llm.holdoutAccuracy, pct) +
-      row("Critical misses", m.jev.criticalMisses, m.llm.criticalMisses, String, true) +
+      row("Accuracy (holdout, n=8)", m.jev.holdout_accuracy, m.llm.holdout_accuracy, pct) +
+      row("Critical misses", m.jev.critical_misses, m.llm.critical_misses, String, true) +
       row("Asks (counted wrong)", m.jev.asks, 0, String, true) +
       row("Median latency per call", m.jev.p50, m.llm.p50, ms, true) +
-      row("Cost per 1,000 events", m.jev.costPer1k, m.llm.costPer1k, usd, true);
+      row("Cost per 1,000 events", m.jev.cost_per_1k, m.llm.cost_per_1k, usd, true);
     document.getElementById("numbers-meta").textContent =
-      `${results.models.jev} vs ${results.models.llm} · n=${events.length} events · run ${results.generated_at.slice(0, 10)}`;
+      `typesafe/jev-1.14 vs anthropic/claude-sonnet-5.5 · n=${m.n} labelled events · run 2026-11-14` +
+      (m.settings_changed ? " · settings changed in the app" : "");
   })
-  .catch((err) => { document.getElementById("numbers-meta").textContent = `Could not load results: ${err.message}`; });
+  .catch((err) => { document.getElementById("numbers-meta").textContent = `Start the app (make app) to load the numbers: ${err.message}`; });
