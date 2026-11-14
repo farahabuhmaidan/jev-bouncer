@@ -1,0 +1,88 @@
+{
+  "kind": "calendar#events",
+  "summary": "sanad@example.com",
+  "timeZone": "Asia/Amman",
+  "items": [
+    {
+      "kind": "calendar#event",
+      "id": "standup-weekly",
+      "status": "confirmed",
+      "summary": "Standup",
+      "start": {
+        "dateTime": "2026-11-16T09:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-16T09:45:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+      ]
+    },
+    {
+      "kind": "calendar#event",
+      "id": "one-on-one-omar",
+      "status": "confirmed",
+      "summary": "1:1 with Omar",
+      "start": {
+        "dateTime": "2026-11-17T14:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-17T14:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default",
+      "recurrence": [
+        "RRULE:FREQ=WEEKLY;BYDAY=TU"
+      ]
+    },
+    {
+      "kind": "calendar#event",
+      "id": "investor-demo",
+      "status": "confirmed",
+      "summary": "Investor demo",
+      "start": {
+        "dateTime": "2026-11-15T10:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-11-15T11:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "q1-planning",
+      "status": "confirmed",
+      "summary": "Quarterly planning",
+      "start": {
+        "dateTime": "2026-12-01T09:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-12-01T10:30:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    },
+    {
+      "kind": "calendar#event",
+      "id": "dentist",
+      "status": "confirmed",
+      "summary": "Dentist",
+      "start": {
+        "dateTime": "2026-12-03T16:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "end": {
+        "dateTime": "2026-12-03T17:00:00+03:00",
+        "timeZone": "Asia/Amman"
+      },
+      "eventType": "default"
+    }
+  ]
+}

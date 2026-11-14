@@ -27,6 +27,8 @@ const PATHS = {
   file: <><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 13H8" /><path d="M16 17H8" /></>,
   timer: <><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2" /><path d="M10 2h4" /></>,
   code: <><path d="m16 18 6-6-6-6" /><path d="m8 6-6 6 6 6" /></>,
+  calendar: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4" /><path d="M8 2v4" /><path d="M3 10h18" /></>,
+  link: <><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></>,
   shield: <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />,
 };
 
@@ -132,6 +134,10 @@ export function Avatar({ e, people }) {
   const n = senderName(e, people);
   const initials = n.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   return <span className={`avatar ${people[e.sender]?.is_bot ? "bot" : ""}`}>{initials}</span>;
+}
+
+export function niceDate(iso) {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 }
 
 export const askChoice = (e) => e.feedback?.find((f) => f.kind === "ask")?.value;

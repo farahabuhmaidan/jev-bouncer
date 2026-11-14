@@ -1,3 +1,4 @@
+import Reminder from "./Reminder.jsx";
 import { Avatar, Icon, SIGNALS, Status, askChoice, eventText, explain, senderName, senderRole, sourceName, statusText } from "./ui.jsx";
 
 function Signal({ q, p, used, s }) {
@@ -14,7 +15,7 @@ function Signal({ q, p, used, s }) {
 
 const ruleRef = (d) => (d.rule === "error" ? "not routed" : typeof d.rule === "number" ? `rule ${d.rule}` : d.rule);
 
-export default function Why({ event: e, people, settings, onChoose }) {
+export default function Why({ event: e, people, settings, onChoose, onChange }) {
   if (!e) {
     return (
       <div className="empty tall">
@@ -63,6 +64,8 @@ export default function Why({ event: e, people, settings, onChoose }) {
           <p className={r.auto_reply ? "" : "muted"}>{r.auto_reply ?? "Writing…"}</p>
         </section>
       )}
+
+      <Reminder eventId={e.id} reminder={r.reminder} onChange={onChange} />
 
       {r.ci_explanation && (
         <section className="card">

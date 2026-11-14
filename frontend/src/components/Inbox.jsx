@@ -47,6 +47,7 @@ export default function Inbox({ events, people, selected, onSelect, filter, onFi
                   <div className="msg-text">{eventText(e)}</div>
                   <div className="msg-meta">
                     <Status decision={d} chosen={askChoice(e)} />
+                    {r?.reminder?.status === "added" && <span className="pill quiet"><Icon name="calendar" size={12} />Reminder {r.reminder.clashes.length ? "· clash" : "added"}</span>}
                     {isUrgent(e) && <span className="pill warn">Sender marked urgent</span>}
                     {d.action === "batch" && isPerson && r?.auto_reply && <span className="pill quiet"><Icon name="reply" size={12} />Auto-replied</span>}
                     {d.action === "batch" && isPerson && !r?.auto_reply && r?.writing && <span className="pill quiet">Writing auto-reply…</span>}

@@ -128,3 +128,45 @@ def test_live_event_gets_deadline_fact_and_row5(store):
     assert (out["decision"]["action"], out["decision"]["rule"]) == ("interrupt", 5)
     assert "deadline_in_minutes" not in out["result"]["state"]
     assert out["baseline_decision"] is None
+
+
+FEES = {**BLOCKER, "blocks_release": 0.05, "time_sensitive": 0.1, "family_matter": 0.95, "task_later": 0.92}
+
+
+def test_message_with_a_later_task_gets_a_reminder_with_clashes(store):
+    store.put("clock", "14:31")
+    calls = []
+    out = process_event(store, {"type": "message", "source": "compose", "sender": "maha",
+                                "text": "you need to pay school fees next month"}, ask=fake_ask(FEES, calls), write=None)
+    rem = out["result"]["reminder"]
+    assert (rem["date"], rem["time"], rem["status"]) == ("2026-12-01", "09:00", "added")
+    assert [c["title"] for c in rem["clashes"]] == ["Quarterly planning"] and rem["suggested"] == "10:30"
+    assert rem["title"] and len(calls) == 2  # routing questions, then the reminder question
+
+
+def test_no_reminder_when_jev_says_no_task(store):
+    store.put("clock", "14:31")
+    out = process_event(store, {"type": "message", "source": "compose", "sender": "maha",
+                                "text": "the school play is next month, so proud of her"},
+                        ask=fake_ask({**FEES, "task_later": 0.1}), write=None)
+    assert out["result"].get("reminder") is None
+
+
+def test_no_reminder_question_without_a_date(store):
+    calls = []
+    out = process_event(store, {"type": "message", "source": "compose", "sender": "maha", "text": "pay the fees"},
+                        ask=fake_ask(FEES, calls), write=None)
+    assert out["result"].get("reminder") is None and len(calls) == 1
+
+
+def test_reminder_question_error_is_shown_not_a_no(store):
+    state = {"n": 0}
+
+    def ask(st, etype):
+        state["n"] += 1
+        if etype == "reminder":
+            return {"answers": {}, "latency_ms": 5, "usage": {}, "request": {}, "error": "HTTP 500"}
+        return {"answers": FEES, "latency_ms": 5, "usage": {}, "request": {}, "error": None}
+    out = process_event(store, {"type": "message", "source": "compose", "sender": "maha",
+                                "text": "you need to pay school fees next month"}, ask=ask, write=None)
+    assert out["result"]["reminder"]["status"] == "error" and "500" in out["result"]["reminder"]["error"]

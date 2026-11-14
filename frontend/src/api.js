@@ -21,6 +21,8 @@ export const getDigest = () => call("GET", "/api/digest");
 export const getPeople = () => call("GET", "/api/people");
 export const getMoments = () => call("GET", "/api/moments");
 export const reset = () => call("POST", "/api/reset");
+export const getCalendar = () => call("GET", "/api/calendar");
+export const reminderAction = (id, action) => call("POST", `/api/events/${encodeURIComponent(id)}/reminder`, { action });
 
 export const toMin = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
 export const toHHMM = (min) => `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(min % 60).padStart(2, "0")}`;

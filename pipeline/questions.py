@@ -87,5 +87,17 @@ CI_QUESTIONS = {
 }
 
 
+# Asked in a second request, only when code found a future date in the message (design/16).
+REMINDER_QUESTIONS = {
+    "task_later": noul(
+        "Does `message` ask Sanad to do something himself at a later date?",
+        "It gives Sanad a task with a future date: pay, book, renew, send, attend or prepare something then.",
+        "It only shares news or plans, mentions a date for something Sanad does not have to act on, or the task is for someone else.",
+    ),
+}
+
+
 def questions_for(event_type: str) -> dict:
+    if event_type == "reminder":
+        return REMINDER_QUESTIONS
     return CI_QUESTIONS if event_type == "ci_failure" else MESSAGE_QUESTIONS

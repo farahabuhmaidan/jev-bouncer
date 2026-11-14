@@ -8,7 +8,9 @@ Doorman is an attention filter for people at work who get hundreds of pings a da
 
 ![Doorman: today's messages, why a message got through, and the phone preview](docs/assets/screenshot.png)
 
-The app has three pages: **Today** (every message with what Doorman did and why, in plain words), **Insights** (Doorman vs an LLM on the same questions) and **Rules** (budget, deadlines, quiet hours, family and VIPs).
+The app has four pages: **Today** (every message with what Doorman did and why, in plain words), **Calendar** (reminders Doorman added for tasks with a later date, with clashes), **Insights** (Doorman vs an LLM on the same questions) and **Rules** (budget, deadlines, quiet hours, family and VIPs, connections).
+
+When a message gives you something to do later ("you need to pay school fees next month"), code finds the date, Jev confirms it's a task for you, and Doorman adds a reminder to your calendar, flags clashes and suggests the next free slot. The calendar connection is demo data in the Google Calendar API format (design/16).
 
 ## What it does
 

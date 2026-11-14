@@ -257,3 +257,28 @@ def test_settings_accept_deadline_minutes(make):
     c, _ = make()
     assert c.put("/api/settings", json={"deadlineMinutes": 60}).json()["deadlineMinutes"] == 60
     assert c.put("/api/settings", json={"deadlineMinutes": 2}).json()["deadlineMinutes"] == 120
+
+
+def ask_fees(state, etype):
+    return {"answers": {**BLOCKER, "blocks_release": 0.05, "time_sensitive": 0.1, "task_later": 0.9},
+            "latency_ms": 5, "usage": {}, "request": {}, "error": None}
+
+
+def test_calendar_lists_connection_and_reminders(make):
+    c, _ = make(ask=ask_fees)
+    out = c.post("/api/events", json={"sender": "maha", "text": "you need to pay school fees next month"}).json()
+    cal = c.get("/api/calendar").json()
+    assert cal["connection"]["connected"] is True
+    [r] = cal["reminders"]
+    assert r["event_id"] == out["event"]["id"] and r["date"] == "2026-12-01"
+    assert [e["title"] for e in r["day"]] == ["Quarterly planning", "Standup", "1:1 with Omar"]
+
+
+def test_reminder_move_to_suggested_and_remove(make):
+    c, _ = make(ask=ask_fees)
+    eid = c.post("/api/events", json={"sender": "maha", "text": "you need to pay school fees next month"}).json()["event"]["id"]
+    r = c.post(f"/api/events/{eid}/reminder", json={"action": "move"}).json()
+    assert (r["time"], r["clashes"], r["suggested"]) == ("10:30", [], None)
+    assert c.post(f"/api/events/{eid}/reminder", json={"action": "remove"}).json()["status"] == "removed"
+    assert c.get("/api/calendar").json()["reminders"] == []
+    assert c.post(f"/api/events/{eid}/reminder", json={"action": "fly"}).status_code == 422

@@ -12,8 +12,9 @@ from pydantic import BaseModel
 from pipeline.adapters import ADAPTERS
 from pipeline.jev import ask_jev
 
+from . import calendar
 from .db import DB_PATH, Store, seed_store
-from .live import baseline_decisions, decisions, process_event
+from .live import baseline_decisions, decisions, place_reminder, process_event
 from .metrics import compute_metrics
 from .policy import effective_settings
 
@@ -41,6 +42,10 @@ class NewEvent(BaseModel):
 
 class Clock(BaseModel):
     time: str
+
+
+class ReminderAction(BaseModel):
+    action: str
 
 
 class Feedback(BaseModel):
@@ -163,6 +168,33 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
         if body.kind == "urgent":
             return store.add_feedback(event_id, "urgent", None)
         raise HTTPException(422, "kind must be 'urgent', or 'ask' with a choice of interrupt/batch/delegate/drop")
+
+    @app.get("/api/calendar")
+    def get_calendar():
+        """The connected calendar and the reminders Doorman added, each with that day's events."""
+        events = {e["id"]: e for e in store.all_events()}
+        reminders = [{"event_id": eid, "sender": (r.get("state") or {}).get("sender"), "message": events[eid].get("text"),
+                      **r["reminder"], "day": calendar.events_on(r["reminder"]["date"])}
+                     for eid, r in store.results().items()
+                     if eid in events and (r.get("reminder") or {}).get("status") == "added"]
+        return {"connection": calendar.connection(), "today": calendar.TODAY,
+                "reminders": sorted(reminders, key=lambda x: (x["date"], x["time"]))}
+
+    @app.post("/api/events/{event_id}/reminder")
+    def reminder_action(event_id: str, body: ReminderAction):
+        rem = (store.results().get(event_id) or {}).get("reminder")
+        if not rem or rem.get("status") == "error":
+            raise HTTPException(404, "this message has no reminder")
+        if body.action == "move" and rem.get("suggested"):
+            rem = place_reminder({**rem, "time": rem["suggested"]}, rem["title"], rem["p"])
+        elif body.action == "remove":
+            rem = {**rem, "status": "removed"}
+        elif body.action == "add":
+            rem = place_reminder(rem, rem["title"], rem["p"])
+        elif body.action != "keep":
+            raise HTTPException(422, "action must be move, keep, remove or add")
+        store.set_result(event_id, {"reminder": rem})
+        return rem
 
     @app.get("/api/metrics")
     def metrics():

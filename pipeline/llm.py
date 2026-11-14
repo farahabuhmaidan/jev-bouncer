@@ -210,6 +210,17 @@ def baseline_judge(state: dict, event_type: str, client: httpx.Client | None = N
         return {"answers": {}, "error": f"{type(exc).__name__}: {exc}"}
 
 
+REMINDER_SYSTEM = """Write the title of a calendar reminder for Sanad from the message below: what he has to do,
+as a short imperative phrase of 2 to 6 words (for example "Pay school fees"). No date, no quotes. Reply with the title only."""
+REMINDER_PARAMS = {"max_tokens": 1000, "effort": "low"}
+
+
+def reminder_title(state: dict, client: httpx.Client | None = None) -> str:
+    user = json.dumps({"sender": state["sender"], "message": state.get("message")}, ensure_ascii=False, indent=1)
+    content, _ = _chat(REMINDER_SYSTEM, user, **REMINDER_PARAMS, client=client)
+    return content.strip().strip('"')[:80]
+
+
 def auto_reply(state: dict, next_slot: str, client: httpx.Client | None = None) -> str:
     user = json.dumps({"sender": state["sender"], "message": state.get("message"),
                        "sanad_will_look_at_it": next_slot}, ensure_ascii=False, indent=1)

@@ -8,6 +8,7 @@ import Why from "./components/Why.jsx";
 import Phone from "./components/Phone.jsx";
 import Settings from "./components/Settings.jsx";
 import Metrics from "./components/Metrics.jsx";
+import CalendarPage from "./components/CalendarPage.jsx";
 import { AskModal, DigestModal } from "./components/Modals.jsx";
 import { Icon, askChoice } from "./components/ui.jsx";
 
@@ -140,7 +141,7 @@ export default function App() {
             </div>
           </section>
           <section className="col detail-col" aria-label="Details">
-            <div className="scroll"><Why event={byId[selected]} people={people} settings={day.settings} onChoose={choose} /></div>
+            <div className="scroll"><Why event={byId[selected]} people={people} settings={day.settings} onChoose={choose} onChange={refresh} /></div>
           </section>
           <aside className="col phone-col" aria-label="Phone preview">
             <div className="col-head"><div><h1 className="small-h">On your phone</h1><p>Only what got through</p></div>
@@ -149,6 +150,7 @@ export default function App() {
           </aside>
         </main>
       )}
+      {tab === "calendar" && <CalendarPage version={day.events.length} />}
       {tab === "insights" && <Metrics m={metrics} />}
       {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} />}
 

@@ -38,6 +38,8 @@ Supersedes "Stage 2" in 01 and the layout in 07. Everything upstream stays: adap
 | `GET /api/metrics` | | `{jev, llm}` each with critical_misses, precision, false_alarm_rate, cost_per_1k, p50, p95, accuracy, accuracy_excl_asks, holdout_accuracy, by_type, asks, errors; plus `n`, `settings_changed` (08), over labelled events only |
 | `GET /api/digest` | | digest groups filtered to events currently batched |
 | `GET /api/people` | | snapshot people (for Compose and Settings) |
+| `GET /api/calendar` | | connection + reminders with each day's agenda (16) |
+| `POST /api/events/{id}/reminder` | `{action: move\|keep\|remove\|add}` | the updated reminder (16) |
 | `POST /api/reset` | | re-seed: deletes live events and feedback, clock 08:00 |
 
 ### SQLite schema (`server/db.py`)

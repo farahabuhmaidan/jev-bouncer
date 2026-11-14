@@ -77,6 +77,13 @@ export default function Settings({ settings: s, people, onChange }) {
       </section>
 
       <section className="panel-card">
+        <h2>Connections</h2>
+        <Row title="Google Calendar" help="Doorman adds reminders for tasks with a later date and checks them for clashes. Demo: sample calendar data, no account is contacted.">
+          <span className="conn"><span className="dot" />Connected · sanad@example.com</span>
+        </Row>
+      </section>
+
+      <section className="panel-card">
         <h2>Engineering</h2>
         <Row title="Rerun flaky tests silently" help="When CI fails on a known-flaky test, Doorman reruns it instead of telling you.">
           <Toggle checked={s.silentRerun} label="Rerun flaky tests silently" onChange={(v) => save({ silentRerun: v })} />
