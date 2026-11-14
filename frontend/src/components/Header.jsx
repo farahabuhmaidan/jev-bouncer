@@ -3,7 +3,6 @@ import { Icon } from "./ui.jsx";
 const TABS = [
   { key: "today", label: "Today", icon: "inbox" },
   { key: "calendar", label: "Calendar", icon: "calendar" },
-  { key: "insights", label: "Insights", icon: "chart" },
   { key: "rules", label: "Rules", icon: "sliders" },
 ];
 

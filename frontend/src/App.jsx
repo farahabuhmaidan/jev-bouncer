@@ -7,7 +7,6 @@ import SenderView from "./components/SenderView.jsx";
 import Why from "./components/Why.jsx";
 import Phone from "./components/Phone.jsx";
 import Settings from "./components/Settings.jsx";
-import Metrics from "./components/Metrics.jsx";
 import CalendarPage from "./components/CalendarPage.jsx";
 import { AskModal, DigestModal } from "./components/Modals.jsx";
 import { Icon, askChoice } from "./components/ui.jsx";
@@ -18,7 +17,6 @@ export default function App() {
   const [day, setDay] = useState(null);
   const [people, setPeople] = useState({});
   const [moments, setMoments] = useState([]);
-  const [metrics, setMetrics] = useState(null);
   const [selected, setSelected] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -44,17 +42,15 @@ export default function App() {
       return d;
     } catch (err) { setError(err.message); }
   }, []);
-  const refreshMetrics = useCallback(() => api.getMetrics().then(setMetrics).catch(() => {}), []);
 
   useEffect(() => {
     loadPeople();
     api.getMoments().then(setMoments);
-    refresh(); refreshMetrics();
+    refresh();
     const t = setInterval(refresh, 1000); // live events and LLM text arrive by polling
     return () => clearInterval(t);
-  }, [refresh, refreshMetrics, loadPeople]);
+  }, [refresh, loadPeople]);
 
-  useEffect(() => { if (tab === "insights") refreshMetrics(); }, [tab, refreshMetrics]);
 
   // Only an ask that arrives now pops up; older ones wait in the Why panel ("Answer" there).
   const [dismissed, setDismissed] = useState(() => new Set());
@@ -90,7 +86,7 @@ export default function App() {
 
   async function resetDay() {
     setPlaying(false); setSelected(null); digestShown.current = false; lastIds.current = new Set(); setDismissed(new Set());
-    await api.reset(); await refresh(); refreshMetrics();
+    await api.reset(); await refresh();
   }
 
   async function choose(id, choice) {
@@ -113,7 +109,7 @@ export default function App() {
   if (!day) return <p className="boot">{error ? `Can't reach the Doorman server: ${error}. Is \`make app\` running?` : "Loading…"}</p>;
   const byId = Object.fromEntries(day.events.map((e) => [e.id, e]));
 
-  const onChanged = async () => { await refresh(); refreshMetrics(); };
+  const onChanged = async () => { await refresh(); };
   return (
     <div className="app">
       <Header day={day} tab={tab} onTab={setTab} playing={playing} speed={speed}
@@ -165,7 +161,6 @@ export default function App() {
         </main>
       )}
       {tab === "calendar" && <CalendarPage version={day.events.length} />}
-      {tab === "insights" && <Metrics m={metrics} />}
       {tab === "rules" && <Settings settings={day.settings} people={people} onChange={onChanged} onPeople={loadPeople} />}
 
       <footer className="foot">
