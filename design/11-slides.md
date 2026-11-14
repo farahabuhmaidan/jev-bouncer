@@ -18,7 +18,7 @@ Revised 2026-11-14: the deck tells the problem first, in plain human language; a
 | 9 | **Live demo** | loud vs quiet → CI trio → live message → "got a sec?" ask → evening mode → change a rule |
 | 10 | The numbers | Jev vs the LLM through the same policy, read live from `/api/metrics`; losses shown |
 | 11 | What we're honest about | Fictional data, small labelled set, changes logged, baseline prompt caveat, demo calendar |
-| 12 | What's next | A real week for a real person, learning from answers, teams |
+| 12 | What's next | A Doorman that learns you: full email and Teams access with a memory of what is urgent and how and when you reply (code still decides; lessons visible and undoable); a real week; whole teams |
 
 ## Rules
 - Numbers on the numbers slide (10) are read from the running server's `/api/metrics`, never typed by hand.
