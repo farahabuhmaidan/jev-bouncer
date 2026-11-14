@@ -28,7 +28,7 @@ Promise.all([fetch("/api/metrics").then((r) => r.json()), fetch("/api/day").then
       const lw = j !== null && l !== null && (lowerWins ? l < j : l > j);
       return `<tr><td>${name}</td><td class="j ${jw ? "win" : ""}">${fmt(j)}</td><td class="l ${lw ? "win" : ""}">${fmt(l)}</td></tr>`;
     };
-    document.getElementById("numbers").innerHTML = `<tr><th></th><th>Jev</th><th>LLM baseline</th></tr>` +
+    document.getElementById("numbers").innerHTML = `<tr><th></th><th>Doorman (Jev)</th><th>LLM only</th></tr>` +
       row("Critical misses", m.jev.critical_misses, m.llm.critical_misses, String, true) +
       row("Interrupt precision", m.jev.precision, m.llm.precision, pct) +
       row("Cost per 1,000 events", m.jev.cost_per_1k, m.llm.cost_per_1k, usd, true) +

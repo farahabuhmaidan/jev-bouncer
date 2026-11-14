@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Doorman</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
   <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,7 +14,7 @@
 
 <section class="slide title">
   <p class="kicker">Hackathon · 2026-11-14</p>
-  <h1>Doorman</h1>
+  <h1><span class="logo"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56Z"/></svg></span>Doorman</h1>
   <p class="lead">Lets the important ping through. Holds the loud one at the door.</p>
   <p class="muted">Jev judges · code decides · the LLM only writes</p>
 </section>
@@ -21,8 +23,8 @@
   <h2>The problem</h2>
   <p class="lead">Hundreds of pings a day, and <b>wording</b> sets the urgency. Loud beats important.</p>
   <div class="pair">
-    <div class="card loud"><div class="who">14:05 · Layla, CEO</div>“URGENT!!! Can we make the investor deck background blue instead of grey???”<div class="verdict"><span class="chip batch">batch</span> cosmetic, can wait</div></div>
-    <div class="card quiet"><div class="who">14:20 · Rami, engineer</div>“hey, is checkout supposed to show 0 JOD for some users? 🤔”<div class="verdict"><span class="chip interrupt">🔔 interrupt</span> pricing bug before the demo</div></div>
+    <div class="card loud"><div class="who">14:05 · Layla, CEO</div>“URGENT!!! Can we make the investor deck background blue instead of grey???”<div class="verdict"><span class="status s-batch">Held until 16:00</span> cosmetic, can wait</div></div>
+    <div class="card quiet"><div class="who">14:20 · Rami, engineer</div>“hey, is checkout supposed to show 0 JOD for some users? 🤔”<div class="verdict"><span class="status s-interrupt">Interrupted you</span> pricing bug before the demo</div></div>
   </div>
 </section>
 
@@ -34,13 +36,13 @@
     <li><b>The LLM</b> only writes: auto-replies, CI explanations, the evening digest.</li>
   </ol>
   <table class="tt">
-    <tr><td>family, can't wait</td><td><span class="chip interrupt">interrupt</span></td></tr>
-    <tr><td>blocks the release and needs Sanad</td><td><span class="chip interrupt">interrupt</span></td></tr>
-    <tr><td>a deadline in under 2 hours (read by code, not a model)</td><td><span class="chip interrupt">interrupt</span></td></tr>
-    <tr><td>sounds urgent, isn't</td><td><span class="chip batch">batch + auto-reply</span></td></tr>
-    <tr><td>Jev unsure if Sanad is needed</td><td><span class="chip ask">ask Sanad</span></td></tr>
-    <tr><td>doesn't need Sanad</td><td><span class="chip delegate">delegate</span></td></tr>
-    <tr><td>time-sensitive, under the interrupt budget</td><td><span class="chip interrupt">interrupt</span></td></tr>
+    <tr><td>family, can't wait</td><td><span class="status s-interrupt">Interrupt</span></td></tr>
+    <tr><td>blocks the release and needs Sanad</td><td><span class="status s-interrupt">Interrupt</span></td></tr>
+    <tr><td>a deadline in under 2 hours (read by code, not a model)</td><td><span class="status s-interrupt">Interrupt</span></td></tr>
+    <tr><td>sounds urgent, isn't</td><td><span class="status s-batch">Hold + auto-reply</span></td></tr>
+    <tr><td>Jev unsure if Sanad is needed</td><td><span class="status s-ask">Ask</span></td></tr>
+    <tr><td>doesn't need Sanad</td><td><span class="status s-delegate">Forward</span></td></tr>
+    <tr><td>time-sensitive, under the interrupt budget</td><td><span class="status s-interrupt">Interrupt</span></td></tr>
   </table>
 </section>
 
@@ -54,7 +56,7 @@
   <div class="arrow">↓ state + typed questions (~0.3 s)</div>
   <div class="flow"><div class="jev">Jev</div><div>policy.py (rules)</div><div class="llm">LLM writes text</div></div>
   <div class="arrow">↓ polled every second</div>
-  <div class="flow"><div>React app: inbox · why · settings</div><div>Sanad's phone (/phone)</div></div>
+  <div class="flow"><div>Doorman app: Today · Insights · Rules</div><div>Sanad's phone (/phone)</div></div>
   <p class="muted">A new source is one adapter module plus a fixture; <code>POST /api/ingest/&lt;source&gt;</code> takes its raw payload. Today's people and data are fictional.</p>
 </section>
 
@@ -66,7 +68,7 @@
     <li><b>Live:</b> type a message as anyone; Jev routes it in a second, the LLM writes the auto-reply</li>
     <li>“got a sec?” from the cofounder: Jev is unsure, so Doorman asks</li>
     <li>Evening mode: work waits for morning, the school still gets through</li>
-    <li>Drag the budget and the sure band: the whole day re-routes, the numbers update</li>
+    <li>Rules: change the budget or the deadline window; the whole day re-routes and Insights update</li>
   </ol>
   <p><a class="button" href="/" target="_blank">Open the app →</a></p>
   <video id="backup" src="../docs/assets/demo.mp4" controls muted hidden></video>
