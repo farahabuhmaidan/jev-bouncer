@@ -148,6 +148,14 @@ def create_app(store: Store, ask=ask_jev, write=True) -> FastAPI:
                   for g in (store.get("digest") or {}).get("groups", [])]
         return {"groups": [g for g in groups if g["items"]]}
 
+    @app.get("/api/moments")
+    def moments():
+        out = []
+        for e in store.all_events():
+            if e.get("demo_moment") and all(m["name"] != e["demo_moment"] for m in out):
+                out.append({"name": e["demo_moment"], "time": e["time"]})
+        return out
+
     @app.get("/api/people")
     def people():
         return [{"key": k, **p} for k, p in snapshot()["people"].items() if k != "sanad"]

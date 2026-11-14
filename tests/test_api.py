@@ -176,3 +176,9 @@ def test_reset(make):
     c.post("/api/clock", json={"time": "15:00"})
     assert c.post("/api/reset").status_code == 200
     assert len(store.all_events()) == 33 and c.get("/api/day").json()["clock"] == "08:00"
+
+
+def test_moments_in_time_order(make):
+    c, _ = make()
+    m = c.get("/api/moments").json()
+    assert [x["name"] for x in m] == ["loud-vs-quiet", "ci-trio", "unsure", "evening"] and m[0]["time"] == "14:05"
