@@ -44,3 +44,5 @@ Bouncer puts every event through one Jev call that answers a few small judgments
 9. [09-build-plan.md](09-build-plan.md): 3-hour clock, risks, open items
 10. [10-public-repo.md](10-public-repo.md): layout, root README, rules for a public repo
 11. [11-slides.md](11-slides.md): the presentation deck
+12. [12-implementation-plan.md](12-implementation-plan.md): task-by-task build plan
+13. [13-adapters.md](13-adapters.md): pluggable source adapters (Slack, Gmail, GitHub Actions, Google Calendar examples)

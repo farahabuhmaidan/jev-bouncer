@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 .remember/
 node_modules/
+.claude/settings.local.json

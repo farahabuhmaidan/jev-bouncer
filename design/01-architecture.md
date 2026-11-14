@@ -13,7 +13,7 @@ GitHub ┘  (slide only)  (events.json)    (state, no AI)        │
                               LLM writes text only where needed ┘
 ```
 
-In the demo, `events.json` **is** the unified inbox. Real adapters (Slack Events API, Gmail push, GitHub Actions webhooks) appear only on a slide.
+In the demo, `events.json` **is** the unified inbox. Sources plug in through adapters (see 13): Slack, Gmail and GitHub Actions adapters turn real-shaped payloads into unified events, and adding a source is one new file.
 
 ## Two stages
 
@@ -55,9 +55,10 @@ Serve with `python -m http.server` from `web/`.
 
 ## Repo layout
 ```
-data/        events.json, snapshot.json, ci_logs/*.txt
-pipeline/    run.py, questions.py (all Jev wording in one place),
-             state.py, llm.py, cache/
+data/        events.json, snapshot.json, ci_logs/*.txt, raw/<source>/*.json
+pipeline/    run.py, load.py, questions.py (all Jev wording in one place),
+             state.py, llm.py, adapters/ (base, slack, gmail, github_actions,
+             google_calendar), cache/
 web/         index.html, app.js, policy.js, metrics.js, style.css, results.json
 design/      this spec
 ```
