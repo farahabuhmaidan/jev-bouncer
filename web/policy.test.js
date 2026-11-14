@@ -78,13 +78,18 @@ test("row 2: evening roadmap is batched to the morning", () => {
 });
 
 test("row 1: evening school message interrupts (family)", () => {
-  const d = decide(msg("school", "18:40"), jev({ ...quiet, family_matter: 0.99 }), DEFAULTS, day({ evening: true }));
+  const d = decide(msg("school", "18:40"), jev({ ...quiet, family_matter: 0.99, time_sensitive: 0.83 }), DEFAULTS, day({ evening: true }));
   assert.equal(d.action, "interrupt"); assert.equal(d.rule, 1); assert.equal(d.usesBudget, false);
 });
 
-test("row 1: sender marked family interrupts even if Jev is unsure", () => {
-  const d = decide(msg("maha"), jev({ ...quiet, family_matter: 0.5 }), DEFAULTS, day());
-  assert.equal(d.rule, 1);
+test("row 1: sender marked family interrupts when timing is unsure", () => {
+  const d = decide(msg("maha"), jev({ ...quiet, family_matter: 0.5, time_sensitive: 0.5 }), DEFAULTS, day());
+  assert.equal(d.action, "interrupt"); assert.equal(d.rule, 1);
+});
+
+test("row 1: family that can wait (bread, not urgent) is batched, never asked or delegated", () => {
+  const d = decide(msg("maha"), jev({ ...quiet, family_matter: 0.98, time_sensitive: 0.06, needs_sanad: 0.5 }), DEFAULTS, day());
+  assert.equal(d.action, "batch"); assert.equal(d.rule, 1); assert.equal(d.label, "until 16:00");
 });
 
 test("row 1 off: with the family rule off, family is not special", () => {

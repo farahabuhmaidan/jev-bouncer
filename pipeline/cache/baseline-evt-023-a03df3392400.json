@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.93,
+ "reason": "FYI email from the CEO with a Friday deadline, not urgent and not blocking the release or demo, so hold it for the digest instead of interrupting the focus block.",
+ "latency_ms": 2422,
+ "tokens": {
+  "in": 724,
+  "out": 77
+ },
+ "cost": 0.002218,
+ "error": null
+}

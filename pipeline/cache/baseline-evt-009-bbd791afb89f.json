@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.72,
+ "reason": "Non-urgent support question about an invoice help article; Sanad is in investor demo prep, so hold it for his next free slot or the digest.",
+ "latency_ms": 1464,
+ "tokens": {
+  "in": 756,
+  "out": 68
+ },
+ "cost": 0.002192,
+ "error": null
+}

@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.9,
+ "reason": "Family message that is explicitly not urgent, so it can wait for his next free slot or the end-of-day digest rather than using one of his 5 interrupts.",
+ "latency_ms": 1506,
+ "tokens": {
+  "in": 724,
+  "out": 73
+ },
+ "cost": 0.002178,
+ "error": null
+}

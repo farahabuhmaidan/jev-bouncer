@@ -7,8 +7,8 @@ Notation: `yes(q)` means p ≥ `settings.yesAt`, `no(q)` means p ≤ `settings.n
 ## Message truth table (first matching row wins)
 | # | Condition | Action | Uses budget |
 |---|---|---|---|
-| 1 | `yes(family_matter)` and rule "family always interrupts" on, or sender marked family | interrupt | no |
-| 2 | Evening mode active and not `yes(family_matter)` and not `yes(blocks_release)` | batch (to morning) | n/a |
+| 1 | Rule "family can always reach me" on, and `yes(family_matter)` or sender marked family | interrupt, unless `no(time_sensitive)`: then batch to the next free slot (never ask or delegate family) | no |
+| 2 | Evening mode active and not family and not `yes(blocks_release)` | batch (to morning) | n/a |
 | 3 | `yes(is_noise)` | drop | n/a |
 | 4 | `yes(blocks_release)` and `yes(needs_sanad)` | interrupt | no |
 | 5 | `yes(wording_only_urgency)` and not `yes(blocks_release)` | batch (+ auto-reply) | n/a |
@@ -59,6 +59,6 @@ Replay pauses and a modal shows the two candidate actions with the unsure probab
 | Daily budget | stepper 1–10 | 5 |
 | Evening start | time | 18:00 |
 | People: family / VIP | tag per contact | family = Sanad's partner and the school; VIP = none |
-| Rules: family always interrupts, CI silent rerun | toggles | on |
+| Rules: family can always reach me, CI silent rerun | toggles | on |
 
 Any change re-runs `decide` over the whole day from 00:00 and re-renders the feed, phone and metrics. Settings are saved in localStorage, wrapped in try/catch.

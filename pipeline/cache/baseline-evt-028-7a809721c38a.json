@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.86,
+ "reason": "School pickup is at 17:30, ten minutes away, and the gate has moved to the east gate. This is time-sensitive family information that would be useless in a digest.",
+ "latency_ms": 2426,
+ "tokens": {
+  "in": 734,
+  "out": 200
+ },
+ "cost": 0.003468,
+ "error": null
+}

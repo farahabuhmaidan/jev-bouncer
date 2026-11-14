@@ -1,0 +1,12 @@
+{
+ "action": "drop",
+ "confidence": 0.8,
+ "reason": "Known flaky timeout test (3 of last 20 runs failed) on an unrelated eslint bump commit; rerun it silently rather than interrupting Sanad's focus block.",
+ "latency_ms": 1721,
+ "tokens": {
+  "in": 1119,
+  "out": 82
+ },
+ "cost": 0.003058,
+ "error": null
+}

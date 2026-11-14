@@ -36,6 +36,7 @@ class Cache:
     def __init__(self, directory: Path = CACHE_DIR):
         self.dir = Path(directory)
         self.dir.mkdir(parents=True, exist_ok=True)
+        self.used: set[str] = set()
 
     @staticmethod
     def key(kind: str, event_id: str, *parts) -> str:
@@ -43,10 +44,19 @@ class Cache:
         return f"{kind}-{event_id}-{digest}"
 
     def get(self, key: str):
+        self.used.add(key)
         path = self.dir / f"{key}.json"
         return json.loads(path.read_text()) if path.exists() else None
 
+    def prune(self) -> int:
+        """Delete entries this run did not touch (old prompts, reworded events). Returns how many."""
+        stale = [f for f in self.dir.glob("*.json") if f.stem not in self.used]
+        for f in stale:
+            f.unlink()
+        return len(stale)
+
     def put(self, key: str, value) -> None:
+        self.used.add(key)
         (self.dir / f"{key}.json").write_text(json.dumps(value, ensure_ascii=False, indent=1))
 
 
@@ -149,7 +159,10 @@ def main(argv: list[str] | None = None) -> None:
 
     snapshot = load_snapshot(ROOT / "data" / "snapshot.json")
     events = load_events(ROOT / "data" / "events.json", snapshot)
-    results = build_results(snapshot, events, offline=args.eval_only)
+    cache = Cache()
+    results = build_results(snapshot, events, cache=cache, offline=args.eval_only)
+    if not args.eval_only:
+        print(f"pruned {cache.prune()} stale cache entries")
     Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1))
     (Path(args.out).parent / "prices.json").write_text(json.dumps(PRICES, indent=1))
 

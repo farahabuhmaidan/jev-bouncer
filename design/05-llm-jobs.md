@@ -3,7 +3,7 @@
 Model: `anthropic/claude-sonnet-5.5` via OpenRouter, with structured output (a JSON schema) wherever the code reads the result. All runs happen in the pipeline, ahead of time.
 
 ## 1. Baseline router (for the comparison)
-- **Input:** the same state Jev saw (02), plus the four action names with one-line descriptions, plus Sanad's default settings in words ("5 interrupts a day; family always interrupts; evening mode from 18:00").
+- **Input:** the same state Jev saw (02), plus the four action names with one-line descriptions, plus Sanad's default settings in words ("5 interrupts a day; family can always reach him when it can't wait; evening mode from 18:00").
 - **Output:** `{ action, confidence 0–1, one_line_reason }`.
 - Record latency and input/output tokens per call.
 - The baseline's actions are fixed; settings sliders don't change them.

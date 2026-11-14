@@ -110,3 +110,16 @@ def test_offline_uses_cache_only(tmp_path):
     snap, events = _day()
     r = build_results(snap, events, cache=Cache(tmp_path), offline=True, **Fakes().kw())
     assert r["events"]["evt-015"]["jev"]["error"].startswith("not in cache")
+
+
+def test_prune_removes_entries_the_run_did_not_use(tmp_path):
+    snap, events = _day()
+    build_results(snap, events, cache=Cache(tmp_path), **Fakes().kw())
+    (tmp_path / "baseline-evt-999-stale.json").write_text("{}")
+    cache = Cache(tmp_path)
+    build_results(snap, events, cache=cache, **Fakes().kw())
+    removed = cache.prune()
+    assert removed == 1 and not (tmp_path / "baseline-evt-999-stale.json").exists()
+    f = Fakes()
+    build_results(snap, events, cache=Cache(tmp_path), **f.kw())
+    assert f.calls["jev"] == 0

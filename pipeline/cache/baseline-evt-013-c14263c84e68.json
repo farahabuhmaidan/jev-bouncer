@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.6,
+ "reason": "Yousef's PR review blocks today's CHK-88 release, which Sanad owns and is due today. Sanad is free now before his 14:00 focus block, so he can pick it up right away and not let it slip toward the evening.",
+ "latency_ms": 5047,
+ "tokens": {
+  "in": 809,
+  "out": 488
+ },
+ "cost": 0.006498,
+ "error": null
+}

@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.6,
+ "reason": "Vague 'got a sec?' from the CTO has no stated urgency, so it can wait until the focus block ends at 16:00; interrupting would spend one of 5 daily interrupts on an unspecified ask, though a quick reply after the block is advisable given the demo tomorrow and today's CHK-88 release.",
+ "latency_ms": 2394,
+ "tokens": {
+  "in": 716,
+  "out": 126
+ },
+ "cost": 0.002692,
+ "error": null
+}

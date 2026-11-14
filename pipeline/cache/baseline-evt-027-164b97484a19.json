@@ -1,0 +1,12 @@
+{
+ "action": "delegate",
+ "confidence": 0.6,
+ "reason": "A routine question about where staging credentials are kept is not urgent for Sanad; a teammate or DevOps can answer it and point Rami to the secrets manager, so there is no need to interrupt before school pickup. It is a credentials question, so it should be answered by someone who can safely direct him to the proper vault rather than by sharing them in chat.",
+ "latency_ms": 2274,
+ "tokens": {
+  "in": 736,
+  "out": 134
+ },
+ "cost": 0.002812,
+ "error": null
+}

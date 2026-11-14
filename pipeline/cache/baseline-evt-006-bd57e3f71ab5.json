@@ -1,0 +1,12 @@
+{
+ "action": "interrupt",
+ "confidence": 0.8,
+ "reason": "CTO needs confirmation before 11:00 that the investor-demo checkout flow works with a discounted plan. This is tied to Sanad's own High-priority CHK-88 (wrong totals on discounted plans) and tomorrow's investor demo, so it has a hard deadline and he is the only one who can answer.",
+ "latency_ms": 2073,
+ "tokens": {
+  "in": 862,
+  "out": 128
+ },
+ "cost": 0.003004,
+ "error": null
+}

@@ -22,7 +22,7 @@ For each incoming event, decide what to do with it. Choose exactly one action:
 - delegate: forward it to a teammate, the support team or DevOps, who can handle it.
 - drop: nothing to do (noise, automated notices, plain thanks); for a flaky CI test, rerun it silently.
 
-Sanad's settings: 5 interrupts a day; family always interrupts; evening mode from 18:00, when work waits until
+Sanad's settings: 5 interrupts a day; family can always reach him when it can't wait (family that can wait is held); evening mode from 18:00, when work waits until
 the morning unless it blocks the release or the investor demo.
 
 Reply with JSON: the action, your confidence from 0 to 1 that it is the right action, and a one-line reason."""

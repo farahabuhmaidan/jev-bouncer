@@ -193,7 +193,7 @@ function renderSettings() {
       ${range("interruptBar", "interrupt bar", 0.5, 0.95, 0.05)}${check("risingBar", "bar rises as budget runs out")}
       ${range("budget", "daily budget", 1, 10, 1)}
       <label>evening starts<input type="time" name="eveningStart" value="${s.eveningStart}"></label></fieldset>
-    <fieldset><legend>Rules</legend>${check("familyAlways", "family always interrupts")}${check("silentRerun", "rerun flaky CI silently")}</fieldset>
+    <fieldset><legend>Rules</legend>${check("familyAlways", "family can always reach me")}${check("silentRerun", "rerun flaky CI silently")}</fieldset>
     <fieldset><legend>People</legend><div class="person muted"><span></span><span>family</span><span>VIP</span></div>
       ${people.map(([k, p]) => `<div class="person"><span>${esc(p.name)} <span class="muted">${esc(p.role ?? "")}</span></span>
         <input type="checkbox" data-list="family" value="${k}" ${s.family.includes(k) ? "checked" : ""}>

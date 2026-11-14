@@ -1,0 +1,12 @@
+{
+ "action": "drop",
+ "confidence": 0.9,
+ "reason": "Automated calendar reminder for a meeting Sanad already knows about and is free for; no action needed.",
+ "latency_ms": 1441,
+ "tokens": {
+  "in": 732,
+  "out": 56
+ },
+ "cost": 0.002024,
+ "error": null
+}

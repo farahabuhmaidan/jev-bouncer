@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.9,
+ "reason": "Routine meeting reschedule for tomorrow 2pm that needs no immediate action; it doesn't block the release or the investor demo, so hold it for the digest or next free slot.",
+ "latency_ms": 1388,
+ "tokens": {
+  "in": 726,
+  "out": 82
+ },
+ "cost": 0.002272,
+ "error": null
+}

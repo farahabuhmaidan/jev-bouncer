@@ -1,0 +1,12 @@
+{
+ "action": "drop",
+ "confidence": 0.95,
+ "reason": "Automated bulk newsletter with an unsubscribe link; no action needed and unrelated to today's CHK-88 release or tomorrow's investor demo.",
+ "latency_ms": 2575,
+ "tokens": {
+  "in": 773,
+  "out": 75
+ },
+ "cost": 0.002296,
+ "error": null
+}

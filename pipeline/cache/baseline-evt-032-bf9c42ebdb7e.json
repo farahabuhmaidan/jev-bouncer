@@ -1,0 +1,12 @@
+{
+ "action": "drop",
+ "confidence": 0.62,
+ "reason": "Automated Jira status notice that CHK-88 was marked Done by Yousef. It needs no action and doesn't block the release or demo, so it shouldn't interrupt Sanad in evening mode.",
+ "latency_ms": 3949,
+ "tokens": {
+  "in": 788,
+  "out": 390
+ },
+ "cost": 0.005476,
+ "error": null
+}

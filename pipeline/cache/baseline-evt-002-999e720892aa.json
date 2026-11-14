@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.8,
+ "reason": "Routine status update from Yousef on CHK-88: fix is pushed and the PR will open after standup, so nothing is blocked and no decision is needed. Sanad is free now, so it can wait for his next free slot or the digest rather than using one of his 5 interrupts.",
+ "latency_ms": 2790,
+ "tokens": {
+  "in": 812,
+  "out": 111
+ },
+ "cost": 0.002734,
+ "error": null
+}

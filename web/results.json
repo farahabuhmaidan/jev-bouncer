@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-14T13:59:19+03:00",
+ "generated_at": "2026-11-14T14:04:47+03:00",
  "models": {
   "jev": "typesafe/jev-1.14",
   "llm": "anthropic/claude-sonnet-5.5"
@@ -567,7 +567,7 @@
     "sender": "noor",
     "text": "customer says their discount code SPRING20 isn't applying at checkout, is that a known issue?",
     "label": {
-     "action": "delegate"
+     "action": "interrupt"
     },
     "holdout": false,
     "demo_moment": null
@@ -859,13 +859,13 @@
    "baseline": {
     "action": "drop",
     "confidence": 0.95,
-    "reason": "Automated bulk newsletter with an unsubscribe link; no action is needed and it has no bearing on today's CHK-88 release or tomorrow's investor demo.",
-    "latency_ms": 2364,
+    "reason": "Automated bulk newsletter with an unsubscribe link; no action needed and unrelated to today's CHK-88 release or tomorrow's investor demo.",
+    "latency_ms": 2575,
     "tokens": {
-     "in": 759,
-     "out": 78
+     "in": 773,
+     "out": 75
     },
-    "cost": 0.002298,
+    "cost": 0.002296,
     "error": null
    },
    "auto_reply": null,
@@ -996,13 +996,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.8,
-    "reason": "Informational status update from Yousef: the CHK-88 fix is pushed and the PR will open after standup. It needs no action right now, and Sanad is free and will see it before standup, so hold it for his next slot rather than spend an interrupt.",
-    "latency_ms": 2781,
+    "reason": "Routine status update from Yousef on CHK-88: fix is pushed and the PR will open after standup, so nothing is blocked and no decision is needed. Sanad is free now, so it can wait for his next free slot or the digest rather than using one of his 5 interrupts.",
+    "latency_ms": 2790,
     "tokens": {
-     "in": 798,
-     "out": 101
+     "in": 812,
+     "out": 111
     },
-    "cost": 0.002606,
+    "cost": 0.002734,
     "error": null
    },
    "auto_reply": "Morning Yousef! Sanad's tied up at the moment but will take a look at 08:50. If it can't wait until then, just tap \"truly urgent\" and it'll get through.",
@@ -1132,14 +1132,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.8,
-    "reason": "Automated Jira status change on a low-priority ticket (CHK-91) due next week; it needs Sanad's review eventually but doesn't block today's CHK-88 release or tomorrow's demo, so hold it for a free slot or the digest.",
-    "latency_ms": 2016,
+    "confidence": 0.6,
+    "reason": "Automated Jira status change on a low-priority, non-urgent ticket (CHK-91, due next week) that doesn't block today's CHK-88 release or tomorrow's demo; Sanad owns it so a review request may need action later, so hold it for the digest rather than drop.",
+    "latency_ms": 2701,
     "tokens": {
-     "in": 771,
-     "out": 103
+     "in": 785,
+     "out": 113
     },
-    "cost": 0.002572,
+    "cost": 0.0027,
     "error": null
    },
    "auto_reply": null,
@@ -1270,13 +1270,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.88,
-    "reason": "Low-priority, no-rush request from Dina about CHK-91 (due next week); it doesn't block today's CHK-88 release or tomorrow's investor demo, so hold it for a free slot or the digest.",
-    "latency_ms": 2423,
+    "reason": "Low-priority, no-rush request from Dina about CHK-91 (due next week); doesn't block today's CHK-88 release or tomorrow's investor demo, so hold it for a free slot or the digest.",
+    "latency_ms": 2584,
     "tokens": {
-     "in": 770,
-     "out": 92
+     "in": 784,
+     "out": 91
     },
-    "cost": 0.00246,
+    "cost": 0.002478,
     "error": null
    },
    "auto_reply": "Hi Dina, Sanad is tied up at the moment but will take a look at your message at 09:45. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -1406,14 +1406,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.6,
-    "reason": "Routine customer question from support, not urgent or blocking the CHK-88 release or demo. Sanad is free now, but it can wait for a free slot or the digest rather than use an interrupt; he, as Checkout lead, is likely the best person to answer the Apple Pay question.",
-    "latency_ms": 2148,
+    "confidence": 0.72,
+    "reason": "A routine customer question about Apple Pay support is not urgent and doesn't block the CHK-88 release or the investor demo, so it can wait until Sanad's next free slot; he is free now but has demo prep at 11:00, so it is best handled in a batch rather than as an interrupt.",
+    "latency_ms": 2538,
     "tokens": {
-     "in": 785,
-     "out": 113
+     "in": 799,
+     "out": 116
     },
-    "cost": 0.0027,
+    "cost": 0.002758,
     "error": null
    },
    "auto_reply": "Hi Noor, Sanad is tied up at the moment but will look at your message at 10:20. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -1545,14 +1545,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.82,
-    "reason": "CTO needs confirmation before 11:00 that checkout works end to end with a discounted plan on the investor-demo branch. This is time-sensitive and tied to tomorrow's investor demo, and it overlaps with Sanad's own high-priority CHK-88 (wrong discounted totals). Only Sanad can verify this, so it can't be delegated, and waiting for a digest would miss the deadline.",
-    "latency_ms": 3225,
+    "confidence": 0.8,
+    "reason": "CTO needs confirmation before 11:00 that the investor-demo checkout flow works with a discounted plan. This is tied to Sanad's own High-priority CHK-88 (wrong totals on discounted plans) and tomorrow's investor demo, so it has a hard deadline and he is the only one who can answer.",
+    "latency_ms": 2073,
     "tokens": {
-     "in": 848,
-     "out": 158
+     "in": 862,
+     "out": 128
     },
-    "cost": 0.003276,
+    "cost": 0.003004,
     "error": null
    },
    "auto_reply": "Hi Omar, Sanad is tied up at the moment but will look at your message at 10:45 and get back to you then. If it can't wait until then, just tap \"truly urgent\" and it will get flagged right away.",
@@ -1677,13 +1677,13 @@
    "baseline": {
     "action": "drop",
     "confidence": 0.9,
-    "reason": "Automated calendar reminder for a meeting Sanad already knows about, with no action needed and nothing worth spending an interrupt on.",
-    "latency_ms": 1370,
+    "reason": "Automated calendar reminder for a meeting Sanad already knows about and is free for; no action needed.",
+    "latency_ms": 1441,
     "tokens": {
-     "in": 718,
-     "out": 67
+     "in": 732,
+     "out": 56
     },
-    "cost": 0.002106,
+    "cost": 0.002024,
     "error": null
    },
    "auto_reply": null,
@@ -1808,13 +1808,13 @@
    "baseline": {
     "action": "drop",
     "confidence": 0.95,
-    "reason": "Plain thanks from Rami for yesterday's review; no question or action needed, so it doesn't merit an interrupt or a digest entry.",
-    "latency_ms": 1331,
+    "reason": "Plain thanks from a teammate for a review; no action needed and not worth an interrupt or digest entry.",
+    "latency_ms": 1599,
     "tokens": {
-     "in": 726,
-     "out": 69
+     "in": 740,
+     "out": 58
     },
-    "cost": 0.002142,
+    "cost": 0.00206,
     "error": null
    },
    "auto_reply": "Hey Rami, glad it helped! 🙌 Sanad's tied up right now but will get back to you around 12:00. If it can't wait, just tap \"truly urgent.\"",
@@ -1938,14 +1938,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.8,
-    "reason": "Non-urgent support question about an invoice help article; it does not block the release or the investor demo, so hold it for the next free slot or end-of-day digest while Sanad is in demo prep.",
-    "latency_ms": 1520,
+    "confidence": 0.72,
+    "reason": "Non-urgent support question about an invoice help article; Sanad is in investor demo prep, so hold it for his next free slot or the digest.",
+    "latency_ms": 1464,
     "tokens": {
-     "in": 742,
-     "out": 83
+     "in": 756,
+     "out": 68
     },
-    "cost": 0.002314,
+    "cost": 0.002192,
     "error": null
    },
    "auto_reply": "Hi Hana, thanks for the message! Sanad is tied up at the moment but will take a look at 12:00. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -2070,13 +2070,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.8,
-    "reason": "Casual lunch invite from a colleague at 12:10 while Sanad is free; not urgent or work-critical, so hold it for his next free slot rather than spend one of his 5 interrupts.",
-    "latency_ms": 1868,
+    "reason": "Casual lunch invite from a colleague at 12:10 is not urgent enough to spend one of the 5 daily interrupts. Sanad is free right now, so he can see it in his next free slot and reply.",
+    "latency_ms": 1560,
     "tokens": {
-     "in": 701,
-     "out": 87
+     "in": 715,
+     "out": 90
     },
-    "cost": 0.002272,
+    "cost": 0.00233,
     "error": null
    },
    "auto_reply": "Hey Dina! Sanad is tied up at the moment but will check your message at 12:40. If it can't wait, just tap \"truly urgent\" 🌯",
@@ -2199,15 +2199,15 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.7,
-    "reason": "Family messages always interrupt per Sanad's settings, even though Maha says it's not urgent and it arrived by email.",
-    "latency_ms": 1255,
+    "action": "batch",
+    "confidence": 0.9,
+    "reason": "Family message that is explicitly not urgent, so it can wait for his next free slot or the end-of-day digest rather than using one of his 5 interrupts.",
+    "latency_ms": 1506,
     "tokens": {
-     "in": 710,
-     "out": 64
+     "in": 724,
+     "out": 73
     },
-    "cost": 0.00206,
+    "cost": 0.002178,
     "error": null
    },
    "auto_reply": "Hi Maha! Sanad is tied up at the moment but will see your message at 13:10. If it can't wait until then, just tap \"truly urgent\" and it'll get through. 😊",
@@ -2337,14 +2337,14 @@
    },
    "baseline": {
     "action": "drop",
-    "confidence": 0.8,
-    "reason": "FYI from DevOps about a Thursday CI runner migration that explicitly needs nothing from Sanad; it is owned by Lina and does not affect today's CHK-88 release or tomorrow's demo.",
-    "latency_ms": 2257,
+    "confidence": 0.6,
+    "reason": "Informational heads-up from DevOps about a Thursday CI migration that explicitly requires nothing from Sanad, so there is nothing to act on and no need to interrupt him.",
+    "latency_ms": 1383,
     "tokens": {
-     "in": 778,
-     "out": 92
+     "in": 792,
+     "out": 81
     },
-    "cost": 0.002476,
+    "cost": 0.002394,
     "error": null
    },
    "auto_reply": "Thanks for the heads up, Lina! Sanad is tied up at the moment but will look at this at 13:45. If it can't wait, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -2475,13 +2475,13 @@
    "baseline": {
     "action": "interrupt",
     "confidence": 0.6,
-    "reason": "Sanad is free now (13:45) and a Focus block starts at 14:00; Yousef's PR review for CHK-88 (High priority, owned by Sanad, due today, release planned today) is on the critical path, so he should hear about it before the focus block, though it's a review request rather than an outage, so batching is a close alternative.",
-    "latency_ms": 3155,
+    "reason": "Yousef's PR review blocks today's CHK-88 release, which Sanad owns and is due today. Sanad is free now before his 14:00 focus block, so he can pick it up right away and not let it slip toward the evening.",
+    "latency_ms": 5047,
     "tokens": {
-     "in": 795,
-     "out": 131
+     "in": 809,
+     "out": 488
     },
-    "cost": 0.0029,
+    "cost": 0.006498,
     "error": null
    },
    "auto_reply": "Hey Yousef, Sanad is tied up at the moment but will look at this at 16:00. If it can't wait until then, tap \"truly urgent\" and it'll get flagged right away.",
@@ -2606,13 +2606,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.6,
-    "reason": "Despite the urgent tone, a deck background color change is cosmetic and not a blocker for the demo or CHK-88; it can wait until Sanad's focus block ends at 16:00, leaving ample time before tomorrow's 10:00 demo.",
-    "latency_ms": 1710,
+    "reason": "A background color change for the investor deck is cosmetic and low-effort, so it does not justify breaking Sanad's focus block despite the CEO's urgent tone. The demo is tomorrow at 10:00, so there is time to handle it at his next free slot after 16:00.",
+    "latency_ms": 2305,
     "tokens": {
-     "in": 727,
-     "out": 105
+     "in": 741,
+     "out": 111
     },
-    "cost": 0.002504,
+    "cost": 0.002592,
     "error": null
    },
    "auto_reply": "Hi Layla, Sanad is tied up at the moment but will look at your message at 16:00 and get back to you then. If it truly can't wait, please tap \"truly urgent\" and it will be flagged right away.",
@@ -2742,14 +2742,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.8,
-    "reason": "Rami reports checkout showing 0 JOD for some users, which likely relates to CHK-88 (wrong totals, owned by Sanad, due today) and could block today's release and tomorrow's investor demo, so it's worth breaking his focus block.",
-    "latency_ms": 1499,
+    "confidence": 0.72,
+    "reason": "Checkout showing 0 JOD for some users may be the CHK-88 pricing bug (owned by Sanad, due today, High priority) and could block today's release and tomorrow's investor demo, so it is worth breaking his focus block.",
+    "latency_ms": 1672,
     "tokens": {
-     "in": 778,
-     "out": 107
+     "in": 792,
+     "out": 102
     },
-    "cost": 0.002626,
+    "cost": 0.002604,
     "error": null
    },
    "auto_reply": "Hey Rami, thanks for flagging this! Sanad is tied up at the moment but will take a look at 16:00. If it can't wait, just tap \"truly urgent\" and it'll get to him sooner.",
@@ -2843,13 +2843,13 @@
    "baseline": {
     "action": "drop",
     "confidence": 0.8,
-    "reason": "Known flaky timeout test (3 of the last 20 runs failed) on an eslint-only bump that can't affect cart behavior, so rerun CI silently and only escalate if it fails again.",
-    "latency_ms": 1999,
+    "reason": "Known flaky timeout test (3 of last 20 runs failed) on an unrelated eslint bump commit; rerun it silently rather than interrupting Sanad's focus block.",
+    "latency_ms": 1721,
     "tokens": {
-     "in": 1105,
-     "out": 86
+     "in": 1119,
+     "out": 82
     },
-    "cost": 0.00307,
+    "cost": 0.003058,
     "error": null
    },
    "auto_reply": null,
@@ -2947,15 +2947,15 @@
     "error": null
    },
    "baseline": {
-    "action": "drop",
+    "action": "delegate",
     "confidence": 0.6,
-    "reason": "Build on low-priority CHK-91 branch (not the CHK-88 release) failed on a transient registry timeout before any tests ran, so a silent rerun is enough; if it recurs, the nearly full runner disk is a DevOps matter.",
-    "latency_ms": 2534,
+    "reason": "CI build on a low-priority copy branch failed from infrastructure causes (registry timeout, runner disk 96% full), not a code issue; it doesn't block the CHK-88 release or demo, so DevOps should look at the runner and registry while Sanad stays in focus.",
+    "latency_ms": 1916,
     "tokens": {
-     "in": 995,
-     "out": 103
+     "in": 1009,
+     "out": 113
     },
-    "cost": 0.00302,
+    "cost": 0.003148,
     "error": null
    },
    "auto_reply": null,
@@ -3056,14 +3056,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.72,
-    "reason": "Not a flaky test: commit c09b5e2 on the investor-demo branch subtracts the discount twice (27.64 vs 27.84), a real regression in CHK-88, Sanad's high-priority item due today, and it blocks both today's release and tomorrow's 10:00 investor demo.",
-    "latency_ms": 4422,
+    "confidence": 0.62,
+    "reason": "This is a real, deterministic failure, not a flaky test. Commit c09b5e2 on the investor-demo branch subtracts the discount twice (27.64 vs 27.84), so it breaks CHK-88 (Sanad's ticket, due today) and could break tomorrow's 10:00 demo. The fix is quick and Sanad owns it, so it is worth breaking his focus block.",
+    "latency_ms": 6722,
     "tokens": {
-     "in": 1304,
-     "out": 510
+     "in": 1318,
+     "out": 744
     },
-    "cost": 0.007708,
+    "cost": 0.010076,
     "error": null
    },
    "auto_reply": null,
@@ -3201,14 +3201,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.88,
-    "reason": "Low-priority receipt copy question (CHK-91, due next week) that doesn't block today's CHK-88 release or tomorrow's demo, so it can wait until Sanad's focus block ends at 16:00.",
-    "latency_ms": 1856,
+    "confidence": 0.9,
+    "reason": "Low-priority receipt copy question (CHK-91, due next week) that doesn't block the CHK-88 release or tomorrow's demo, so it can wait until after Sanad's focus block ends at 16:00.",
+    "latency_ms": 1724,
     "tokens": {
-     "in": 775,
+     "in": 789,
      "out": 93
     },
-    "cost": 0.00248,
+    "cost": 0.002508,
     "error": null
    },
    "auto_reply": "Hi Dina! Sanad is tied up right now but will look at this at 16:00. If it can't wait, just tap \"truly urgent\" and it'll get flagged.",
@@ -3332,14 +3332,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.55,
-    "reason": "Vague 'got a sec?' from the CTO carries no stated urgency and Sanad is in a focus block until 16:00; hold it for the end of the block, though the investor demo tomorrow and today's CHK-88 release mean it could become urgent if Omar follows up.",
-    "latency_ms": 2191,
+    "confidence": 0.6,
+    "reason": "Vague 'got a sec?' from the CTO has no stated urgency, so it can wait until the focus block ends at 16:00; interrupting would spend one of 5 daily interrupts on an unspecified ask, though a quick reply after the block is advisable given the demo tomorrow and today's CHK-88 release.",
+    "latency_ms": 2394,
     "tokens": {
-     "in": 702,
-     "out": 112
+     "in": 716,
+     "out": 126
     },
-    "cost": 0.002524,
+    "cost": 0.002692,
     "error": null
    },
    "auto_reply": "Hi Omar, Sanad is tied up at the moment but will look at your message at 16:00. If it can't wait until then, just tap \"truly urgent\" and it will reach him right away.",
@@ -3468,15 +3468,15 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
+    "action": "batch",
     "confidence": 0.6,
-    "reason": "A discount code failing at checkout may be a live symptom of CHK-88 (wrong totals for discounted plans), which Sanad owns and is releasing today. Noor needs to know if it's a known issue, and the answer could affect the release. It's only 15:20, so it's still before evening mode.",
-    "latency_ms": 5587,
+    "reason": "Noor's question is a single customer report that likely maps to the known CHK-88 discount issue. Sanad's focus block ends at 16:00, so it can wait 40 minutes for a reply, and it isn't a release blocker.",
+    "latency_ms": 4988,
     "tokens": {
-     "in": 779,
-     "out": 120
+     "in": 793,
+     "out": 514
     },
-    "cost": 0.002758,
+    "cost": 0.006726,
     "error": null
    },
    "auto_reply": "Hi Noor, Sanad is tied up at the moment but will take a look at this at 16:00. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -3576,13 +3576,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.85,
-    "reason": "Real but minor lint failure (unused import, long line) on a low-priority CHK-91 branch that is not the CHK-88 release or the demo, so it can wait for the end-of-day digest and does not justify breaking his focus block.",
-    "latency_ms": 1503,
+    "reason": "Real but minor lint failures (unused import, long line) on low-priority branch chk-91, which is not CHK-88 or the demo; it's not a flaky test so no silent rerun, and Sanad can fix it after his focus block or in the digest.",
+    "latency_ms": 2092,
     "tokens": {
-     "in": 971,
-     "out": 98
+     "in": 985,
+     "out": 103
     },
-    "cost": 0.002922,
+    "cost": 0.003,
     "error": null
    },
    "auto_reply": null,
@@ -3707,13 +3707,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.93,
-    "reason": "Non-urgent FYI from the CEO with a Friday comment deadline; it doesn't block the release or tomorrow's demo, so hold it for the end-of-day digest and leave Sanad's focus block alone.",
-    "latency_ms": 1808,
+    "reason": "FYI email from the CEO with a Friday deadline, not urgent and not blocking the release or demo, so hold it for the digest instead of interrupting the focus block.",
+    "latency_ms": 2422,
     "tokens": {
-     "in": 710,
-     "out": 94
+     "in": 724,
+     "out": 77
     },
-    "cost": 0.00236,
+    "cost": 0.002218,
     "error": null
    },
    "auto_reply": "Hi Layla, thanks for sending the board update draft. Sanad is tied up at the moment but will look at it at 16:00 today. If it truly can't wait, you can tap \"truly urgent\" and it will get his attention sooner.",
@@ -3838,13 +3838,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.9,
-    "reason": "A routine PM sync reschedule for tomorrow at 2pm is informational and not urgent, so it can wait for his next free slot or the digest and does not block the CHK-88 release or the investor demo.",
-    "latency_ms": 1513,
+    "reason": "Routine meeting reschedule for tomorrow 2pm that needs no immediate action; it doesn't block the release or the investor demo, so hold it for the digest or next free slot.",
+    "latency_ms": 1388,
     "tokens": {
-     "in": 712,
-     "out": 89
+     "in": 726,
+     "out": 82
     },
-    "cost": 0.002314,
+    "cost": 0.002272,
     "error": null
    },
    "auto_reply": "Hi Dina, thanks for the heads-up! Sanad is tied up at the moment but will look at this at 16:40. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged.",
@@ -3974,14 +3974,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.95,
-    "reason": "Production checkout error rate at 8% after the 16:15 deploy, and Yousef (Checkout tech lead) needs Sanad's rollback decision now; it affects today's CHK-88 release and tomorrow's investor demo, and Sanad is free at 16:25 before the 17:30 pickup.",
-    "latency_ms": 1701,
+    "confidence": 0.93,
+    "reason": "Prod checkout error rate at 8% after the 16:15 deploy, and his tech lead needs Sanad's rollback call now. It also affects the CHK-88 release and tomorrow's investor demo, and Sanad is free and not yet in evening mode.",
+    "latency_ms": 1545,
     "tokens": {
-     "in": 804,
-     "out": 126
+     "in": 818,
+     "out": 110
     },
-    "cost": 0.002868,
+    "cost": 0.002736,
     "error": null
    },
    "auto_reply": "Hey Yousef, Sanad is tied up right now and will look at this at 16:55. If it can't wait until then, tap \"truly urgent\" and it'll get through to him right away.",
@@ -4106,13 +4106,13 @@
    "baseline": {
     "action": "drop",
     "confidence": 0.95,
-    "reason": "Automated newsletter promo for conference tickets is noise, unrelated to the CHK-88 release or tomorrow's investor demo, so it needs no action.",
-    "latency_ms": 1310,
+    "reason": "Automated promotional newsletter email about conference tickets; no relevance to the CHK-88 release or tomorrow's investor demo and no action needed.",
+    "latency_ms": 1581,
     "tokens": {
-     "in": 715,
-     "out": 75
+     "in": 729,
+     "out": 72
     },
-    "cost": 0.00218,
+    "cost": 0.002178,
     "error": null
    },
    "auto_reply": null,
@@ -4237,13 +4237,13 @@
    "baseline": {
     "action": "delegate",
     "confidence": 0.6,
-    "reason": "Rami's question about where the payments sandbox staging credentials are kept is routine and a teammate or DevOps can answer it. It isn't blocking the release as stated, so it doesn't warrant an interrupt, and Sanad has school pickup at 17:30.",
-    "latency_ms": 4928,
+    "reason": "A routine question about where staging credentials are kept is not urgent for Sanad; a teammate or DevOps can answer it and point Rami to the secrets manager, so there is no need to interrupt before school pickup. It is a credentials question, so it should be answered by someone who can safely direct him to the proper vault rather than by sharing them in chat.",
+    "latency_ms": 2274,
     "tokens": {
-     "in": 722,
-     "out": 109
+     "in": 736,
+     "out": 134
     },
-    "cost": 0.002534,
+    "cost": 0.002812,
     "error": null
    },
    "auto_reply": "Hey Rami, Sanad's tied up at the moment but will look at this at 09:00 tomorrow. If it can't wait until then, just tap \"truly urgent\" and it'll get flagged right away.",
@@ -4367,14 +4367,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.9,
-    "reason": "Family-related school notice with a changed pickup location (east gate) that is time-sensitive, since pickup is at 17:30 and Sanad leaves in 10 minutes.",
-    "latency_ms": 1261,
+    "confidence": 0.86,
+    "reason": "School pickup is at 17:30, ten minutes away, and the gate has moved to the east gate. This is time-sensitive family information that would be useless in a digest.",
+    "latency_ms": 2426,
     "tokens": {
-     "in": 720,
-     "out": 82
+     "in": 734,
+     "out": 200
     },
-    "cost": 0.00226,
+    "cost": 0.003468,
     "error": null
    },
    "auto_reply": "Hello, thanks for the message. Sanad is busy at the moment and will look at it at 09:00 tomorrow. If it can't wait, please tap \"truly urgent\" and it will be flagged right away.",
@@ -4498,14 +4498,14 @@
    },
    "baseline": {
     "action": "batch",
-    "confidence": 0.9,
-    "reason": "Evening mode: Dina's sprint board update is explicitly non-urgent ('tomorrow'), doesn't block the CHK-88 release or the investor demo, so hold it for the morning digest.",
-    "latency_ms": 2059,
+    "confidence": 0.88,
+    "reason": "Dina's note is a non-urgent sprint board update that she says can wait until tomorrow. It doesn't block the CHK-88 release or the investor demo, and it's evening mode, so hold it for the morning digest.",
+    "latency_ms": 1500,
     "tokens": {
-     "in": 702,
-     "out": 89
+     "in": 716,
+     "out": 94
     },
-    "cost": 0.002294,
+    "cost": 0.002372,
     "error": null
    },
    "auto_reply": "Thanks, Dina! Sanad is tied up right now but will check the sprint board at 09:00 tomorrow. If it can't wait until then, just tap \"truly urgent.\"",
@@ -4629,14 +4629,14 @@
    },
    "baseline": {
     "action": "interrupt",
-    "confidence": 0.96,
-    "reason": "Family matter: school nurse reports Sanad's daughter has a fever and asks for a callback, so it needs immediate notice even in evening mode.",
-    "latency_ms": 1857,
+    "confidence": 0.8,
+    "reason": "The school says his daughter has a fever and is in the nurse's office. This is family and needs a call back, so it should reach him now even though it's evening. 'When you can' and the mild fever make it slightly less urgent, but a sick child at school is worth a prompt notification.",
+    "latency_ms": 1634,
     "tokens": {
-     "in": 739,
-     "out": 73
+     "in": 753,
+     "out": 110
     },
-    "cost": 0.002208,
+    "cost": 0.002606,
     "error": null
    },
    "auto_reply": "Hello, this is an auto-reply on behalf of Sanad, who is busy at the moment and will look at your message at 09:00 tomorrow. If this can't wait, please tap \"truly urgent\" so it reaches him right away. Thank you for understanding.",
@@ -4761,13 +4761,13 @@
    "baseline": {
     "action": "batch",
     "confidence": 0.88,
-    "reason": "Evening mode is active and Layla's roadmap question about subscriptions is non-urgent; it doesn't block the CHK-88 release or tomorrow's investor demo, so hold it for the morning digest.",
-    "latency_ms": 2043,
+    "reason": "It's evening mode (19:30) and Layla's roadmap question about moving subscriptions up is non-urgent, doesn't block the CHK-88 release or tomorrow's investor demo, so hold it for the morning digest.",
+    "latency_ms": 1606,
     "tokens": {
-     "in": 720,
-     "out": 91
+     "in": 734,
+     "out": 97
     },
-    "cost": 0.00235,
+    "cost": 0.002438,
     "error": null
    },
    "auto_reply": "Hi Layla, thanks for your message. Sanad is tied up at the moment and will review it at 09:00 tomorrow. If it can't wait until then, please tap \"truly urgent\" and it will be flagged right away.",
@@ -4896,15 +4896,15 @@
     "error": null
    },
    "baseline": {
-    "action": "batch",
-    "confidence": 0.8,
-    "reason": "Automated Jira notice that CHK-88 was moved to Done by Yousef. It's good news, not a blocker, so it doesn't justify an evening interrupt. Hold it for the digest or morning check, when Sanad can confirm the release went out before the 10:00 investor demo.",
-    "latency_ms": 2003,
+    "action": "drop",
+    "confidence": 0.62,
+    "reason": "Automated Jira status notice that CHK-88 was marked Done by Yousef. It needs no action and doesn't block the release or demo, so it shouldn't interrupt Sanad in evening mode.",
+    "latency_ms": 3949,
     "tokens": {
-     "in": 774,
-     "out": 116
+     "in": 788,
+     "out": 390
     },
-    "cost": 0.002708,
+    "cost": 0.005476,
     "error": null
    },
    "auto_reply": null,
@@ -5027,15 +5027,15 @@
     "error": null
    },
    "baseline": {
-    "action": "interrupt",
-    "confidence": 0.93,
-    "reason": "Message is from family (Maha, Sanad's partner), and family always interrupts per his settings, even in evening mode.",
-    "latency_ms": 1157,
+    "action": "batch",
+    "confidence": 0.6,
+    "reason": "Maha's 'dinner's ready' is a family message that can wait only briefly and isn't urgent, so it doesn't merit using one of the 5 interrupts. Holding it for his next free slot fits the rule that family which can wait is held.",
+    "latency_ms": 1489,
     "tokens": {
-     "in": 698,
-     "out": 63
+     "in": 712,
+     "out": 101
     },
-    "cost": 0.002026,
+    "cost": 0.002434,
     "error": null
    },
    "auto_reply": "Thanks Maha! 🍲 Sanad's tied up at the moment and will see this at 09:00 tomorrow. If it can't wait, tap \"truly urgent\" and it'll reach him sooner.",

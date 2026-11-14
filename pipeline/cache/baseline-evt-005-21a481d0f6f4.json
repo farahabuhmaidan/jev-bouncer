@@ -1,0 +1,12 @@
+{
+ "action": "batch",
+ "confidence": 0.72,
+ "reason": "A routine customer question about Apple Pay support is not urgent and doesn't block the CHK-88 release or the investor demo, so it can wait until Sanad's next free slot; he is free now but has demo prep at 11:00, so it is best handled in a batch rather than as an interrupt.",
+ "latency_ms": 2538,
+ "tokens": {
+  "in": 799,
+  "out": 116
+ },
+ "cost": 0.002758,
+ "error": null
+}

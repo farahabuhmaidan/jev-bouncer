@@ -57,8 +57,13 @@ function decideMessage(event, r, s, day) {
   const out = (action, rule, extra = {}) => ({ action, rule, reasons: r.reasons, usesBudget: false, ...extra });
   const later = { label: day.evening ? MORNING : `until ${day.nextSlot ?? "the next free slot"}` };
 
-  if (s.familyAlways && (s.family.includes(event.sender) || r.yes("family_matter"))) return out("interrupt", 1);
-  if (day.evening && !r.yes("blocks_release")) return out("batch", 2, { label: MORNING });
+  const family = s.family.includes(event.sender) || r.yes("family_matter");
+  if (s.familyAlways && family) {
+    // Family can always reach Sanad, past the budget and evening mode, but only when it can't wait.
+    // Family that can wait is held for his next free slot: it is never asked about or forwarded.
+    return r.no("time_sensitive") ? out("batch", 1, later) : out("interrupt", 1);
+  }
+  if (day.evening && !family && !r.yes("blocks_release")) return out("batch", 2, { label: MORNING });
   if (r.yes("is_noise")) return out("drop", 3);
   if (r.yes("blocks_release") && r.yes("needs_sanad")) return out("interrupt", 4);
   if (r.yes("wording_only_urgency") && !r.yes("blocks_release")) return out("batch", 5, later);
