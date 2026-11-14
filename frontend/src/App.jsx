@@ -72,7 +72,7 @@ export default function App() {
   async function jump() {
     setPlaying(false);
     const now = api.toMin(day.clock);
-    const next = moments.find((m) => api.toMin(m.time) - 1 > now);
+    const next = moments.find((m) => api.toMin(m.time) > now);
     await api.setClock(next ? api.toHHMM(api.toMin(next.time) - 1) : "20:00");
     await refresh();
     if (next) { // step onto the moment one minute later so it lands on screen
