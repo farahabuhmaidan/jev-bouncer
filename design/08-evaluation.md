@@ -15,7 +15,7 @@ Labels reflect **default settings**. The strip shows a small "settings changed: 
 | Critical misses | Labelled `interrupt` events that got batch, drop or delegate. This is the costly error. |
 | Asks | How many events Jev's policy sent to Sanad as "ask" (the LLM has none) |
 | Latency | Median and p95 per call, measured in the pipeline from the laptop |
-| Cost per 1,000 events | **Routing only**: one Jev request per event vs one baseline LLM call per event (the text-writing calls are the same on both sides, so they're left out). Use TypeSafe's published pricing, per request or per question, whichever it charges, and Anthropic's per-token prices, entered by hand with a date in `pipeline/prices.py`. If no public Jev price can be found, show calls and tokens instead of dollars and say so. |
+| Cost per 1,000 events | **Routing only**: one Jev request per event vs one baseline LLM call per event (the text-writing calls are the same on both sides, so they're left out). Prices are entered by hand with a date in `pipeline/prices.py`. Jev 1.14: $0.042 per million input tokens, output free (TypeSafe models page, checked 2026-11-14). Sonnet 5.5 on OpenRouter: $2 / $10 per million input / output tokens (OpenRouter models API, 2026-11-14). Recheck both before the final run. |
 | Calibration (stretch) | For `needs_sanad`, bucket p into 0.1 bins and compare against the labels. Only if time is left. |
 
 Clicks in the "ask Sanad" modal never change the metrics. "Ask" is not a label; it counts as wrong for accuracy and is reported separately as the ask count.

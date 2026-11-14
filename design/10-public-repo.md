@@ -7,7 +7,7 @@ This repo will be made public after the hackathon. Everything committed must be 
 README.md          pitch, demo GIF, quickstart, the numbers, how it works
 LICENSE            MIT
 .gitignore         .env, .venv/, __pycache__/, .DS_Store, .remember/
-.env.example       TYPESAFE_API_KEY=, ANTHROPIC_API_KEY= (no values)
+.env.example       OPENROUTER_API_KEY= (no value)
 AGENTS.md          short guide for AI agents working in the repo (where things are, how to run)
 Makefile           make install · make pipeline · make demo · make eval
 design/            this spec

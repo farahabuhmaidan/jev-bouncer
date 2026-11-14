@@ -1,6 +1,6 @@
 # 05 — LLM jobs
 
-Model: `claude-sonnet-5-5` via the Anthropic API, with structured output (tool use or a JSON schema) wherever the code reads the result. All runs happen in the pipeline, ahead of time.
+Model: `anthropic/claude-sonnet-5.5` via OpenRouter, with structured output (a JSON schema) wherever the code reads the result. All runs happen in the pipeline, ahead of time.
 
 ## 1. Baseline router (for the comparison)
 - **Input:** the same state Jev saw (02), plus the four action names with one-line descriptions, plus Sanad's default settings in words ("5 interrupts a day; family always interrupts; evening mode from 18:00").

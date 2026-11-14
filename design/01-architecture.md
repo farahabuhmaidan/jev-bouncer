@@ -30,7 +30,7 @@ Writes `web/results.json`. Calls are cached in `pipeline/cache/` by event id plu
 ```json
 {
   "generated_at": "2026-11-14T14:10:00+03:00",
-  "models": { "jev": "<model id from the TypeSafe docs>", "llm": "claude-sonnet-5-5" },
+  "models": { "jev": "typesafe/jev-1.14", "llm": "anthropic/claude-sonnet-5.5" },
   "events": {
     "evt-031": {
       "state": { "...": "exact state sent to Jev (02)" },
@@ -64,10 +64,11 @@ design/      this spec
 ```
 
 ## Stack (decided)
-- Python 3 for the pipeline, using the TypeSafe Python SDK (or plain HTTP if the SDK gets in the way).
-- LLM: the Anthropic API, with `claude-sonnet-5-5` for both writing and the baseline.
+- Python 3 for the pipeline, calling everything through **OpenRouter with one key**:
+  - Jev: `POST https://openrouter.ai/api/alpha/decisions`, model `typesafe/jev-1.14` (pinned), body `{model, state, questions}` as in the TypeSafe docs. Plain `httpx`.
+  - LLM: `POST https://openrouter.ai/api/v1/chat/completions`, model `anthropic/claude-sonnet-5.5`, with JSON-schema structured output where code reads the result.
 - Page: plain HTML, CSS and JS with no build step. Builder's call: a single-file React via CDN is fine if faster for them.
-- Keys come from env vars `TYPESAFE_API_KEY` and `ANTHROPIC_API_KEY`. Keys never reach the page.
+- One key, from env var `OPENROUTER_API_KEY` (loaded from a gitignored `.env`). Keys never reach the page.
 
 ## Optional "live" button (only if time is left)
 A tiny `pipeline/live.py` endpoint that sends one event to Jev and returns its answers. It can be cut first.

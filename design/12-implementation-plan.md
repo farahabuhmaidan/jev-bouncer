@@ -6,15 +6,15 @@
 
 **Architecture:** An offline Python pipeline turns `data/` into `web/results.json` (Jev answers, baseline actions, LLM texts). A static page loads it and runs the routing policy and metrics in the browser, so settings re-route the day instantly. See `design/01-architecture.md`.
 
-**Tech Stack:** Python 3.11+ (TypeSafe SDK or `httpx`, `anthropic`, `pytest`), plain HTML/CSS/JS ES modules, Node 20+ only for `node --test` on the JS modules.
+**Tech Stack:** Python 3.11+ (`httpx`, `pytest`, `python-dotenv`; every model call goes through OpenRouter), plain HTML/CSS/JS ES modules, Node 20+ only for `node --test` on the JS modules.
 
 **Spec:** `design/README.md` and `design/01`–`11`. Read the spec file a task names before starting it.
 
 ## Global Constraints
-- Public repo: no secrets (keys only via `TYPESAFE_API_KEY`, `ANTHROPIC_API_KEY` from `.env`), fictional data only, no private links (`design/10-public-repo.md`).
+- Public repo: no secrets (the only key is `OPENROUTER_API_KEY`, from a gitignored `.env`), fictional data only, no private links (`design/10-public-repo.md`).
 - Jev never picks the action; all routing lives in `web/policy.js` only (`design/04-policy.md`).
 - All Jev question wording lives in `pipeline/questions.py`; all LLM prompts in `pipeline/llm.py`.
-- LLM model: `claude-sonnet-5-5`. Jev model id: whatever the TypeSafe models page names, recorded in `results.json.models.jev`.
+- Jev: `POST https://openrouter.ai/api/alpha/decisions`, model `typesafe/jev-1.14`. LLM: `POST https://openrouter.ai/api/v1/chat/completions`, model `anthropic/claude-sonnet-5.5`. Both use `Authorization: Bearer $OPENROUTER_API_KEY`.
 - Defaults: `yesAt 0.7`, `noAt 0.3`, `interruptBar 0.7`, rising bar on, budget 5, evening start 18:00, family-always-interrupts on, CI silent rerun on.
 - A failed model call is an error, never an answer.
 - Day runs 08:00–20:00; times are `"HH:MM"` strings.
@@ -33,9 +33,9 @@
 **Files:** Create `requirements.txt`, `.env.example`, `Makefile`, `pipeline/__init__.py`, `pipeline/probe.py`, `pipeline/API_NOTES.md`
 
 - [ ] **Step 1:** Read `https://docs.typesafe.ai/llms.txt`, then `/go/api.md`, `/go/primitives.md` and `/go/models.md` (append `.md`). Write `pipeline/API_NOTES.md` with: endpoint or SDK call, auth header, how one request carries state + several questions, exact type names for yes/no (Noul), Choice and Score, the response shape, model id, context and rate limits, and pricing if published (with its date and URL).
-- [ ] **Step 2:** `requirements.txt`: `anthropic`, `httpx`, `pytest`, `python-dotenv`, plus the TypeSafe SDK package name if one exists. `.env.example` has both keys with empty values. Makefile targets: `install` (venv + pip), `test` (`pytest -q && node --test web/`), `pipeline` (`python -m pipeline.run`), `demo` (`python -m http.server 8000` from the repo root, then open `localhost:8000/web/`), `eval` (`python -m pipeline.run --eval-only`).
-- [ ] **Step 3:** `pipeline/probe.py` sends one Jev request (the state from `design/02` plus the `needs_sanad` Noul) and one Anthropic message, then prints both raw responses.
-- [ ] **Step 4:** Run `make install && python -m pipeline.probe`. Expected: a Jev probability near yes for `needs_sanad` and an Anthropic reply. **Ask the user before the first live call** (it uses their keys and sends mock data only).
+- [ ] **Step 2:** `requirements.txt`: `httpx`, `pytest`, `python-dotenv`. `.env.example` has `OPENROUTER_API_KEY=` with no value. Makefile targets: `install` (venv + pip), `test` (`pytest -q && node --test web/`), `pipeline` (`python -m pipeline.run`), `demo` (`python -m http.server 8000` from the repo root, then open `localhost:8000/web/`), `eval` (`python -m pipeline.run --eval-only`).
+- [ ] **Step 3:** `pipeline/probe.py` sends one Jev request through OpenRouter (the state from `design/02` plus the `needs_sanad` Noul) and one Sonnet 5.5 chat completion, then prints both raw responses.
+- [ ] **Step 4:** Run `make install && python -m pipeline.probe`. Expected: a Jev probability near yes for `needs_sanad` and a Sonnet reply. **Ask the user before the first live call** (it uses their keys and sends mock data only).
 - [ ] **Step 5:** Commit: `chore: scaffold and API notes`.
 
 ### Task 2: Mock data + data checks (0:00–0:50, the user labels)
@@ -114,7 +114,7 @@
 
 All use tool-use structured output, except `auto_reply`, which returns plain text.
 
-- [ ] **Step 1: Tests** with a fake Anthropic client:
+- [ ] **Step 1: Tests** with a fake OpenRouter client:
   - `test_baseline_action_in_four`
   - `test_baseline_prompt_has_default_settings_in_words` (contains `"5 interrupts a day"`)
   - `test_auto_reply_mentions_slot`
@@ -205,5 +205,5 @@ All use tool-use structured output, except `auto_reply`, which returns plain tex
 **Files:** Create `README.md`, `LICENSE` (MIT, the user as copyright holder), `AGENTS.md`
 
 - [ ] **Step 1:** README sections 1–7 per `design/10`, with numbers copied from the metrics output plus a link to `web/results.json`, the date and n.
-- [ ] **Step 2: Verify:** fresh clone into the scratchpad → `make demo` works with no `.env`; `make test` passes; `git grep -nE "sk-ant|TYPESAFE_API_KEY=.+"` finds nothing.
+- [ ] **Step 2: Verify:** fresh clone into the scratchpad → `make demo` works with no `.env`; `make test` passes; `git grep -nE "sk-or-|OPENROUTER_API_KEY=.+"` finds nothing.
 - [ ] **Step 3:** Commit and push: `docs: public README`.
