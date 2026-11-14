@@ -20,6 +20,8 @@ MAX_LOG_LINES = 40
 
 def _tail(log: str) -> str:
     lines = log.rstrip().splitlines()
+    if len(lines) <= MAX_LOG_LINES:  # short logs keep the diff and context
+        return "\n".join(lines)
     for i, line in enumerate(lines):
         if "FAILURES" in line or "##[error]" in line or "Error" in line:
             lines = lines[max(0, i - 2):]

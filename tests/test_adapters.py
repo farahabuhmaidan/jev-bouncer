@@ -137,3 +137,9 @@ def test_calendar_skips_cancelled_and_free():
         _item("Optional talk", "13:00", "14:00", transparency="transparent"),
         _item("Standup", "09:30", "09:45")))
     assert [o["title"] for o in out] == ["Standup"]
+
+
+def test_github_short_log_kept_whole_with_diff():
+    raw = json.loads((RAW / "github_actions" / "regression.json").read_text())
+    ev = ADAPTERS["github_actions"].to_event(raw, PEOPLE)
+    assert "plan.discount * plan.price" in ev["log_tail"] and "AssertionError" in ev["log_tail"]
