@@ -39,7 +39,6 @@ function PeopleList({ title, icon, help, members, people, onAdd, onRemove, onCre
       close();
     } catch (e) { setErr(e.message); }
   };
-  const listId = `people-${title}`;
   return (
     <div className="plist">
       <div className="plist-head">
@@ -59,12 +58,11 @@ function PeopleList({ title, icon, help, members, people, onAdd, onRemove, onCre
       {adding && (
         <form className="padd" onSubmit={submit}>
           <label><span>Name</span>
-            <input className="input" autoFocus list={listId} value={name} placeholder="Pick a contact or type a new name" onChange={(e) => setName(e.target.value)} /></label>
-          <datalist id={listId}>{humans.filter((p) => !members.includes(p.key)).map((p) => <option key={p.key} value={p.name}>{p.role}</option>)}</datalist>
-          {!match && name.trim() && (
-            <label><span>Who are they? <small>new contact</small></span>
-              <input className="input" value={role} placeholder="e.g. Sister, Head of Sales" onChange={(e) => setRole(e.target.value)} /></label>
-          )}
+            <input className="input" autoFocus autoComplete="off" value={name} placeholder="Any name, e.g. Rana Haddad" onChange={(e) => setName(e.target.value)} /></label>
+          {match
+            ? <p className="hint padd-match"><Icon name="check" size={12} />Already a contact: {match.name}, {match.role}. Messages from them will follow this rule.</p>
+            : <label><span>Who are they? <small>optional</small></span>
+                <input className="input" autoComplete="off" value={role} placeholder="e.g. Sister, Head of Sales" onChange={(e) => setRole(e.target.value)} /></label>}
           <div className="padd-actions">
             <button className="btn small primary" type="submit" disabled={!name.trim()}>{match ? `Add ${match.name}` : "Add new person"}</button>
             <button className="btn small" type="button" onClick={close}>Cancel</button>

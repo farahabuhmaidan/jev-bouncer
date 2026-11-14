@@ -402,3 +402,4 @@ a { color: var(--accent); }
 .rail-count { min-width: 20px; height: 20px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; display: grid; place-items: center; padding: 0 5px; }
 @media (max-width: 1200px) { .today.no-phone { grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.3fr); } .phone-rail { display: none; } }
 @media (max-width: 860px) { .today.no-phone { grid-template-columns: 1fr; } }
+.padd-match { display: flex; align-items: center; gap: 6px; align-self: center; margin: 0; }
